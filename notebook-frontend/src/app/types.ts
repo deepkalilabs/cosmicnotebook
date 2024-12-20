@@ -70,6 +70,7 @@ export interface NotebookConnectionProps {
   onError?: (error: string) => void;
   onNotebookDeployed?: (data: OutputDeployMessage) => void;
   notebookDetails?: NotebookDetails;
+  onPosthogSetup?: (data: OutputPosthogSetupMessage) => void;
 }
 
 export interface WebSocketMessage {
@@ -117,6 +118,7 @@ export interface OutputDeployMessage {
     type: string;
     success: boolean;
     message: string;
+    output: JSON;
 }
 
 export interface Job {
@@ -144,6 +146,7 @@ export interface OutputPosthogSetupMessage {
     type: string;
     success: boolean;
     message: string;
+    output: JSON;
 }
 
 export interface User {
