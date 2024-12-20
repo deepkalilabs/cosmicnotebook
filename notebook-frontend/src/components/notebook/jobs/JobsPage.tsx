@@ -6,7 +6,7 @@ interface JobsPageProps {
   jobs?: Jobs;
 }
 
-export function JobsPage({ jobs }: JobsPageProps) {
+export default function JobsPage({ jobs }: JobsPageProps) {
   return (
     <div className="rounded-md border">
       <Table>

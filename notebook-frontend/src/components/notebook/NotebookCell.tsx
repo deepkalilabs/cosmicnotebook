@@ -10,12 +10,12 @@ import { MarkdownEditor } from '@/components/MarkdownEditor';
 import { Edit, Eye } from 'lucide-react';
 import { FileUploadEditor } from "@/components/FileUpload";
 
-//type CellType = 'code' | 'markdown' | 'file';
+type CellType = 'code' | 'markdown' | 'file';
 
 // TODO: Break up notebook cell into different classes all extending from base notebookcell class.
 
 export function NotebookCell({
-  //id,
+  id,
   code,
   output,
   type,
@@ -23,7 +23,7 @@ export function NotebookCell({
   isExecuting,
   onCodeChange,
   onTypeChange,
-  //onFilesChange,
+  onFilesChange,
   onExecute,
   onDelete,
   onMoveUp,

@@ -15,7 +15,8 @@ import { JobsPage } from '@/components/notebook/jobs/JobsPage';
 import { JobScheduler } from '@/components/notebook/jobs/JobScheduler';
 import { getApiUrl } from '@/app/lib/config';
 
-export default function NotebookPage({ notebookId, userId, name, jobs }: NotebookPageProps) {
+
+export default function NotebookPage({ notebookId, userId, name }: NotebookPageProps) {
   const { toast } = useToast();
   const { cells, addCell, updateCellCode, updateCellType,updateCellOutput, deleteCell, moveCellUp, moveCellDown, setCells } = useNotebookStore();
   const [ isDeploying, setIsDeploying ] = useState(false);
@@ -124,6 +125,7 @@ export default function NotebookPage({ notebookId, userId, name, jobs }: Noteboo
     <div className="flex min-h-screen">
       <div className="container mx-auto py-8">
         <Tabs defaultValue="notebook" className="w-full">
+<<<<<<< HEAD
           <div className="flex flex-row">
             <TabsList className="flex space-x-4 mb-5">
               <TabsTrigger value="notebook" className="flex-1">
@@ -152,6 +154,8 @@ export default function NotebookPage({ notebookId, userId, name, jobs }: Noteboo
             </div>
           </div>
 
+=======
+>>>>>>> b51b052 (Addes sub side bar)
 
           <TabsContent value="notebook">
             { isDeploying && (
@@ -207,6 +211,7 @@ export default function NotebookPage({ notebookId, userId, name, jobs }: Noteboo
               )} 
             </div>
           </TabsContent>
+<<<<<<< HEAD
           <TabsContent value="jobs">
             <JobsPage jobs={jobs} />
           </TabsContent>
@@ -216,6 +221,8 @@ export default function NotebookPage({ notebookId, userId, name, jobs }: Noteboo
               notebookId={notebookId}
             />
           </TabsContent>
+=======
+>>>>>>> b51b052 (Addes sub side bar)
         </Tabs>
       </div>
     </div>
