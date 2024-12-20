@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import {  Activity, Brain, BookOpen, Database, Clock } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from '@/components/ui/separator';
 import { useNotebookStore } from '@/app/store';
@@ -10,10 +9,7 @@ import { NotebookToolbar } from '@/components/notebook/NotebookToolbar';
 import { NotebookCell } from '@/components/notebook/NotebookCell';
 import { OutputDeployMessage, CellType, NotebookPageProps } from '@/app/types';
 import DeploymentDialog from '@/components/notebook/NotebookDeploy';
-import { SourcesTab } from '@/components/notebook/connectors/Sources';
-import { JobsPage } from '@/components/notebook/jobs/JobsPage';
 import { JobScheduler } from '@/components/notebook/jobs/JobScheduler';
-import { getApiUrl } from '@/app/lib/config';
 
 
 export default function NotebookPage({ notebookId, userId, name }: NotebookPageProps) {
@@ -125,38 +121,6 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
     <div className="flex min-h-screen">
       <div className="container mx-auto py-8">
         <Tabs defaultValue="notebook" className="w-full">
-<<<<<<< HEAD
-          <div className="flex flex-row">
-            <TabsList className="flex space-x-4 mb-5">
-              <TabsTrigger value="notebook" className="flex-1">
-                <BookOpen className="w-4 h-4 mr-2" />
-                Notebook
-              </TabsTrigger>
-              <TabsTrigger value="datasources" className="flex-1">
-                <Database className="w-4 h-4 mr-2" />
-                Data Sources
-              </TabsTrigger>
-              <TabsTrigger value="context" className="flex-1">
-                <Brain className="w-4 h-4 mr-2" />
-                Context
-              </TabsTrigger>
-              <TabsTrigger value="jobs" className="flex-1">
-                <Activity className="w-4 h-4 mr-2" />
-                Jobs {jobs?.jobs?.length ? `(${jobs.jobs.length})` : '...'}
-              </TabsTrigger>
-              <TabsTrigger value="schedule" className="flex-1">
-                <Clock className="w-4 h-4 mr-2" />
-                Schedule
-              </TabsTrigger>
-            </TabsList>
-            <div className="flex flex-1 justify-end">
-              <SourcesTab globalSources={[]} posthogSetup={posthogSetup} />
-            </div>
-          </div>
-
-=======
->>>>>>> b51b052 (Addes sub side bar)
-
           <TabsContent value="notebook">
             { isDeploying && (
               <DeploymentDialog
@@ -179,6 +143,7 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
                 isConnected={isConnected}
                 allCells={cells}
                 onHandleDeploy={handleDeploy}
+                posthogSetup={posthogSetup}
               />
             </div>
 
@@ -211,18 +176,6 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
               )} 
             </div>
           </TabsContent>
-<<<<<<< HEAD
-          <TabsContent value="jobs">
-            <JobsPage jobs={jobs} />
-          </TabsContent>
-
-          <TabsContent value="schedule">
-            <JobScheduler 
-              notebookId={notebookId}
-            />
-          </TabsContent>
-=======
->>>>>>> b51b052 (Addes sub side bar)
         </Tabs>
       </div>
     </div>
