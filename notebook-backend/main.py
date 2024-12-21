@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from helpers.lambda_generator import lambda_generator
 from helpers.supabase import job_status
+<<<<<<< HEAD
 from helpers.types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, OutputPosthogSetupMessage, ScheduledJob, NotebookDetails
 
 from uuid import UUID
@@ -10,6 +11,15 @@ from helpers.notebook import notebook
 import logging
 from helpers.scheduler.notebook_scheduler import NotebookScheduler
 from typing import List
+=======
+from helpers.connectors.posthog.handler import PostHogHandler
+from helpers.supabase.connector_credentials import get_connector_credentials
+from helpers.types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, OutputPosthogSetupMessage
+from uuid import UUID
+from helpers.notebook import notebook
+import logging
+from helpers.utils.ansi_cleaner import clean_ansi_output
+>>>>>>> e40bc8e (Added connector page retriever)
 logging.basicConfig(level=logging.INFO)
 
 app = FastAPI()

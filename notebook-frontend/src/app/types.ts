@@ -181,6 +181,7 @@ export interface NotebookConnectionProps {
   onPosthogSetup?: (data: OutputPosthogSetupMessage) => void;
 }
 
+<<<<<<< HEAD
 export interface NotebookDetails {
   id: string;
   name: string;
@@ -205,3 +206,28 @@ export interface ScheduledJob {
   last_run_output?: string;
 }
 
+=======
+export interface Connector {
+  type: string;
+  success: boolean;
+  message: string;
+  output: JSON;
+}
+
+export interface ConnectorsStore {
+  connectors: Connector[];
+  setConnectors: (connectors: Connector[]) => void;
+}
+
+export interface ConnectorCredentials {
+  id: string;
+  connector_id: string;
+  user_id: string;
+  notebook_id: string;
+  credentials: JSON;
+}
+
+export interface ConnectorCredentialsList {
+  credentials: ConnectorCredentials[];
+}
+>>>>>>> e40bc8e (Added connector page retriever)
