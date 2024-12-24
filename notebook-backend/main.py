@@ -13,7 +13,7 @@ from helpers.scheduler.notebook_scheduler import NotebookScheduler
 from typing import List
 =======
 from helpers.connectors.posthog.handler import PostHogHandler
-from helpers.supabase.connector_credentials import get_connector_credentials
+from helpers.supabase.connector_credentials import get_connector_credentials, get_is_type_connected 
 from helpers.types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, OutputPosthogSetupMessage
 from uuid import UUID
 from helpers.notebook import notebook
@@ -187,6 +187,10 @@ async def delete_schedule(schedule_id: str):
         return {"status": "success"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/connectors/{user_id}/{notebook_id}/{type}")
+async def get_connectors(user_id: UUID, notebook_id: UUID, type: str):
+    return get_is_type_connected(user_id, notebook_id, type)
 
 if __name__ == "__main__":
     if not os.path.exists('notebooks'):
