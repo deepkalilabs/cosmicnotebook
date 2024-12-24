@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { Separator } from '@/components/ui/separator';
 import { useNotebookStore } from '@/app/store';
 import { useNotebookConnection } from '@/hooks/useNotebookConnection';
@@ -111,11 +111,6 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
     deployCode(cells, userId, name, notebookId)
   }
 
-  /*
-  useEffect(() => {
-    console.log(cells);
-  }), [cells];
-  */
 
   return (
     <div className="flex min-h-screen">
