@@ -3,23 +3,20 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from helpers.lambda_generator import lambda_generator
 from helpers.supabase import job_status
-<<<<<<< HEAD
 from helpers.types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, OutputPosthogSetupMessage, ScheduledJob, NotebookDetails
-
 from uuid import UUID
 from helpers.notebook import notebook
 import logging
 from helpers.scheduler.notebook_scheduler import NotebookScheduler
 from typing import List
-=======
-from helpers.connectors.posthog.handler import PostHogHandler
 from helpers.supabase.connector_credentials import get_connector_credentials, get_is_type_connected 
 from helpers.types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, OutputPosthogSetupMessage
 from uuid import UUID
 from helpers.notebook import notebook
 import logging
 from helpers.utils.ansi_cleaner import clean_ansi_output
->>>>>>> e40bc8e (Added connector page retriever)
+from helpers.types import ConnectorCredentials
+
 logging.basicConfig(level=logging.INFO)
 
 app = FastAPI()
@@ -47,7 +44,7 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str, notebook_id:
     try:
         while True:
             if notebook_id not in notebook_sessions:
-                nb = notebook.NotebookUtils(notebook_id)
+                nb = notebook.NotebookUtils(notebook_id, websocket)
                 await websocket.send_json({"type": "init", "message": "Kernel initializing. Please wait."})
                 kernel_manager, kernel_client = nb.initialize_kernel()
                 notebook_sessions[notebook_id] = {'km': kernel_manager, 'kc': kernel_client, 'nb': nb}
@@ -57,6 +54,8 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str, notebook_id:
             data = await websocket.receive_json()
             
             if data['type'] == 'execute':
+
+
                 code = data['code']
                 output = await nb.execute_code(code=code)
 
@@ -75,7 +74,17 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str, notebook_id:
                 # print("response", response)
                 output = OutputLoadMessage(type='notebook_loaded', success=response['status'] == 'success', message=response['message'], cells=response['notebook'])
                 await websocket.send_json(output.model_dump())
-                
+ 
+            elif data['type'] == 'create_connector':
+                credentials: ConnectorCredentials = {
+                    "connector_type": data['connector_type'],
+                    "user_id": data['user_id'],
+                    "notebook_id": data['notebook_id'],
+                    "credentials": data['credentials']
+                }
+                response = await nb.handle_connector_request(credentials)
+                await websocket.send_json(response.model_dump())
+               
             elif data['type'] == 'deploy_lambda':
                 # TODO: Better dependency management here.
                 # TODO: Get status/msg directly from function.
@@ -112,6 +121,7 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str, notebook_id:
             msgOutput = ''
             
     except WebSocketDisconnect:
+        logging.info(f"WebSocket disconnected for session ID: {session_id} and notebook ID: {notebook_id}")
         pass
     finally:
         # Optionally, you can decide when to shut down the kernel
@@ -189,7 +199,7 @@ async def delete_schedule(schedule_id: str):
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/connectors/{user_id}/{notebook_id}/{type}")
-async def get_connectors(user_id: UUID, notebook_id: UUID, type: str):
+async def check_connector_connection(user_id: UUID, notebook_id: UUID, type: str):
     return get_is_type_connected(user_id, notebook_id, type)
 
 if __name__ == "__main__":

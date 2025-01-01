@@ -73,3 +73,16 @@ class NotebookDetails(BaseModel):
     created_at: Optional[str] = None 
     updated_at: Optional[str] = None
     output: dict
+
+
+class ConnectorResponse(BaseModel):
+    success: bool
+    message: str
+    cell: Optional[dict] # Cell data to inject
+
+class ConnectorCredentials(BaseModel):
+    user_id: str
+    notebook_id: str
+    connector_type: str
+    credentials: dict
+

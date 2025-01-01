@@ -226,6 +226,7 @@ export interface ConnectorCredentials {
   notebook_id: string;
   connector_type: string;
   credentials: JSON;
+  has_seen_doc: boolean;
 }
 
 export interface ConnectorCredentialsList {
