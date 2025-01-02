@@ -63,6 +63,22 @@ export interface NotebookDetails {
   name: string 
 }
 
+interface ConnectorStatus {
+  success: boolean;
+  message: string;
+}
+
+
+export interface ConnectorCredentials {
+  id: string;
+  connector_id: string;
+  user_id: string;
+  notebook_id: string;
+  connector_type: string;
+  credentials: JSON;
+  has_seen_doc: boolean;
+}
+
 export interface NotebookConnectionProps {
   onOutput?: (cellId: string, output: string) => void;
   onNotebookLoaded?: (cells: NotebookCell[]) => void;
@@ -71,6 +87,8 @@ export interface NotebookConnectionProps {
   onNotebookDeployed?: (data: OutputDeployMessage) => void;
   notebookDetails?: NotebookDetails;
   onPosthogSetup?: (data: OutputPosthogSetupMessage) => void;
+  onConnectorStatus?: (status: ConnectorStatus) => void;
+  onConnectorCreated?: (cell: any) => void;
 }
 
 export interface WebSocketMessage {
@@ -171,15 +189,6 @@ export interface NotebookDetails {
   name: string 
 }
 
-export interface NotebookConnectionProps {
-  onOutput?: (cellId: string, output: string) => void;
-  onNotebookLoaded?: (cells: NotebookCell[]) => void;
-  onNotebookSaved?: (data: OutputSaveMessage) => void;
-  onError?: (error: string) => void;
-  onNotebookDeployed?: (data: OutputDeployMessage) => void;
-  notebookDetails?: NotebookDetails;
-  onPosthogSetup?: (data: OutputPosthogSetupMessage) => void;
-}
 
 <<<<<<< HEAD
 export interface NotebookDetails {
@@ -219,15 +228,7 @@ export interface ConnectorsStore {
   setConnectors: (connectors: Connector[]) => void;
 }
 
-export interface ConnectorCredentials {
-  id: string;
-  connector_id: string;
-  user_id: string;
-  notebook_id: string;
-  connector_type: string;
-  credentials: JSON;
-  has_seen_doc: boolean;
-}
+
 
 export interface ConnectorCredentialsList {
   credentials: ConnectorCredentials[];
