@@ -1,6 +1,5 @@
 import { Table, TableHeader, TableBody, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import { Jobs } from "@/app/types";
-import { useState, useEffect } from "react";
 
 interface JobsPageProps {
   jobs?: Jobs;

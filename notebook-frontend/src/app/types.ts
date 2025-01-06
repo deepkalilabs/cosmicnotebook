@@ -56,12 +56,6 @@ export interface NotebookCellProps {
   onMoveDown: () => void;
 }
 
-export interface NotebookDetails {
-  notebookId: string;
-  userId: string;
-  name: string;
-}
-
 interface ConnectorStatus {
   success: boolean;
   message: string;
@@ -87,6 +81,19 @@ export interface NotebookConnectionProps {
   notebookDetails?: NotebookDetails;
   onConnectorStatus?: (status: ConnectorStatus) => void;
   onConnectorCreated?: (data: ConnectorResponse) => void;
+}
+
+export interface NotebookDetails {
+  id: string;
+  name: string;
+  description?: string;
+  user_id: string;
+  s3_url?: string;
+  submit_endpoint?: string;
+  cells?: NotebookCell[];
+  session_id?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface WebSocketMessage {

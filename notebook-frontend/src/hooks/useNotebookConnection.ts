@@ -23,10 +23,13 @@ export function useNotebookConnection({
   const { toast } = useToast();
   //const { connectors, setConnectors } = useConnectorsStore();
   const sessionId = useRef(uuidv4()).current;
-  const notebookId = notebookDetails?.notebookId
+  const notebookId = notebookDetails?.id
   console.log("details", notebookId)
   const [isReconnecting, setIsReconnecting] = useState(false);
 
+  // TODO: 1. Prevent multiple connections to the same notebook.
+  // TODO: 2. Have a way to re-use the same connection if the same notebook is opened again.
+  // TODO: 3. Avoid losing the connection when the user navigates away from the notebook page.
   const socketUrl = useMemo(() => {
     const socketBaseURL = process.env.NODE_ENV === 'development' ? '0.0.0.0' : process.env.NEXT_PUBLIC_AWS_EC2_IP;
     return `ws://${socketBaseURL}:8000/ws/${sessionId}/${notebookId}`;

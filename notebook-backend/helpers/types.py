@@ -72,7 +72,7 @@ class NotebookDetails(BaseModel):
     session_id: Optional[str] = None
     created_at: Optional[str] = None 
     updated_at: Optional[str] = None
-    output: dict
+    output: Optional[dict] = None
 
 
 class ConnectorResponse(BaseModel):

@@ -10,6 +10,7 @@ from helpers.aws.s3 import s3
 from pathlib import Path
 from typing import Tuple
 from fastapi import WebSocket
+from helpers.supabase.client import get_supabase_client
 from helpers.connectors.manager import ConnectorManager
 from helpers.types import ConnectorCredentials, ConnectorResponse
 
@@ -137,7 +138,7 @@ class NotebookUtils():
         self.kernel_manager = None
         self.websocket = websocket
         self.connector_manager = ConnectorManager(websocket)
-    
+        self.notebook_id = notebook_id
     @property
     def relevant_env_path(self):
         curr_envs = {os.path.basename(env): env for env in json.loads(sh.conda("env", "list", "--json"))['envs']}
@@ -293,6 +294,18 @@ class NotebookUtils():
         except Exception as e:
             return {"status": "error", "message": str(e), "notebook": []}
             
+    async def get_notebook_details(self):
+        try:
+            supabase = get_supabase_client()
+            response = supabase.table('notebooks').select('*').eq('id', self.notebook_id).single().execute()
+            
+            if not response.data:
+                raise ValueError("Notebook not found")
+                
+            return response.data
+            
+        except Exception as e:
+            raise ValueError(f"Failed to get notebook details: {str(e)}")
 
     async def handle_connector_request(self, credentials: ConnectorCredentials) -> ConnectorResponse:
         """

@@ -1,6 +1,6 @@
 "use client"
 
-import { Database, Notebook, Activity } from "lucide-react"
+import { Database, Notebook, Activity, Clock } from "lucide-react"
 import { useParams, useSearchParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { cn } from "@/lib/utils";
@@ -20,6 +20,11 @@ const getNotebookNavItems = (id: string, name: string) => [
     title: "Jobs",
     href: `/dashboard/notebook/${id}/jobs?name=${encodeURIComponent(name)}`,
     icon: <Activity className="h-4 w-4" />,
+  },
+  {
+    title: "Schedule",
+    href: `/dashboard/notebook/${id}/schedules?name=${encodeURIComponent(name)}`,
+    icon: <Clock className="h-4 w-4" />,
   },
 ]
 

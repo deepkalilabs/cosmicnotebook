@@ -9,7 +9,6 @@ import { NotebookToolbar } from '@/components/notebook/NotebookToolbar';
 import { NotebookCell } from '@/components/notebook/NotebookCell';
 import { OutputDeployMessage, CellType, NotebookPageProps } from '@/app/types';
 import DeploymentDialog from '@/components/notebook/NotebookDeploy';
-import { JobScheduler } from '@/components/notebook/jobs/JobScheduler';
 
 export default function NotebookPage({ notebookId, userId, name }: NotebookPageProps) {
   const { toast } = useToast();
@@ -67,13 +66,7 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
     },
     onConnectorCreated: (response) => {
       console.log("Received connector_created on NotebookPage", response);
-      alert(response)
     },
-    notebookDetails: {
-      notebookId: notebookId,
-      userId: userId,
-      name: name
-    }
   });
 
   useEffect(() => {
@@ -96,7 +89,6 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
 
   useEffect(() => {
     console.log("connectors updated", connectors)
-    alert(connectors)
     if (connectors.length > 0) {
       //Iterate over connectors, if the connector has_seen_doc is false, inject the last entry cell or show a alert message to direct the user to a doc
       //If the connector has_seen_doc is true, do nothing

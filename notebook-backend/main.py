@@ -165,8 +165,9 @@ async def shutdown_scheduler():
 
 @app.get("/notebook_details/{notebook_id}")
 async def get_notebook_details(notebook_id: str) -> NotebookDetails:
-    nb = notebook.NotebookUtils(notebook_id)
+    nb = notebook.NotebookUtils(notebook_id, None)
     details = await nb.get_notebook_details()
+    print("Notebook Details:", details)
     return NotebookDetails(**details)
 
 @app.get("/notebook_job_schedule/{notebook_id}")
@@ -221,6 +222,7 @@ async def get_connectors(user_id: UUID, notebook_id: UUID):
 @app.get("/connectors/{user_id}/{notebook_id}/{type}")
 async def check_connector_connection(user_id: UUID, notebook_id: UUID, type: str):
     return get_is_type_connected(user_id, notebook_id, type)
+
 
 if __name__ == "__main__":
     if not os.path.exists('notebooks'):

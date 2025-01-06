@@ -63,6 +63,7 @@ export function JobScheduler({ notebookId }: JobSchedulerProps) {
         description: 'Job schedule has been deleted successfully',
       });
     } catch (error) {
+      console.error('Error deleting job schedule:', error);
       toast({
         title: 'Error',
         description: 'Failed to delete job schedule',
@@ -101,6 +102,7 @@ export function JobScheduler({ notebookId }: JobSchedulerProps) {
         description: 'Job schedule has been updated successfully',
       });
     } catch (error) {
+      console.error('Error updating job schedule:', error);
       toast({
         title: 'Error',
         description: 'Failed to update job schedule',
