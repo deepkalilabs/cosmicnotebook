@@ -11,7 +11,11 @@ from helpers.types import ScheduledJob, NotebookDetails
 from typing import List
 import uuid
 import json
+import logging
+
 load_dotenv()
+
+logger = logging.getLogger(__name__)
 
 class NotebookScheduler:
     _instance = None
@@ -20,15 +24,34 @@ class NotebookScheduler:
 
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(NotebookScheduler, cls).__new__(cls)
-            # Initialize scheduler only once
-            cls._scheduler = AsyncIOScheduler()
-            cls._scheduler.add_jobstore(
-                'sqlalchemy',
-                url=os.getenv('SUPABASE_DATABASE_URL')
-            )
-            # Initialize Supabase
-            cls._supabase: Client = get_supabase_client()
+            try:
+                cls._instance = super(NotebookScheduler, cls).__new__(cls)
+                # Initialize scheduler only once
+                cls._scheduler = AsyncIOScheduler()
+                #cls._scheduler.add_jobstore('memory')
+                # Debug: Print the connection URL (with password masked)
+                db_url = os.getenv('SUPABASE_DATABASE_URL')
+                safe_url = db_url.replace(db_url.split('@')[0].split(':')[-1], '****')
+                print(f"Attempting to connect with URL: {safe_url}")
+            
+                cls._scheduler.add_jobstore(
+                    'sqlalchemy',
+                    url=db_url,
+                    engine_options={
+                        'pool_pre_ping': True,
+                        'pool_recycle': 3600,
+                        'connect_args': {
+                            'sslmode': 'require',
+                            'application_name': 'cosmic',
+                        }
+                    }
+                )
+                # Initialize Supabase
+                cls._supabase: Client = get_supabase_client()
+            except Exception as e:
+                logger.error(f"Error initializing NotebookScheduler: {str(e)}")
+                raise ValueError(f"Error initializing NotebookScheduler: {str(e)}")
+            
         return cls._instance
 
     def __init__(self):

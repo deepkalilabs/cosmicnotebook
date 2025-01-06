@@ -1,5 +1,5 @@
 // app/types.ts
-export type CellType = 'code' | 'markdown' | 'file';
+export type CellType = 'code' | 'markdown' | 'file' | 'connector';
 
 export interface NotebookCell {
   id: string;
@@ -23,7 +23,7 @@ export interface NotebookToolbarProps {
 export interface NotebookStore {
   cells: NotebookCell[];
   maxExecutionCount: number;
-  addCell: (type: CellType) => void;
+  addCell: (type: CellType, id?: string) => void;
   updateCellCode: (id: string, code: string) => void;
   updateCellType: (id: string, type: CellType) => void;
   updateCellOutput: (id: string, output: string) => void;
@@ -56,10 +56,20 @@ export interface NotebookCellProps {
   onMoveDown: () => void;
 }
 
-export interface NotebookDetails {
-  notebookId: string
-  userId: string
-  name: string 
+interface ConnectorStatus {
+  success: boolean;
+  message: string;
+}
+
+
+export interface ConnectorCredentials {
+  id: string;
+  connector_id: string;
+  user_id: string;
+  notebook_id: string;
+  connector_type: string;
+  credentials: JSON;
+  has_seen_doc: boolean;
 }
 
 export interface NotebookConnectionProps {
@@ -69,6 +79,21 @@ export interface NotebookConnectionProps {
   onError?: (error: string) => void;
   onNotebookDeployed?: (data: OutputDeployMessage) => void;
   notebookDetails?: NotebookDetails;
+  onConnectorStatus?: (status: ConnectorStatus) => void;
+  onConnectorCreated?: (data: ConnectorResponse) => void;
+}
+
+export interface NotebookDetails {
+  id: string;
+  name: string;
+  description?: string;
+  user_id: string;
+  s3_url?: string;
+  submit_endpoint?: string;
+  cells?: NotebookCell[];
+  session_id?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface WebSocketMessage {
@@ -116,6 +141,16 @@ export interface OutputDeployMessage {
     type: string;
     success: boolean;
     message: string;
+    output: JSON;
+}
+
+export interface ConnectorResponse {
+    type: string;
+    success: boolean;
+    message: string;
+    cell: NotebookCell;
+    code: string;
+    docstring: string;
 }
 
 export interface Job {
@@ -139,10 +174,13 @@ export interface FileUploadProps {
   onFileSelect: (fileName: string, content: { cells: any[] }) => void;
 }
 
-export interface OutputPosthogSetupMessage {
+export interface OutputConnectorCreatedMessage {
     type: string;
     success: boolean;
     message: string;
+    cell: NotebookCell;
+    code: string;
+    docstring: string;
 }
 
 export interface User {
@@ -159,36 +197,6 @@ export interface NotebookPageProps {
   notebookId: string;
   userId: string;
   name: string;
-  jobs?: Jobs;
-}
-
-export interface NotebookDetails {
-  notebookId: string
-  userId: string
-  name: string 
-}
-
-export interface NotebookConnectionProps {
-  onOutput?: (cellId: string, output: string) => void;
-  onNotebookLoaded?: (cells: NotebookCell[]) => void;
-  onNotebookSaved?: (data: OutputSaveMessage) => void;
-  onError?: (error: string) => void;
-  onNotebookDeployed?: (data: OutputDeployMessage) => void;
-  notebookDetails?: NotebookDetails;
-  onPosthogSetup?: (data: OutputPosthogSetupMessage) => void;
-}
-
-export interface NotebookDetails {
-  id: string;
-  name: string;
-  description?: string;
-  user_id: string;
-  s3_url?: string;
-  submit_endpoint?: string;
-  cells?: any[];
-  session_id?: string;
-  created_at?: string;
-  updated_at?: string;
 }
 
 export interface ScheduledJob {
@@ -200,5 +208,21 @@ export interface ScheduledJob {
   next_run?: string;
   status?: string;
   last_run_output?: string;
+}
+export interface Connector {
+  type: string;
+  success: boolean;
+  message: string;
+  output: JSON;
+}
+
+export interface ConnectorsStore {
+  connectors: Connector[];
+  setConnectors: (connectors: Connector[]) => void;
+}
+
+
+export interface ConnectorCredentialsList {
+  credentials: ConnectorCredentials[];
 }
 

@@ -112,7 +112,6 @@ export default function ProjectsPage() {
 
       if (error) {
           console.error('Error creating notebook:', error);
-          alert('Failed to create notebook: ' + error.message);
           return "";
       }
 
@@ -125,7 +124,7 @@ export default function ProjectsPage() {
     const createNotebook = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         const notebookId = await createNotebookHelper(newNotebookName);
-        alert(`Notebook created successfully at ${notebookId}`);
+        console.log(`Notebook created successfully at ${notebookId}`);
         openNotebook(notebookId, newNotebookName);
         setDialogOpen(false);
     }
@@ -149,7 +148,7 @@ export default function ProjectsPage() {
 
       setImportNotebookDialogOpen(false);
       const notebookId = await createNotebookHelper(fileName);
-      alert(`Notebook created successfully at ${notebookId}`);
+      console.log(`Notebook created successfully at ${notebookId}`);
 
       // TODO: Save the notebook cells to S3 associated with the notebook name
       if (user?.id) {
@@ -164,7 +163,7 @@ export default function ProjectsPage() {
     const getAllNotebooksByUser = async (userId: string) => {
         const { data, error } = await supabase.from('notebooks').select().eq('user_id', userId);
         if (error) {
-            alert('Failed to fetch notebooks: ' + error.message);
+            console.error('Failed to fetch notebooks: ' + error.message);
             return;
         }
         setNotebooks(data || [] as Notebook[]); // Type assertion with proper interface
@@ -177,7 +176,7 @@ export default function ProjectsPage() {
             .eq('id', notebookId);
             
         if (error) {
-            alert('Failed to delete notebook: ' + error.message);
+            console.error('Failed to delete notebook: ' + error.message);
             return;
         }
         

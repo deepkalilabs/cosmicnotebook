@@ -1,25 +1,21 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import {  Activity, Brain, BookOpen, Database, Clock } from 'lucide-react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { Separator } from '@/components/ui/separator';
-import { useNotebookStore } from '@/app/store';
+import { useConnectorsStore, useNotebookStore } from '@/app/store';
 import { useNotebookConnection } from '@/hooks/useNotebookConnection';
 import { NotebookToolbar } from '@/components/notebook/NotebookToolbar';
 import { NotebookCell } from '@/components/notebook/NotebookCell';
-import { Jobs, OutputDeployMessage, CellType, NotebookPageProps } from '@/app/types';
+import { OutputDeployMessage, CellType, NotebookPageProps } from '@/app/types';
 import DeploymentDialog from '@/components/notebook/NotebookDeploy';
-import { SourcesTab } from '@/components/notebook/connectors/Sources';
-import { JobsPage } from '@/components/notebook/jobs/JobsPage';
-import { JobScheduler } from '@/components/notebook/jobs/JobScheduler';
-import { getApiUrl } from '@/app/lib/config';
 
-export default function NotebookPage({ notebookId, userId, name, jobs }: NotebookPageProps) {
+export default function NotebookPage({ notebookId, userId, name }: NotebookPageProps) {
   const { toast } = useToast();
   const { cells, addCell, updateCellCode, updateCellType,updateCellOutput, deleteCell, moveCellUp, moveCellDown, setCells } = useNotebookStore();
   const [ isDeploying, setIsDeploying ] = useState(false);
   const [ deploymentData, setDeploymentData] = useState<OutputDeployMessage>({} as OutputDeployMessage);
+  const { connectors } = useConnectorsStore();
   const {
     executeCode,
     saveNotebook,
@@ -28,7 +24,6 @@ export default function NotebookPage({ notebookId, userId, name, jobs }: Noteboo
     deployCode,
     isConnected,
     connectionStatus,
-    posthogSetup
   } = useNotebookConnection({
     onOutput: updateCellOutput,
     onNotebookLoaded: (cells) => {
@@ -69,11 +64,9 @@ export default function NotebookPage({ notebookId, userId, name, jobs }: Noteboo
         variant: "destructive"
       });
     },
-    notebookDetails: {
-      notebookId: notebookId,
-      userId: userId,
-      name: name
-    }
+    onConnectorCreated: (response) => {
+      console.log("Received connector_created on NotebookPage", response);
+    },
   });
 
   useEffect(() => {
@@ -93,6 +86,21 @@ export default function NotebookPage({ notebookId, userId, name, jobs }: Noteboo
       loadNotebook(name, notebookId, userId);
     }
   }, [isConnected]);
+
+  useEffect(() => {
+    console.log("connectors updated", connectors)
+    if (connectors.length > 0) {
+      //Iterate over connectors, if the connector has_seen_doc is false, inject the last entry cell or show a alert message to direct the user to a doc
+      //If the connector has_seen_doc is true, do nothing
+      connectors.forEach(connector => {
+        if (!connector) {
+          console.log("Adding to notebook")
+          console.log(connectors)
+        }
+      })
+    }
+
+  }, [connectors])
 
   const handleExecute = async (cellId: string) => {
     const cell = cells.find(c => c.id === cellId);
@@ -114,43 +122,11 @@ export default function NotebookPage({ notebookId, userId, name, jobs }: Noteboo
     deployCode(cells, userId, name, notebookId)
   }
 
-  useEffect(() => {
-    console.log(cells);
-  }), [cells];
 
   return (
     <div className="flex min-h-screen">
       <div className="container mx-auto py-8">
         <Tabs defaultValue="notebook" className="w-full">
-          <div className="flex flex-row">
-            <TabsList className="flex space-x-4 mb-5">
-              <TabsTrigger value="notebook" className="flex-1">
-                <BookOpen className="w-4 h-4 mr-2" />
-                Notebook
-              </TabsTrigger>
-              <TabsTrigger value="datasources" className="flex-1">
-                <Database className="w-4 h-4 mr-2" />
-                Data Sources
-              </TabsTrigger>
-              <TabsTrigger value="context" className="flex-1">
-                <Brain className="w-4 h-4 mr-2" />
-                Context
-              </TabsTrigger>
-              <TabsTrigger value="jobs" className="flex-1">
-                <Activity className="w-4 h-4 mr-2" />
-                Jobs {jobs?.jobs?.length ? `(${jobs.jobs.length})` : '...'}
-              </TabsTrigger>
-              <TabsTrigger value="schedule" className="flex-1">
-                <Clock className="w-4 h-4 mr-2" />
-                Schedule
-              </TabsTrigger>
-            </TabsList>
-            <div className="flex flex-1 justify-end">
-              <SourcesTab globalSources={[]} posthogSetup={posthogSetup} />
-            </div>
-          </div>
-
-
           <TabsContent value="notebook">
             { isDeploying && (
               <DeploymentDialog
@@ -204,15 +180,6 @@ export default function NotebookPage({ notebookId, userId, name, jobs }: Noteboo
                 </div>
               )} 
             </div>
-          </TabsContent>
-          <TabsContent value="jobs">
-            <JobsPage jobs={jobs} />
-          </TabsContent>
-
-          <TabsContent value="schedule">
-            <JobScheduler 
-              notebookId={notebookId}
-            />
           </TabsContent>
         </Tabs>
       </div>

@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, Dict, Any
 
 class OutputExecutionMessage(BaseModel):
     type: str
@@ -36,6 +36,18 @@ class SupabaseJobDetails(BaseModel):
 class SupabaseJobList(BaseModel):
     jobs: list[SupabaseJobDetails]
 
+class SupabaseConnectorCredential(BaseModel):
+    id: Optional[str] = None
+    user_id: Optional[str] = None
+    notebook_id: Optional[str] = None
+    connector_type: Optional[str] = None
+    credentials: Optional[dict] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
+class SupabaseConnectorCredentialList(BaseModel):
+    credentials: list[SupabaseConnectorCredential]
+
 class OutputPosthogSetupMessage(BaseModel):
     type: str
     success: bool
@@ -60,3 +72,20 @@ class NotebookDetails(BaseModel):
     session_id: Optional[str] = None
     created_at: Optional[str] = None 
     updated_at: Optional[str] = None
+    output: Optional[dict] = None
+
+
+class ConnectorResponse(BaseModel):
+    type: str
+    success: bool
+    message: str
+    cell: Optional[Dict[str, Any]] = None
+    code: Optional[str] = None
+    docstring: Optional[str] = None
+
+class ConnectorCredentials(BaseModel):
+    user_id: str
+    notebook_id: str
+    connector_type: str
+    credentials: dict
+

@@ -82,7 +82,12 @@ const JobStatusDashboard = () => {
             }));
             setJobs(processedJobs);
           })
-          .catch(error => console.error('Error fetching jobs:', error));
+          .catch(error => {
+            //If there is an error, we need to log it return an empty array
+            //Can the error not be shown in the UI?
+            console.error('Error fetching jobs:', error);
+            setJobs([]);
+          });
       }
   }, [userId]);
 

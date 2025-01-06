@@ -6,10 +6,16 @@ from helpers.supabase import job_status
 from helpers.types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, OutputPosthogSetupMessage, ScheduledJob, NotebookDetails
 from uuid import UUID
 from helpers.notebook import notebook
-from connectors.helpers.aws.s3.helpers import S3Helper
 import logging
 from helpers.scheduler.notebook_scheduler import NotebookScheduler
 from typing import List
+from helpers.supabase.connector_credentials import get_connector_credentials, get_is_type_connected 
+from helpers.types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, ConnectorResponse
+from uuid import UUID
+from helpers.notebook import notebook
+import logging
+from helpers.types import ConnectorCredentials
+
 logging.basicConfig(level=logging.INFO)
 
 app = FastAPI()
@@ -27,23 +33,19 @@ notebook_sessions = {}
 
 @app.websocket("/ws/{session_id}/{notebook_id}")
 async def websocket_endpoint(websocket: WebSocket, session_id: str, notebook_id: str):
-
     print(f"New connection with session ID: {session_id} and notebook ID: {notebook_id}")
     
     await websocket.accept()
     
-    print(f"New connection with session ID: {session_id} and notebook ID: {notebook_id}")
-
     try:
         while True:
             if notebook_id not in notebook_sessions:
-                nb = notebook.NotebookUtils(notebook_id)
+                nb = notebook.NotebookUtils(notebook_id, websocket)
                 await websocket.send_json({"type": "init", "message": "Kernel initializing. Please wait."})
                 kernel_manager, kernel_client = nb.initialize_kernel()
                 notebook_sessions[notebook_id] = {'km': kernel_manager, 'kc': kernel_client, 'nb': nb}
             
             nb = notebook_sessions[notebook_id]['nb']
-
             data = await websocket.receive_json()
             
             if data['type'] == 'execute':
@@ -65,71 +67,30 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str, notebook_id:
                 # print("response", response)
                 output = OutputLoadMessage(type='notebook_loaded', success=response['status'] == 'success', message=response['message'], cells=response['notebook'])
                 await websocket.send_json(output.model_dump())
-
-            elif data['type'] == 'posthog_setup':
-                logging.info("Setting up PostHog...")
-                logging.info("Task 1: Save the credentials to S3")
-                logging.info("Task 2: Setup PostHog in the notebook")
-                user_id = data.get('user_id')
-                api_key = data.get('api_key')
-                base_url = data.get('base_url')
-
-                logging.info(f"data: {data}")
-
-                aws_credentials = {
-                    "aws_access_key_id": os.environ.get('AWS_ACCESS_KEY_ID'),
-                    "aws_secret_access_key": os.environ.get('AWS_SECRET_ACCESS_KEY'),
-                    "region_name": os.environ.get('AWS_DEFAULT_REGION')
-                }
-
-                # Format the credentials in the new structure
-                posthog_credentials = {
-                    "posthog": {
-                        "credentials": {
-                            "api_key": api_key,
-                            "base_url": base_url
-                        }
+ 
+            elif data['type'] == 'create_connector':
+                try:
+                    print("Creating connector", data)
+                    credentials: ConnectorCredentials = {
+                        "connector_type": data['connector_type'],
+                        "user_id": data['user_id'],
+                        "notebook_id": data['notebook_id'],
+                        "credentials": data['credentials']
                     }
-                }
-                print(f"posthog_credentials: {posthog_credentials['posthog']['credentials']}")
-
-                logging.info("Task 1: Saving credentials to S3")
-                # Initialize S3Helper
-                s3_helper = S3Helper(credentials=aws_credentials)
-                await s3_helper.init_s3(user_id)  # This initializes the S3 client
-
-                # Now save the credentials
-                response = s3_helper.save_or_update_credentials(user_id, posthog_credentials)
-                logging.info(f"response: {response}")
-
-                if response['ResponseMetadata']['HTTPStatusCode'] != 200:
-                    raise ValueError("Failed to save credentials")
-                
-                # Handle dependencies
-                # TODO: Handle dependencies better.
-                posthog_dependencies = await nb.execute_code(code='!pip install pydantic requests')
-                print(f"posthog_dependencies: {posthog_dependencies}")
-
-                #Task 2: Setup PostHog in the notebook
-                # Setup PostHog in the notebook
-                posthog_setup_code = f"""
-                from connectors.services.posthog.posthog_service import PostHogService
-                from IPython import get_ipython
-                # Initialize PostHog service
-                posthog_service = PostHogService({posthog_credentials['posthog']['credentials']})
-                # Get IPython instance and inject into namespace
-                ipython = get_ipython()
-                ipython.user_ns['posthog_service'] = posthog_service
-                ipython.user_ns['posthog_client'] = posthog_service.client
-                ipython.user_ns['posthog_adapter'] = posthog_service.adapter
-                """
-                logging.info(f"Injecting PostHog setup code into the notebook: {posthog_setup_code}")
-                output = await nb.execute_code(code=posthog_setup_code)
-                logging.info(f"output: {output}")
-
-                response = OutputPosthogSetupMessage(type='posthog_setup', success=True, message="PostHog setup complete")
-                await websocket.send_json(response.model_dump())
-                
+                    print("Installing dependencies")
+                    dependencies = await nb.execute_code(code='!pip install pydantic requests')
+                    print("dependencies", dependencies)
+                    output = await nb.handle_connector_request(credentials)
+                    print("Connector created response", output)
+                    await websocket.send_json(output.model_dump())
+                except Exception as e:
+                    logging.error(f"Error creating connector: {e}")
+                    await websocket.send_json({
+                        'type': 'error',
+                        'message': str(e)
+                    })
+                continue  # Continue listening for more messages
+               
             elif data['type'] == 'deploy_lambda':
                 # TODO: Better dependency management here.
                 # TODO: Get status/msg directly from function.
@@ -166,10 +127,20 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str, notebook_id:
             msgOutput = ''
             
     except WebSocketDisconnect:
-        pass
+        logging.info(f"WebSocket disconnected for session ID: {session_id} and notebook ID: {notebook_id}")
+    except Exception as e:
+        logging.error(f"Error in websocket connection: {e}")
+        try:
+            await websocket.send_json({
+                'type': 'error',
+                'message': str(e)
+            })
+        except:
+            pass
     finally:
-        # Optionally, you can decide when to shut down the kernel
-        pass
+        if notebook_id in notebook_sessions:
+            # Clean up kernel if needed
+            pass
 
 @app.get("/status/jobs/{user_id}")
 async def status_endpoint_jobs_for_user(user_id: UUID):
@@ -194,8 +165,9 @@ async def shutdown_scheduler():
 
 @app.get("/notebook_details/{notebook_id}")
 async def get_notebook_details(notebook_id: str) -> NotebookDetails:
-    nb = notebook.NotebookUtils(notebook_id)
+    nb = notebook.NotebookUtils(notebook_id, None)
     details = await nb.get_notebook_details()
+    print("Notebook Details:", details)
     return NotebookDetails(**details)
 
 @app.get("/notebook_job_schedule/{notebook_id}")
@@ -241,6 +213,16 @@ async def delete_schedule(schedule_id: str):
         return {"status": "success"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/connectors/{user_id}/{notebook_id}")
+async def get_connectors(user_id: UUID, notebook_id: UUID):
+    print(f"Getting connectors for user {user_id} and notebook {notebook_id}")
+    return get_connector_credentials(user_id, notebook_id)
+
+@app.get("/connectors/{user_id}/{notebook_id}/{type}")
+async def check_connector_connection(user_id: UUID, notebook_id: UUID, type: str):
+    return get_is_type_connected(user_id, notebook_id, type)
+
 
 if __name__ == "__main__":
     if not os.path.exists('notebooks'):

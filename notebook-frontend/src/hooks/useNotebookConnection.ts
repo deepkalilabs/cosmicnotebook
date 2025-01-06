@@ -1,13 +1,14 @@
 // hooks/useNotebookConnection.ts
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { v4 as uuidv4 } from 'uuid';
 
 import { NotebookCell, OutputDeployMessage, NotebookConnectionProps } from '@/app/types';
-import { OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputPosthogSetupMessage } from '@/app/types';
+import { OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputConnectorCreatedMessage } from '@/app/types';
 import { useToast } from '@/hooks/use-toast';
+//import { useWebSocketContext } from '@/contexts/WebSocketContext'; May need this later for avoiding multiple connections and reusing the same connection
 
 export function useNotebookConnection({
   onOutput,
@@ -16,26 +17,23 @@ export function useNotebookConnection({
   onNotebookDeployed,
   onError,
   notebookDetails,
-  onPosthogSetup
-
+  onConnectorStatus,
+  onConnectorCreated,
 }: NotebookConnectionProps) {
   const { toast } = useToast();
+  //const { connectors, setConnectors } = useConnectorsStore();
   const sessionId = useRef(uuidv4()).current;
-  const notebookId = notebookDetails?.notebookId
+  const notebookId = notebookDetails?.id
   console.log("details", notebookId)
+  const [isReconnecting, setIsReconnecting] = useState(false);
 
-  const setupSocketUrl = useCallback(() => {
+  // TODO: 1. Prevent multiple connections to the same notebook.
+  // TODO: 2. Have a way to re-use the same connection if the same notebook is opened again.
+  // TODO: 3. Avoid losing the connection when the user navigates away from the notebook page.
+  const socketUrl = useMemo(() => {
     const socketBaseURL = process.env.NODE_ENV === 'development' ? '0.0.0.0' : process.env.NEXT_PUBLIC_AWS_EC2_IP;
-
-    const socketUrl = process.env.NODE_ENV === 'development'
-    ? `ws://0.0.0.0:8000/ws/${sessionId}/${notebookId}`
-    : `wss://${socketBaseURL}/ws/${sessionId}/${notebookId}`;
-
-    console.log("socketUrl", socketUrl)
-    return socketUrl;
+    return `ws://${socketBaseURL}:8000/ws/${sessionId}/${notebookId}`;
   }, [sessionId, notebookId]);
-
-  const socketUrl = setupSocketUrl();
 
   const {
     sendMessage,
@@ -43,24 +41,32 @@ export function useNotebookConnection({
     readyState,
   } = useWebSocket(socketUrl, {
     onOpen: () => {
+      setIsReconnecting(false);
       toast({
         title: "Connected to Python kernel",
         description: "Successfully connected to Python kernel"
       });
     },
     onClose: () => {
-      toast({
-        title: "Disconnected from Python kernel",
-        description: "Disconnected from Python kernel"
-      });
+      if (!isReconnecting) {
+        toast({
+          title: "Disconnected from Python kernel",
+          description: "Attempting to reconnect..."
+        });
+      }
     },
     onError: (event) => {
-      console.log("onError", event);
+      console.error("WebSocket error:", event);
       onError?.("Failed to connect to Python kernel");
     },
-    shouldReconnect: () => true,
-    reconnectAttempts: 3,
+    shouldReconnect: (closeEvent) => {
+      console.log("shouldReconnect", closeEvent)
+      setIsReconnecting(true);
+      return true;
+    },
+    reconnectAttempts: 10,
     reconnectInterval: 3000,
+    share: true,
   });
 
   useEffect(() => {
@@ -93,10 +99,15 @@ export function useNotebookConnection({
           console.log(`Received lambda_generated: ${parsedData.type}, success: ${parsedData.success}, message: ${parsedData.message}`);
           onNotebookDeployed?.(parsedData);
           break;
-        case 'posthog_setup':
-          parsedData = data as OutputPosthogSetupMessage;
-          console.log(`Received posthog_setup: ${parsedData.type}, success: ${parsedData.success}, message: ${parsedData.message}`);
-          onPosthogSetup?.(parsedData);
+        case 'connector_status':
+          console.log("Received connector_status")
+          onConnectorStatus?.({success: data.success, message: data.message});
+          break;
+        case 'connector_created':
+          console.log("Received connector_created")
+          parsedData = data as OutputConnectorCreatedMessage;
+          console.log("Received connector_created in useNotebookConnection", parsedData)
+          onConnectorCreated?.(parsedData);
           break;
         case 'error':
           onError?.(data.message);
@@ -152,12 +163,14 @@ export function useNotebookConnection({
     }));
   }, [sendMessage]);
 
-  const posthogSetup = useCallback((userId: string, apiKey: string, baseUrl: string) => {
+
+  const createConnector = useCallback((connectorType: string, credentials: Record<string, string | number | boolean>, userId: string, notebookId: string) => {
     sendMessage(JSON.stringify({
-      type: 'posthog_setup',
+      type: 'create_connector',
+      connector_type: connectorType,
+      credentials: credentials,
       user_id: userId,
-      api_key: apiKey,
-      base_url: baseUrl,
+      notebook_id: notebookId
     }));
   }, [sendMessage]);
 
@@ -167,7 +180,7 @@ export function useNotebookConnection({
     loadNotebook,
     restartKernel,
     deployCode,
-    posthogSetup,
+    createConnector,
     isConnected: readyState === ReadyState.OPEN,
     connectionStatus: {
       [ReadyState.CONNECTING]: 'Connecting',

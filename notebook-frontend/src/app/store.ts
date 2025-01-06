@@ -1,15 +1,16 @@
 // app/store.ts
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
-import { NotebookCell, User, CellType, NotebookStore, NotebookCellProps, UserStore } from './types';
+import { CellType, NotebookStore, UserStore, ConnectorsStore } from './types';
 
 export const useNotebookStore = create<NotebookStore>((set) => ({
   cells: [],
   maxExecutionCount: 0,
   
-  addCell: (type: CellType = 'code') => set((state) => ({
+  //TODO: Add a function to add a cell with a markdown type
+  addCell: (type: CellType, id?: string) => set((state) => ({
     cells: [...state.cells, {
-      id: uuidv4(),
+      id: id || uuidv4(),
       code: '',
       output: '',
       executionCount: 0,
@@ -58,7 +59,7 @@ export const useNotebookStore = create<NotebookStore>((set) => ({
     return { cells: newCells };
   }),
   
-  setCells: (cells) => set({ cells })
+  setCells: (cells) => set({ cells }),
 }));
 
 
@@ -66,3 +67,10 @@ export const useUserStore = create<UserStore>((set) => ({
   user: null,
   setUser: (user) => set({ user })
 }));
+
+export const useConnectorsStore = create<ConnectorsStore>((set) => ({
+  connectors: [],
+  setConnectors: (connectors) => set({ connectors })
+}));
+
+
