@@ -14,7 +14,6 @@ from helpers.types import OutputExecutionMessage, OutputSaveMessage, OutputLoadM
 from uuid import UUID
 from helpers.notebook import notebook
 import logging
-from helpers.utils.ansi_cleaner import clean_ansi_output
 from helpers.types import ConnectorCredentials
 
 logging.basicConfig(level=logging.INFO)
@@ -213,6 +212,11 @@ async def delete_schedule(schedule_id: str):
         return {"status": "success"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/connectors/{user_id}/{notebook_id}")
+async def get_connectors(user_id: UUID, notebook_id: UUID):
+    print(f"Getting connectors for user {user_id} and notebook {notebook_id}")
+    return get_connector_credentials(user_id, notebook_id)
 
 @app.get("/connectors/{user_id}/{notebook_id}/{type}")
 async def check_connector_connection(user_id: UUID, notebook_id: UUID, type: str):
