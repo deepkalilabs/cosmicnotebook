@@ -167,10 +167,22 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
                   isExecuting={false}
                   onTypeChange={(type: CellType) => updateCellType(cell.id, type)}
                   onCodeChange={(code) => updateCellCode(cell.id, code)}
-                  onExecute={() => handleExecute(cell.id)}
-                  onDelete={() => deleteCell(cell.id)}
-                  onMoveUp={() => moveCellUp(cell.id)}
-                  onMoveDown={() => moveCellDown(cell.id)}
+                  onExecute={() => {
+                    handleExecute(cell.id)
+                    handleSave(name)
+                  }}
+                  onDelete={() => {
+                    deleteCell(cell.id)
+                    handleSave(name)
+                  }}
+                  onMoveUp={() => {
+                    moveCellUp(cell.id)
+                    handleSave(name)
+                  }}
+                  onMoveDown={() => {
+                    moveCellDown(cell.id)
+                    handleSave(name)
+                  }}
                 />
               ))}
               
