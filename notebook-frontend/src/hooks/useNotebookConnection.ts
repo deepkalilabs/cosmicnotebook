@@ -154,9 +154,11 @@ export function useNotebookConnection({
 
   const deployCode = useCallback((cells: NotebookCell[], user_id: string, name: string, notebook_id: string) => {
     // TODO: Change the default name
+    console.log("deployCode", cells.filter((cell) => cell.type === 'code').map((cell) => cell.code).join('\n'))
+
     sendMessage(JSON.stringify({
       type: 'deploy_lambda',
-      all_code: cells.map((cell) => cell.code).join('\n'),
+      all_code: cells.filter((cell) => cell.type === 'code').map((cell) => cell.code).join('\n'),
       user_id: user_id,
       notebook_name: name,
       notebook_id: notebook_id

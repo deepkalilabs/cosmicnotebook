@@ -90,8 +90,9 @@ class LambdaGenerator:
         
         with open(os.path.join(self.base_folder_path, 'lambda_function.py'), 'w') as f:
             f.write(self.code_chunk_clean)
+
+        logger.info(f"Lambda code saved successfully: {self.code_chunk_clean}")
             
-        logger.info("Lambda code saved successfully")
         return self.code_chunk_clean
     
     def prepare_container(self):
@@ -247,7 +248,7 @@ class LambdaGenerator:
         # Step 6: Add Lambda permission
         self.lambda_client.add_permission(
             FunctionName=self.lambda_fn_arn,
-            StatementId=f'APIGateway-{self.api_name}-{uuid.uuid4()}',
+            StatementId=f'APIGateway-{self.api_name}',
             Action='lambda:InvokeFunction',
             Principal='apigateway.amazonaws.com',
             SourceArn=f'arn:aws:execute-api:{self.region}:{self.account_id}:{self.api_id}/*/*/submit'

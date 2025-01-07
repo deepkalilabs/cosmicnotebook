@@ -52,7 +52,7 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str, notebook_id:
                 code = data['code']
                 output = await nb.execute_code(code=code)
 
-                print(f"Sending output: {output}, type: {type(output)}, cellId: {data['cellId']}\n\n")
+                # print(f"Sending output: {output}, type: {type(output)}, cellId: {data['cellId']}\n\n")
                 msgOutput = OutputExecutionMessage(type='output', cellId=data['cellId'], output=output)
                 await websocket.send_json(msgOutput.model_dump())
             
@@ -70,18 +70,18 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str, notebook_id:
  
             elif data['type'] == 'create_connector':
                 try:
-                    print("Creating connector", data)
+                    # print("Creating connector", data)
                     credentials: ConnectorCredentials = {
                         "connector_type": data['connector_type'],
                         "user_id": data['user_id'],
                         "notebook_id": data['notebook_id'],
                         "credentials": data['credentials']
                     }
-                    print("Installing dependencies")
+                    # print("Installing dependencies")
                     dependencies = await nb.execute_code(code='!pip install pydantic requests')
-                    print("dependencies", dependencies)
+                    # print("dependencies", dependencies)
                     output = await nb.handle_connector_request(credentials)
-                    print("Connector created response", output)
+                    # print("Connector created response", output)
                     await websocket.send_json(output.model_dump())
                 except Exception as e:
                     logging.error(f"Error creating connector: {e}")
