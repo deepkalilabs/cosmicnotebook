@@ -195,7 +195,102 @@ class PostHogClient:
                 "data": None
             }
 
+    """
+    Section: Events API
+    url: https://posthog.com/docs/api/events
+    """
+    def get_events(self, project_id: str) -> List[Event]:
+        """
+        Description: Get all events for a project
+        url: https://posthog.com/docs/api/events
+        """
+        if not project_id:
+            return {
+                "status": "error",
+                "message": "Project ID is required",
+                "data": None
+            }
+        
+        try:
+            response = requests.get(
+                f"{self.base_url}/api/projects/{project_id}/events/",
+                headers=self.headers,
+                timeout=10
+            )
+            response.raise_for_status()
+            return {
+                "status": "success",
+                "message": "Events retrieved successfully",
+                "data": response.json()
+            }
+        except requests.RequestException as e:
+            return {
+                "status": "error",
+                "message": f"Failed to fetch events: {str(e)}",
+                "data": None
+            }
+        
+    def get_event_by_id(self, project_id: str, event_id: str) -> Dict[str, Any]:
+        """
+        Description: Get an event by ID
+        url: https://posthog.com/docs/api/events#get-api-projects-project_id-events-event_id
+        """
+        if not project_id or not event_id:
+            return {
+                "status": "error",
+                "message": "Project ID and event ID are required",
+                "data": None
+            }
+        
+        try:
+            response = requests.get(
+                f"{self.base_url}/api/projects/{project_id}/events/{event_id}",
+                headers=self.headers,
+                timeout=10
+            )
+            response.raise_for_status()
+            return {
+                "status": "success",
+                "message": "Event retrieved successfully",
+                "data": response.json()
+            }
+        except requests.RequestException as e:
+            return {
+                "status": "error",
+                "message": f"Failed to fetch event: {str(e)}",
+                "data": None
+            }
 
+    def get_event_by_values(self, project_id: str) -> Dict[str, Any]:
+        """
+        Description: Get an event by value
+        url: https://posthog.com/docs/api/events#get-api-projects-project_id-events-values
+        """
+        if not project_id:
+            return {
+                "status": "error",
+                "message": "Project ID is required",
+                "data": None
+            }
+        
+        try:
+            response = requests.get(
+                f"{self.base_url}/api/projects/{project_id}/events/values/",
+                headers=self.headers,
+                timeout=10
+            )
+            response.raise_for_status()
+            return {
+                "status": "success",
+                "message": "Event values retrieved successfully",
+                "data": response.json()
+            }
+        except requests.RequestException as e:
+            return {
+                "status": "error",
+                "message": f"Failed to fetch event values: {str(e)}",
+                "data": None
+            }
 
     def generate_test_data(self, project_id: str, organization_id: str) -> Dict[str, Any]:
         """
