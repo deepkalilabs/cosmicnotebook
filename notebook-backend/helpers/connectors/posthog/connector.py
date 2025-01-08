@@ -87,11 +87,10 @@ print("PostHog connector initialized successfully! ✅")
         doc = """
         # Posthog notebook connector
 
-        1. To fetch raw data from PostHog, use the library `posthog_service.client`. Link: https://github.com/deepkalilabs/cosmicnotebook/tree/main/docs/posthog/client`
-        3. To try own our own AI recipes, use `posthog_service`. Link: https://github.com/deepkalilabs/cosmicnotebook/tree/main/docs/posthog/service`
+        1. To fetch raw data from PostHog, use the library `posthog_service.client`. Link: https://github.com/deepkalilabs/cosmic-sdk/blob/main/src/cosmic/connectors/posthog/client.py
+        2. To try own our own AI recipes, use `posthog_service`. Link: TBD
 
         # Try out the following examples:
-    
         ## Get all organizations:
         Description: Fetch all organizations from PostHog.
         ```python
