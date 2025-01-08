@@ -106,11 +106,19 @@ export default function FormsPosthog({createConnector}: FormsPosthogProps) {
                 <FormControl>
                   <Input placeholder="phx_1234..." {...field} />
                 </FormControl>
-                <FormDescription>
-                  Find your API key in PostHog under Project Settings → Project API Key. Make sure to select the &quot;Read&quot; permission.
-                  <a href="https://us.posthog.com/settings/project-settings/api-keys" target="_blank" rel="noopener noreferrer" className="inline-flex items-center">
-                    <ExternalLinkIcon className="w-4 h-4 ml-1" />
-                  </a>
+                <FormDescription className="space-y-2">
+                  <span className="block">
+                    Find your API key in PostHog under Project Settings → Project API Key. Make sure to select the &quot;Read&quot; permission.
+                    <a href="https://us.posthog.com/settings/project-settings/api-keys" target="_blank" rel="noopener noreferrer" className="inline-flex items-center">
+                      <ExternalLinkIcon className="w-4 h-4 ml-1" />
+                    </a>
+                  </span>
+                  <span className="block">
+                    <a href="https://ooo.mmhmm.app/watch/z_dnV4Ov6cUfTYuy4mHQxM" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline inline-flex items-center">
+                      Watch video tutorial
+                      <ExternalLinkIcon className="w-4 h-4 ml-1" />
+                    </a>
+                  </span>
                 </FormDescription>
                 <FormMessage />
               </FormItem>

@@ -90,7 +90,8 @@ class MagicCommandHandler:
             
         except sh.ErrorReturnCode as e:
             raise Exception(f"top command failed: {error_buffer.getvalue()}")
-            
+    
+    # TODO: Fix uninstall command. It's not working.
     def _pip(self, args: list) -> str:
         """Execute pip command using sh."""
         output_buffer = StringIO()
