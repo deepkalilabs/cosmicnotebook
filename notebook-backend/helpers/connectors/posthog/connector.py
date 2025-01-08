@@ -71,8 +71,6 @@ class PosthogConnector(BaseConnector):
 
     def get_connector_code(self):
         code = f"""
-!pip install cosmic-sdk
-
 from cosmic.connectors import PostHogService
 
 # Initialize PostHog service
