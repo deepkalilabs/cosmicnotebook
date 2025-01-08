@@ -31,6 +31,7 @@ app.add_middleware(
 # Dictionary to manage kernels per session
 notebook_sessions = {}
 
+# TODO: This should only load in a notebook if it's not already loaded. It currently loads /dashboard/projects
 @app.websocket("/ws/{session_id}/{notebook_id}")
 async def websocket_endpoint(websocket: WebSocket, session_id: str, notebook_id: str):
     print(f"New connection with session ID: {session_id} and notebook ID: {notebook_id}")
@@ -162,6 +163,15 @@ async def start_scheduler():
 @app.on_event("shutdown")
 async def shutdown_scheduler():
     scheduler.shutdown()
+
+@app.on_event("shutdown")
+async def cleanup():
+    for session in notebook_sessions.values():
+        if 'nb' in session:
+            try:
+                session['nb'].magic.cleanup_packages()
+            except:
+                pass
 
 @app.get("/notebook_details/{notebook_id}")
 async def get_notebook_details(notebook_id: str) -> NotebookDetails:

@@ -1,7 +1,6 @@
 from ..base import BaseConnector
 from helpers.types import ConnectorResponse
 from helpers.supabase.connector_credentials import create_connector_credentials
-from connectors.services.posthog.service import PostHogService
 import logging
 
 logger = logging.getLogger(__name__)
@@ -72,21 +71,14 @@ class PosthogConnector(BaseConnector):
 
     def get_connector_code(self):
         code = f"""
-from connectors.services.posthog.service import PostHogService
-from IPython import get_ipython
+!pip install cosmic-sdk
+
+from cosmic.connectors import PostHogService
 
 # Initialize PostHog service
 posthog_service = PostHogService({self.credentials})
 
-# Get IPython instance and inject into namespace
-ipython = get_ipython()
-if ipython:
-    ipython.user_ns['posthog_service'] = posthog_service
-    ipython.user_ns['posthog_client'] = posthog_service.client
-    ipython.user_ns['posthog_adapter'] = posthog_service.adapter
-
 print("PostHog connector initialized successfully! ✅")
-print("Available objects: posthog_service, posthog_client, posthog_adapter")
 """
         return code.lstrip()
 
@@ -97,8 +89,7 @@ print("Available objects: posthog_service, posthog_client, posthog_adapter")
         doc = """
         # Posthog notebook connector
 
-        1. To fetch raw data from PostHog, use the library `posthog_client`. Link: https://github.com/deepkalilabs/cosmicnotebook/tree/main/docs/posthog/client`
-        2. To fetch transformed data using our own format, use `posthog_adapter`. Link: https://github.com/deepkalilabs/cosmicnotebook/tree/main/docs/posthog/adapter`
+        1. To fetch raw data from PostHog, use the library `posthog_service.client`. Link: https://github.com/deepkalilabs/cosmicnotebook/tree/main/docs/posthog/client`
         3. To try own our own AI recipes, use `posthog_service`. Link: https://github.com/deepkalilabs/cosmicnotebook/tree/main/docs/posthog/service`
 
         # Try out the following examples:
@@ -106,7 +97,7 @@ print("Available objects: posthog_service, posthog_client, posthog_adapter")
         ## Get all organizations:
         Description: Fetch all organizations from PostHog.
         ```python
-        posthog_client.get_organizations()
+        posthog_service.client.get_organizations()
         ```
         """
         return doc
