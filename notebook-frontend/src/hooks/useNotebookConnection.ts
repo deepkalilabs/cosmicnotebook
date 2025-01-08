@@ -1,9 +1,8 @@
 // hooks/useNotebookConnection.ts
 'use client';
 
-import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
-import { v4 as uuidv4 } from 'uuid';
 
 import { NotebookCell, OutputDeployMessage, NotebookConnectionProps } from '@/app/types';
 import { OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputConnectorCreatedMessage } from '@/app/types';
@@ -22,7 +21,6 @@ export function useNotebookConnection({
 }: NotebookConnectionProps) {
   const { toast } = useToast();
   //const { connectors, setConnectors } = useConnectorsStore();
-  const sessionId = useRef(uuidv4()).current;
   const notebookId = notebookDetails?.id
   console.log("details", notebookId)
   const [isReconnecting, setIsReconnecting] = useState(false);
@@ -32,8 +30,13 @@ export function useNotebookConnection({
   // TODO: 3. Avoid losing the connection when the user navigates away from the notebook page.
   const socketUrl = useMemo(() => {
     const socketBaseURL = process.env.NODE_ENV === 'development' ? '0.0.0.0' : process.env.NEXT_PUBLIC_AWS_EC2_IP;
-    return `ws://${socketBaseURL}:8000/ws/${sessionId}/${notebookId}`;
-  }, [sessionId, notebookId]);
+
+    if (process.env.NODE_ENV === 'development') {
+      return `ws://${socketBaseURL}:8000/ws/${notebookId}`;
+    } else {
+      return `wss://${socketBaseURL}/ws/${notebookId}`;
+    }
+  }, [notebookId]);
 
   const {
     sendMessage,

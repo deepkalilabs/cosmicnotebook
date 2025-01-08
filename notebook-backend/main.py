@@ -32,9 +32,9 @@ app.add_middleware(
 notebook_sessions = {}
 
 # TODO: This should only load in a notebook if it's not already loaded. It currently loads /dashboard/projects
-@app.websocket("/ws/{session_id}/{notebook_id}")
-async def websocket_endpoint(websocket: WebSocket, session_id: str, notebook_id: str):
-    print(f"New connection with session ID: {session_id} and notebook ID: {notebook_id}")
+@app.websocket("/ws/{notebook_id}")
+async def websocket_endpoint(websocket: WebSocket, notebook_id: str):
+    print(f"New connection with notebook ID: {notebook_id}")
     
     await websocket.accept()
     
@@ -130,7 +130,7 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str, notebook_id:
             msgOutput = ''
             
     except WebSocketDisconnect:
-        logging.info(f"WebSocket disconnected for session ID: {session_id} and notebook ID: {notebook_id}")
+        logging.info(f"WebSocket disconnected for notebook ID: {notebook_id}")
     except Exception as e:
         logging.error(f"Error in websocket connection: {e}")
         try:

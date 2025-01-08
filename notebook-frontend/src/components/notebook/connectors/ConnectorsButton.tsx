@@ -27,18 +27,12 @@ export function ConnectorsButton() {
       if (response.success) {
         handleSuccess();
         
-        // Add cells
-        const pipInstallCellId = uuidv4();
         const codeCellId = uuidv4();
         const markdownCellId = uuidv4();
         
-        // addCell('code', pipInstallCellId);
         addCell('code', codeCellId);
         addCell('markdown', markdownCellId);
 
-        // Update cells directly with their IDs
-        //TODO: Switch to a better way to install the connector if the package needs to be independent of cosmic-sdk
-        // updateCellCode(pipInstallCellId, `!pip install cosmic-sdk`); // Hacky install cosmic-sdk
         updateCellCode(codeCellId, response.code);
         updateCellCode(markdownCellId, response.docstring);
       } else {
