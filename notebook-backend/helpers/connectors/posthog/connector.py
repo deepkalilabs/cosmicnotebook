@@ -77,6 +77,7 @@ from cosmic.connectors import PostHogService
 posthog_service = PostHogService({self.credentials})
 
 print("PostHog connector initialized successfully! ✅")
+
 """
         return code.lstrip()
 
@@ -95,6 +96,7 @@ print("PostHog connector initialized successfully! ✅")
         Description: Fetch all organizations from PostHog.
         ```python
         posthog_service.client.get_organizations()
+        posthog_service.client.get_events(project_id)
         ```
         """
         return doc

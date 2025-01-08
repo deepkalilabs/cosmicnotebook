@@ -79,7 +79,9 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str, notebook_id:
                         "credentials": data['credentials']
                     }
                     # print("Installing dependencies")
-                    dependencies = await nb.execute_code(code='!pip install pydantic requests')
+                    dependency_list = ['cosmic-sdk', 'pydantic', 'requests']
+                    dependencies = await nb.execute_code(code='!pip install ' + ' '.join(dependency_list))
+
                     # print("dependencies", dependencies)
                     output = await nb.handle_connector_request(credentials)
                     # print("Connector created response", output)
