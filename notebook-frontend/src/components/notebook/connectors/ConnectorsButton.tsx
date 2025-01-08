@@ -21,7 +21,7 @@ export function ConnectorsButton() {
   const [open, setOpen] = useState(false);
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const { addCell, updateCellCode } = useNotebookStore();
-  const { createConnector, executeCode } = useNotebookConnection({
+  const { createConnector } = useNotebookConnection({
     onConnectorCreated: async (response) => {
       console.log("Connector created in ConnectorsButton:", response);
       if (response.success) {
