@@ -40,6 +40,7 @@ export function useNotebookConnection({
     } else {
       return null;
     }
+    
   }, [notebookId]);
 
   console.log("socketURL", socketUrl)
