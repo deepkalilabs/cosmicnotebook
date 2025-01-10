@@ -158,10 +158,10 @@ export interface Job {
     completed_at: string | null;
     created_at: string;
     error: string | null;
-    input_params: unknown | null;
+    input_params: any | null;
     notebook_id: string;
     request_id: string;
-    result: unknown | null;
+    result: any | null;
     updated_at: string;
 }
 
@@ -195,7 +195,7 @@ export interface UserStore {
 
 export interface NotebookPageProps {
   notebookId: string;
-  userId: string;
+  userId: string | null;
   name: string;
 }
 

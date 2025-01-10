@@ -8,17 +8,15 @@ import { useUserStore } from '@/app/store';
 export default function Notebook() {
   const params = useParams();
   const searchParams = useSearchParams();
-  const [userId, setUserId] = useState('');
+  const { user } = useUserStore();
   const id = params.id as string;
   const name = searchParams.get('name') || '';
-  const { user } = useUserStore();
 
-  useEffect(() => {
-    const userId = user?.id || '';
-    setUserId(userId || '');
-  }, []);
+  if (!user?.id) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <NotebookPage notebookId={id} userId={userId} name={name}/>
+    <NotebookPage notebookId={id} userId={user.id} name={name}/>
   )
 }

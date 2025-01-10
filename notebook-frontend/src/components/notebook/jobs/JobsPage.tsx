@@ -15,6 +15,9 @@ export default function JobsPage({ jobs }: JobsPageProps) {
             <TableHead>Status</TableHead>
             <TableHead>Created</TableHead>
             <TableHead>Completed</TableHead>
+            <TableHead>Result</TableHead>
+            <TableHead>Input Params</TableHead>
+            <TableHead>Error</TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
@@ -46,7 +49,10 @@ export default function JobsPage({ jobs }: JobsPageProps) {
               </span>
             </TableCell>
             <TableCell>{new Date(job.created_at).toLocaleString()}</TableCell>
-              <TableCell>{job.completed_at ? new Date(job.completed_at).toLocaleString() : '-'}</TableCell>
+            <TableCell>{job.completed_at ? new Date(job.completed_at).toLocaleString() : '-'}</TableCell>
+            <TableCell>{job.result ? JSON.stringify(job.result) : '-'}</TableCell>
+            <TableCell>{job.input_params ? JSON.stringify(job.input_params) : '-'}</TableCell>
+            <TableCell>{job.error ? job.error : '-'}</TableCell>
             </TableRow>
           ))
         )}

@@ -1,15 +1,14 @@
 // hooks/useNotebookConnection.ts
 'use client';
 
-import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
-import { v4 as uuidv4 } from 'uuid';
 
 import { NotebookCell, OutputDeployMessage, NotebookConnectionProps } from '@/app/types';
 import { OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputConnectorCreatedMessage } from '@/app/types';
 import { useToast } from '@/hooks/use-toast';
 //import { useWebSocketContext } from '@/contexts/WebSocketContext'; May need this later for avoiding multiple connections and reusing the same connection
-
+import { getApiUrl } from '@/app/lib/config';
 export function useNotebookConnection({
   onOutput,
   onNotebookLoaded,
@@ -22,7 +21,6 @@ export function useNotebookConnection({
 }: NotebookConnectionProps) {
   const { toast } = useToast();
   //const { connectors, setConnectors } = useConnectorsStore();
-  const sessionId = useRef(uuidv4()).current;
   const notebookId = notebookDetails?.id
   console.log("details", notebookId)
   const [isReconnecting, setIsReconnecting] = useState(false);
@@ -31,9 +29,20 @@ export function useNotebookConnection({
   // TODO: 2. Have a way to re-use the same connection if the same notebook is opened again.
   // TODO: 3. Avoid losing the connection when the user navigates away from the notebook page.
   const socketUrl = useMemo(() => {
-    const socketBaseURL = process.env.NODE_ENV === 'development' ? '0.0.0.0' : process.env.NEXT_PUBLIC_AWS_EC2_IP;
-    return `ws://${socketBaseURL}:8000/ws/${sessionId}/${notebookId}`;
-  }, [sessionId, notebookId]);
+    const socketBaseURL = getApiUrl();
+
+    if (notebookId) {
+      if (process.env.NODE_ENV === 'development') {
+        return `ws://${socketBaseURL}/ws/${notebookId}`;
+      } else {
+        return `wss://${socketBaseURL}/ws/${notebookId}`;
+      }
+    } else {
+      return null;
+    }
+  }, [notebookId]);
+
+  console.log("socketURL", socketUrl)
 
   const {
     sendMessage,
@@ -56,7 +65,7 @@ export function useNotebookConnection({
       }
     },
     onError: (event) => {
-      console.error("WebSocket error:", event);
+      console.log("WebSocket error:", event);
       onError?.("Failed to connect to Python kernel");
     },
     shouldReconnect: (closeEvent) => {
