@@ -1,7 +1,6 @@
 'use client'
 
 import { useParams, useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
 import NotebookPage from '@/components/notebook/NotebookPage';
 import { useUserStore } from '@/app/store';
 

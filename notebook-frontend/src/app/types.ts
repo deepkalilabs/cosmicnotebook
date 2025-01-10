@@ -158,9 +158,11 @@ export interface Job {
     completed_at: string | null;
     created_at: string;
     error: string | null;
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     input_params: any | null;
     notebook_id: string;
     request_id: string;
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     result: any | null;
     updated_at: string;
 }

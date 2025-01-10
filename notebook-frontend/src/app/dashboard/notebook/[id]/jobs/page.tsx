@@ -4,8 +4,6 @@ import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Jobs } from '@/app/types';
 import JobsPage from '@/components/notebook/jobs/JobsPage'; 
-import { getApiUrl } from '@/app/lib/config'
-
 
 export default function Page() {
   const params = useParams();
