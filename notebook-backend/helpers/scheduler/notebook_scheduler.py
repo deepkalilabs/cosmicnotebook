@@ -67,8 +67,8 @@ class NotebookScheduler:
         try:
             # Get notebook endpoint from Supabase
             endpoint_result = ''
-            response = self._supabase.table('notebooks').eq('id', notebook_id).single().execute()
-            input_params = self._supabase.table('schedules').eq('job_id', schedule_job_id).select('input_params').single().execute()
+            response = self._supabase.table('notebooks').select("*").eq('id', notebook_id).limit(1).maybe_single().execute()
+            input_params = self._supabase.table('schedules').select("input_params").eq('job_id', schedule_job_id).limit(1).maybe_single().execute()
 
             nb_details = NotebookDetails(**response.data)
             endpoint = nb_details.submit_endpoint

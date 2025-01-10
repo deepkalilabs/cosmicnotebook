@@ -15,7 +15,7 @@ from uuid import UUID
 from helpers.notebook import notebook
 import logging
 from helpers.types import ConnectorCredentials
-
+import time
 logging.basicConfig(level=logging.INFO)
 
 app = FastAPI()
@@ -111,7 +111,7 @@ async def websocket_endpoint(websocket: WebSocket, notebook_id: str):
                 lambda_handler.prepare_container()
                 response = OutputGenerateLambdaMessage(type='lambda_generated', success=status, message=msg)
                 await websocket.send_json(response.model_dump())
-                
+
                 msg = "Shipping your code to the cloud"
                 lambda_handler.build_and_push_container()
                 response = OutputGenerateLambdaMessage(type='lambda_generated', success=status, message=msg)
@@ -244,7 +244,7 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:app", 
         host="0.0.0.0", 
-        port=8000,
+        port=47153,
         reload=True,
         reload_excludes=[
             "lambda_dumps/**",
