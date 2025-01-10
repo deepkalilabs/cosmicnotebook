@@ -52,6 +52,11 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
         });
       }
     },
+    notebookDetails: {
+      id: notebookId,
+      name: name,
+      user_id: userId || ""
+    },
     onNotebookDeployed: (data) => {
       console.log(`Received notebook_deployed: ${data.type}, success: ${data.success}, message: ${data.message}`);
       setIsDeploying(true);
@@ -82,10 +87,11 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
   }, [isConnected, connectionStatus, toast]);
 
   useEffect(() => {
-    if (isConnected) {
-      loadNotebook(name, notebookId, userId);
+    if (notebookId) {
+      console.log("Loading notebook", name, notebookId, userId);
+      loadNotebook(name, notebookId, userId || "");
     }
-  }, [isConnected]);
+  }, [notebookId]);
 
   useEffect(() => {
     console.log("connectors updated", connectors)
@@ -111,17 +117,18 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
   };
 
   const handleSave = async (filename: string) => {
-    saveNotebook(cells, filename, notebookId, userId);
+    saveNotebook(cells, filename, notebookId, userId || "");
   };
 
   const handleLoad = async (filename: string) => {
-    loadNotebook(filename, notebookId, userId);
+    loadNotebook(filename, notebookId, userId || "");
   };
 
   const handleDeploy = async () => {
-    deployCode(cells, userId, name, notebookId)
+    deployCode(cells, userId || "", name, notebookId)
   }
 
+  console.log("firing here", notebookId, name, userId)
 
   return (
     <div className="flex min-h-screen">

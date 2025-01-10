@@ -132,7 +132,7 @@ async def websocket_endpoint(websocket: WebSocket, notebook_id: str):
     except WebSocketDisconnect:
         logging.info(f"WebSocket disconnected for notebook ID: {notebook_id}")
     except Exception as e:
-        logging.error(f"Error in websocket connection: {e}")
+        logging.error(f"Error in websocket connection: {str(e)}")
         try:
             await websocket.send_json({
                 'type': 'error',

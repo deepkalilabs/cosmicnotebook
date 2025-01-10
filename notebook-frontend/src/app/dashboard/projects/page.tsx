@@ -56,10 +56,15 @@ export default function ProjectsPage() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [newNotebookName, setNewNotebookName] = useState("");
     const filterNotebooks = notebooks.filter((notebook: { name: string }) => notebook.name.toLowerCase().includes(search.toLowerCase()));
+
+    console.log("notebooks", notebooks);
+    console.log("filterNotebooks", filterNotebooks);
     const [importNotebookDialogOpen, setImportNotebookDialogOpen] = useState(false);
     const router = useRouter();
     const [user, setUser] = useState<User | null>(null);  // Add at the top with other state declarations
     const { toast } = useToast();
+
+    console.log("firing here", 1)
 
     const { saveNotebook } = useNotebookConnection({
       onNotebookSaved: (data) => {

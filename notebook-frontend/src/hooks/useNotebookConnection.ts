@@ -8,7 +8,7 @@ import { NotebookCell, OutputDeployMessage, NotebookConnectionProps } from '@/ap
 import { OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputConnectorCreatedMessage } from '@/app/types';
 import { useToast } from '@/hooks/use-toast';
 //import { useWebSocketContext } from '@/contexts/WebSocketContext'; May need this later for avoiding multiple connections and reusing the same connection
-
+import { getApiUrl } from '@/app/lib/config';
 export function useNotebookConnection({
   onOutput,
   onNotebookLoaded,
@@ -29,14 +29,21 @@ export function useNotebookConnection({
   // TODO: 2. Have a way to re-use the same connection if the same notebook is opened again.
   // TODO: 3. Avoid losing the connection when the user navigates away from the notebook page.
   const socketUrl = useMemo(() => {
-    const socketBaseURL = process.env.NODE_ENV === 'development' ? '0.0.0.0' : process.env.NEXT_PUBLIC_AWS_EC2_IP;
+    const socketBaseURL = getApiUrl().split('://')[1];
 
-    if (process.env.NODE_ENV === 'development') {
-      return `ws://${socketBaseURL}:8000/ws/${notebookId}`;
+    if (notebookId) {
+      if (process.env.NODE_ENV === 'development') {
+        return `wss://${socketBaseURL}/ws/${notebookId}`;
+      } else {
+        return `wss://${socketBaseURL}/ws/${notebookId}`;
+      }
     } else {
-      return `wss://${socketBaseURL}/ws/${notebookId}`;
+      return null;
     }
+    
   }, [notebookId]);
+
+  console.log("socketURL", socketUrl)
 
   const {
     sendMessage,
@@ -59,7 +66,7 @@ export function useNotebookConnection({
       }
     },
     onError: (event) => {
-      console.error("WebSocket error:", event);
+      console.log("WebSocket error:", event);
       onError?.("Failed to connect to Python kernel");
     },
     shouldReconnect: (closeEvent) => {
