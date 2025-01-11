@@ -33,7 +33,7 @@ export function useNotebookConnection({
 
     if (notebookId) {
       if (process.env.NODE_ENV === 'development') {
-        return `wss://${socketBaseURL}/ws/${notebookId}`;
+        return `ws://${socketBaseURL}/ws/${notebookId}`;
       } else {
         return `wss://${socketBaseURL}/ws/${notebookId}`;
       }

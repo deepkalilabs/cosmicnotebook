@@ -17,6 +17,12 @@ import logging
 from helpers.types import ConnectorCredentials
 import time
 logging.basicConfig(level=logging.INFO)
+import resend 
+
+from supabase import Client
+from helpers.supabase.client import get_supabase_client
+supabase: Client = get_supabase_client()
+resend.api_key = os.getenv('RESEND_API_KEY')
 
 app = FastAPI()
 scheduler = NotebookScheduler()  # Single instance
@@ -124,9 +130,30 @@ async def websocket_endpoint(websocket: WebSocket, notebook_id: str):
                 
                 status, message = lambda_handler.create_api_endpoint()
                 response = OutputGenerateLambdaMessage(type='lambda_generated', success=status, message=message)
-                # sleep(3) # Wait for API to be registered at AWS
                 await websocket.send_json(response.model_dump())
+
+                api = message
+
+                # Get user email from Supabase
+                # TODO: Move this to a helper class.
+                user_data = supabase.table('notebooks').select('user_id').eq('id', data['notebook_id']).execute()
+                if user_data and user_data.data:
+                    user_id = user_data.data[0]['user_id']
                 
+                user_obj = supabase.auth.admin.get_user_by_id(user_id)
+                if user_obj and user_obj.user:
+                    email = user_obj.user.email
+                else:
+                    raise Exception("User email not found for user_id: " + user_id)
+                
+                # Sending email with the attachment
+                resend.Emails.send({
+                    "from": "shikhar@agentkali.ai",
+                    "to": email,
+                    "subject": "Your API is ready",
+                    "html": f"<p>Congrats on creating your <strong>first API</strong>!</p><p>You can find it here: {api}</p>",
+                })
+
             msgOutput = ''
             
     except WebSocketDisconnect:

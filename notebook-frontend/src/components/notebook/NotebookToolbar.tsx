@@ -42,7 +42,7 @@ export function NotebookToolbar({
   }
 
   return (
-    <div className="fixed top-0 w-full z-50 bg-white p-2">
+    <div className="fixed top-10 w-full z-50 bg-white p-2">
     <div className="flex items-center space-x-2 mb-4">
       <div className="flex items-center gap-6 px-4 py-2 bg-muted rounded-lg text-sm text-muted-foreground">
         <div className="flex items-center gap-2">

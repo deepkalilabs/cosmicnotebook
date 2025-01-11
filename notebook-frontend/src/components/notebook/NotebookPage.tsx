@@ -125,6 +125,8 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
   };
 
   const handleDeploy = async () => {
+    // setIsDeploying(true);
+    console.log("handle deploying", isDeploying)
     deployCode(cells, userId || "", name, notebookId)
   }
 
