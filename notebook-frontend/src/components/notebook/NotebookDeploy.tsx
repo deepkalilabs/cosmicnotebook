@@ -42,7 +42,7 @@ const DeploymentDialog = ({ isOpen, onOpenChange, data }: { isOpen: boolean, onO
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" aria-describedby="dialog-description">
         <DialogHeader>
           <DialogTitle>Deploying your Notebook</DialogTitle>
         </DialogHeader>
