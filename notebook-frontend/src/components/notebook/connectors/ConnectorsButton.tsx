@@ -1,12 +1,11 @@
 "use client"
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Plus } from 'lucide-react'
 import { FormsPosthog, FormsDbt, FormsClickhouse, FormsSnowflake, FormsLooker, FormsAmplitude, FormsRedshift} from './forms'
-import { useNotebookConnection } from '@/hooks/useNotebookConnection';
-import { useNotebookStore } from '@/app/store';
-import { v4 as uuidv4 } from 'uuid';
+import { ConnectorsButtonProps } from '@/app/types'
+import { useConnectorHook } from '@/hooks/useConnectorHook'
 
 
 interface DataSource {
@@ -17,40 +16,24 @@ interface DataSource {
   form: React.ReactNode;
 }
 
-export function ConnectorsButton() {
-  const [open, setOpen] = useState(false);
+export function ConnectorsButton({
+  onHandleCreateConnector
+}: ConnectorsButtonProps) {
+  const { isDialogOpen, handleOpenDialog, handleCloseDialog } = useConnectorHook();
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
-  const { addCell, updateCellCode } = useNotebookStore();
-  const { createConnector } = useNotebookConnection({
-    onConnectorCreated: async (response) => {
-      console.log("Connector created in ConnectorsButton:", response);
-      if (response.success) {
-        handleSuccess();
-        
-        const codeCellId = uuidv4();
-        const markdownCellId = uuidv4();
-        
-        addCell('code', codeCellId);
-        addCell('markdown', markdownCellId);
-
-        updateCellCode(codeCellId, response.code);
-        updateCellCode(markdownCellId, response.docstring);
-      } else {
-        console.error("Error creating connector:", response.message);
-      }
+ 
+  const handleDialog = () => {
+    if (isDialogOpen) {
+      handleCloseDialog();
+      handleReset();
+    } else {
+      handleOpenDialog();
     }
-  });
-
-  const handleSuccess = useCallback(() => {
-    // Don't create a new connection, just close the dialog
-    setSelectedSource(null);
-    setOpen(false);
-  }, []);
-
+  }
   const handleReset = () => setSelectedSource(null);
 
   const [dataSources] = useState<DataSource[]>([
-    { id: 'posthog', name: 'PostHog', available: true, icon: `https://img.logo.dev/posthog.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsPosthog  createConnector={createConnector}/> },
+    { id: 'posthog', name: 'PostHog', available: true, icon: `https://img.logo.dev/posthog.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsPosthog onHandleCreateConnector={onHandleCreateConnector}/> },
     { id: 'dbt', name: 'dbt', available: false, icon: `https://img.logo.dev/dbt.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsDbt /> },
     { id: 'clickhouse', name: 'ClickHouse', available: false, icon: `https://img.logo.dev/clickhouse.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsClickhouse /> },
     { id: 'snowflake', name: 'Snowflake', available: false, icon: `https://img.logo.dev/snowflake.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsSnowflake /> },
@@ -61,7 +44,7 @@ export function ConnectorsButton() {
   ]);
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={isDialogOpen} onOpenChange={handleDialog}>
       <SheetHeader>
         <SheetTitle>
           <SheetTrigger asChild>

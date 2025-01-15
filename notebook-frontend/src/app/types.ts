@@ -18,6 +18,7 @@ export interface NotebookToolbarProps {
   isConnected: boolean;
   allCells: NotebookCell[];
   onHandleDeploy?: () => Promise<void>;
+  onHandleCreateConnector: (type: string, values: Record<string, string | number | boolean>, userId: string, notebookId: string) => void;
 }
 
 export interface NotebookStore {
@@ -61,6 +62,9 @@ interface ConnectorStatus {
   message: string;
 }
 
+export interface ConnectorsButtonProps {
+  onHandleCreateConnector: (connector: string,  values:Record<string, string | number | boolean>, userId: string, notebookId: string) => void;
+}
 
 export interface ConnectorCredentials {
   id: string;
@@ -69,8 +73,12 @@ export interface ConnectorCredentials {
   notebook_id: string;
   connector_type: string;
   credentials: JSON;
-  has_seen_doc: boolean;
+  has_seen_doc?: boolean;
+  //status?: 'connected' | 'disconnected' | 'pending' | 'error';
+  //created_at?: string;
+  //updated_at?: string;
 }
+
 
 export interface NotebookConnectionProps {
   onOutput?: (cellId: string, output: string) => void;
@@ -211,17 +219,44 @@ export interface ScheduledJob {
   status?: string;
   last_run_output?: string;
 }
-export interface Connector {
-  type: string;
-  success: boolean;
-  message: string;
-  output: JSON;
-}
+
 
 export interface ConnectorsStore {
-  connectors: Connector[];
-  setConnectors: (connectors: Connector[]) => void;
+  //Dialog state
+  isDialogOpen: boolean;
+  selectedConnector: string | null;
+
+  //Connectors data
+  connectors: ConnectorCredentials[];
+  isLoading: boolean;
+  error: string | null;
+
+  //Dialog functions
+  openDialog: () => void;
+  closeDialog: () => void;
+  setSelectedConnector: (connector: string | null) => void;
+  resetDialog: () => void;
+
+  //Connector actions
+  // addConnector 
+  // updateConnector
+  // deleteConnector
+  // removeConnector
+  // resetConnectors
+  // setConnectors
+
+  // Status management
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+
+  // Utility functions
+  setConnectors: (connectors: ConnectorCredentials[]) => void;
+  getConnectorByType: (type: string) => ConnectorCredentials | null;
+  getConnectorById: (id: string) => ConnectorCredentials | null;
+  hasConnector: (type: string) => boolean; 
+
 }
+
 
 
 export interface ConnectorCredentialsList {
