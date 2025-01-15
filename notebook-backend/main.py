@@ -77,7 +77,7 @@ async def websocket_endpoint(websocket: WebSocket, notebook_id: str):
  
             elif data['type'] == 'create_connector':
                 try:
-                    # print("Creating connector", data)
+                    print("Creating connector", data)
                     credentials: ConnectorCredentials = {
                         "connector_type": data['connector_type'],
                         "user_id": data['user_id'],

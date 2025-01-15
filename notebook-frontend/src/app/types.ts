@@ -18,6 +18,7 @@ export interface NotebookToolbarProps {
   isConnected: boolean;
   allCells: NotebookCell[];
   onHandleDeploy?: () => Promise<void>;
+  onHandleCreateConnector: (type: string, values: Record<string, any>, userId: string, notebookId: string) => void;
 }
 
 export interface NotebookStore {
@@ -61,6 +62,9 @@ interface ConnectorStatus {
   message: string;
 }
 
+export interface ConnectorsButtonProps {
+  onHandleCreateConnector: (connector: string,  values:Record<string, string | number | boolean>, userId: string, notebookId: string) => void;
+}
 
 export interface ConnectorCredentials {
   id: string;

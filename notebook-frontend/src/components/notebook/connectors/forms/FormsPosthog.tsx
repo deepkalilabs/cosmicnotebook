@@ -10,10 +10,9 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useUserStore, useConnectorsStore } from '@/app/store'
 import { getApiUrl } from '@/app/lib/config'
+import { ConnectorsButtonProps } from '@/app/types'
 
-interface FormsPosthogProps {
-  createConnector: (connector: string, data: Record<string, string | number | boolean>, userId: string, notebookId: string) => void;
-}
+
 
 
 const formSchema = z.object({
@@ -22,7 +21,7 @@ const formSchema = z.object({
   userId: z.string().min(5, { message: "User ID is required" })
 })
 
-export default function FormsPosthog({createConnector}: FormsPosthogProps) {
+export default function FormsPosthog({onHandleCreateConnector}: ConnectorsButtonProps) {
   const { user } = useUserStore();
   const userId = user?.id || '';
   const notebookId = window.location.pathname.split('/').pop()?.split('?')[0] || '';
@@ -53,7 +52,9 @@ export default function FormsPosthog({createConnector}: FormsPosthogProps) {
       const response = await fetch(`${getApiUrl()}/connectors/${userId}/${notebookId}/posthog`);
       console.log("Checking if PostHog is connected", response)
       const data = await response.json();
-      const isConnected = JSON.parse(data.body).is_connected;
+      const dataBody = JSON.parse(data.body)
+      
+      const isConnected = dataBody.is_connected;
       console.log("isConnected", isConnected)
       
       if (isConnected) {
@@ -68,7 +69,7 @@ export default function FormsPosthog({createConnector}: FormsPosthogProps) {
         return;
       }
 
-      createConnector(
+      onHandleCreateConnector(
         'posthog',
         {
           api_key: values.apiKey,

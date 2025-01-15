@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { Separator } from '@/components/ui/separator';
@@ -24,6 +25,7 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
     deployCode,
     isConnected,
     connectionStatus,
+    createConnector
   } = useNotebookConnection({
     onOutput: updateCellOutput,
     onNotebookLoaded: (cells) => {
@@ -71,6 +73,28 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
     },
     onConnectorCreated: (response) => {
       console.log("Received connector_created on NotebookPage", response);
+      //TODO: Update the store with the new connector
+      //TODO: Close the dialog
+      if (response.success) {
+        toast({
+          title: "Connector created",
+          description: response.message,
+          variant: "default",
+          duration: 1000
+        });
+
+        const codeCellId = uuidv4();
+        const markdownCellId = uuidv4();
+
+        addCell('code', codeCellId);
+        addCell('markdown', markdownCellId);
+
+        updateCellCode(codeCellId,  response.code); 
+        updateCellCode(markdownCellId, response.docstring);
+
+
+      }
+
     },
   });
 
@@ -130,6 +154,11 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
     deployCode(cells, userId || "", name, notebookId)
   }
 
+  const handleCreateConnector = (connector: string, values:Record<string, string | number | boolean>, userId: string, notebookId: string) => {
+    console.log("handleCreateConnector", connector, values, userId, notebookId)
+    createConnector(connector, values, userId, notebookId)
+  }
+
   console.log("firing here", notebookId, name, userId)
 
   return (
@@ -158,6 +187,7 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
                 isConnected={isConnected}
                 allCells={cells}
                 onHandleDeploy={handleDeploy}
+                onHandleCreateConnector={handleCreateConnector}
               />
             </div>
 

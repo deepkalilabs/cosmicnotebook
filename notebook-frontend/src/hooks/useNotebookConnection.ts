@@ -20,9 +20,8 @@ export function useNotebookConnection({
   onConnectorCreated,
 }: NotebookConnectionProps) {
   const { toast } = useToast();
-  //const { connectors, setConnectors } = useConnectorsStore();
   const notebookId = notebookDetails?.id
-  console.log("details", notebookId)
+  console.log("notebookDetails", notebookDetails)
   const [isReconnecting, setIsReconnecting] = useState(false);
 
   // TODO: 1. Prevent multiple connections to the same notebook.
