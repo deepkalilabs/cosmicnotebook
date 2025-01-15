@@ -68,9 +68,23 @@ export const useUserStore = create<UserStore>((set) => ({
   setUser: (user) => set({ user })
 }));
 
-export const useConnectorsStore = create<ConnectorsStore>((set) => ({
-  connectors: [],
-  setConnectors: (connectors) => set({ connectors })
-}));
 
+
+export const useConnectorStore = create<ConnectorsStore>((set, get) => ({
+  isDialogOpen: false,
+  connectors: [],
+  selectedConnector: null,
+  isLoading: false,
+  error: null,
+  openDialog: () => set({ isDialogOpen: true }),
+  closeDialog: () => set({ isDialogOpen: false }),
+  setConnectors: (connectors) => set({ connectors }),
+  setSelectedConnector: (connector) => set({ selectedConnector: connector }),
+  resetDialog: () => set({ isDialogOpen: false, selectedConnector: null }),
+  setLoading: (loading) => set({ isLoading: loading }),
+  setError: (error) => set({ error }),
+  getConnectorByType: (type) => get().connectors.find(c => c.connector_type === type) || null,
+  getConnectorById: (id) => get().connectors.find(c => c.id === id) || null,
+  hasConnector: (type) => get().connectors.some(c => c.connector_type === type)
+}));
 

@@ -4,19 +4,20 @@ import { v4 as uuidv4 } from 'uuid';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { Separator } from '@/components/ui/separator';
-import { useConnectorsStore, useNotebookStore } from '@/app/store';
+import { useNotebookStore } from '@/app/store';
 import { useNotebookConnection } from '@/hooks/useNotebookConnection';
 import { NotebookToolbar } from '@/components/notebook/NotebookToolbar';
 import { NotebookCell } from '@/components/notebook/NotebookCell';
 import { OutputDeployMessage, CellType, NotebookPageProps } from '@/app/types';
 import DeploymentDialog from '@/components/notebook/NotebookDeploy';
+import { useConnectorHook } from '@/hooks/useConnectorHook';
 
 export default function NotebookPage({ notebookId, userId, name }: NotebookPageProps) {
   const { toast } = useToast();
   const { cells, addCell, updateCellCode, updateCellType,updateCellOutput, deleteCell, moveCellUp, moveCellDown, setCells } = useNotebookStore();
   const [ isDeploying, setIsDeploying ] = useState(false);
   const [ deploymentData, setDeploymentData] = useState<OutputDeployMessage>({} as OutputDeployMessage);
-  const { connectors } = useConnectorsStore();
+  const { handleCloseDialog } = useConnectorHook();
   const {
     executeCode,
     saveNotebook,
@@ -91,8 +92,16 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
 
         updateCellCode(codeCellId,  response.code); 
         updateCellCode(markdownCellId, response.docstring);
-
-
+        handleCloseDialog();
+      } else {
+        //TODO: Add remote error logging for team to fix
+        console.error("Failed to create connector", response)
+        toast({
+          title: "Failed to create connector",
+          description: response.message,
+          variant: "destructive",
+          duration: 1000
+        });
       }
 
     },
@@ -117,20 +126,6 @@ export default function NotebookPage({ notebookId, userId, name }: NotebookPageP
     }
   }, [notebookId]);
 
-  useEffect(() => {
-    console.log("connectors updated", connectors)
-    if (connectors.length > 0) {
-      //Iterate over connectors, if the connector has_seen_doc is false, inject the last entry cell or show a alert message to direct the user to a doc
-      //If the connector has_seen_doc is true, do nothing
-      connectors.forEach(connector => {
-        if (!connector) {
-          console.log("Adding to notebook")
-          console.log(connectors)
-        }
-      })
-    }
-
-  }, [connectors])
 
   const handleExecute = async (cellId: string) => {
     const cell = cells.find(c => c.id === cellId);

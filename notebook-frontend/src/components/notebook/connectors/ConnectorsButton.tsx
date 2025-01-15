@@ -1,11 +1,11 @@
 "use client"
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Plus } from 'lucide-react'
 import { FormsPosthog, FormsDbt, FormsClickhouse, FormsSnowflake, FormsLooker, FormsAmplitude, FormsRedshift} from './forms'
 import { ConnectorsButtonProps } from '@/app/types'
-
+import { useConnectorHook } from '@/hooks/useConnectorHook'
 
 
 interface DataSource {
@@ -19,17 +19,17 @@ interface DataSource {
 export function ConnectorsButton({
   onHandleCreateConnector
 }: ConnectorsButtonProps) {
-  const [open, setOpen] = useState(false);
+  const { isDialogOpen, handleOpenDialog, handleCloseDialog } = useConnectorHook();
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
  
-
-  //TODO: When receiving a connector_created message, update a store and close the dialog
-  const handleSuccess = useCallback(() => {
-    // Don't create a new connection, just close the dialog
-    setSelectedSource(null);
-    setOpen(false);
-  }, []);
-
+  const handleDialog = () => {
+    if (isDialogOpen) {
+      handleCloseDialog();
+      handleReset();
+    } else {
+      handleOpenDialog();
+    }
+  }
   const handleReset = () => setSelectedSource(null);
 
   const [dataSources] = useState<DataSource[]>([
@@ -44,7 +44,7 @@ export function ConnectorsButton({
   ]);
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={isDialogOpen} onOpenChange={handleDialog}>
       <SheetHeader>
         <SheetTitle>
           <SheetTrigger asChild>

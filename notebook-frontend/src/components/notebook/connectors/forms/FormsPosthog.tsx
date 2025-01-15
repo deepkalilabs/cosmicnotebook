@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { ExternalLinkIcon, Loader2 } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
@@ -8,11 +8,9 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { useUserStore, useConnectorsStore } from '@/app/store'
+import { useUserStore } from '@/app/store'
 import { getApiUrl } from '@/app/lib/config'
 import { ConnectorsButtonProps } from '@/app/types'
-
-
 
 
 const formSchema = z.object({
@@ -26,12 +24,6 @@ export default function FormsPosthog({onHandleCreateConnector}: ConnectorsButton
   const userId = user?.id || '';
   const notebookId = window.location.pathname.split('/').pop()?.split('?')[0] || '';
   const [isConnecting, setIsConnecting] = useState(false);
-  const { connectors } = useConnectorsStore();
-
-
-  useEffect(() => {
-    console.log("connectors", connectors);
-  }, [connectors]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,11 +53,13 @@ export default function FormsPosthog({onHandleCreateConnector}: ConnectorsButton
         form.setError("root", { 
           message: "PostHog is already connected. Support for multiple connections is in the roadmap." 
         });
+        setIsConnecting(false);
         return;
       }
 
       if (!notebookId) {
         form.setError("root", { message: "Invalid notebook ID" });
+        setIsConnecting(false);
         return;
       }
 
@@ -78,14 +72,18 @@ export default function FormsPosthog({onHandleCreateConnector}: ConnectorsButton
         values.userId,
         notebookId
       );
+      setTimeout(() => {
+        setIsConnecting(false);
+      }, 4000);
     } catch (err) {
+      //TODO: Load error message from backend
       console.error("Error connecting to PostHog", err);
       form.setError("root", { 
         message: "Failed to connect to PostHog. Please check your credentials." 
       });
-    } finally {
       setIsConnecting(false);
-    }
+
+    } 
   };
 
   return (  
@@ -144,7 +142,7 @@ export default function FormsPosthog({onHandleCreateConnector}: ConnectorsButton
           />
           { form.formState.errors.root && <FormMessage>{form.formState.errors.root.message}</FormMessage> }
           <Button type="submit" disabled={isConnecting}>
-            {isConnecting ? <Loader2 className="w-4 h-4 mr-2" /> : null}
+            {isConnecting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
             Connect
           </Button>
         </form>
