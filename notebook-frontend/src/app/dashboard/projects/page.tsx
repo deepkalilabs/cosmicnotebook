@@ -7,14 +7,14 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
 import { NotebookCell } from '@/app/types';
-import { User } from '@supabase/supabase-js';
 import { useNotebookConnection } from '@/hooks/useNotebookConnection';
 import { useToast } from '@/hooks/use-toast';
 import NotebookUpload from '@/components/NotebookUpload';
+import { useOrgUserStore, useUserStore } from '@/app/store';
 
 const templateData = {
     "templates": [
@@ -42,10 +42,12 @@ const templateData = {
     ]
 }
 
+//TODO: Move notebook interface to types.ts
 interface Notebook {
     id: string;
     user_id: string;
     session_id: string;
+    organization_id: string;
     name: string;
     description: string;
     s3_url: string;
@@ -64,9 +66,9 @@ export default function ProjectsPage() {
     console.log("filterNotebooks", filterNotebooks);
     const [importNotebookDialogOpen, setImportNotebookDialogOpen] = useState(false);
     const router = useRouter();
-    const [user, setUser] = useState<User | null>(null);  // Add at the top with other state declarations
     const { toast } = useToast();
-
+    const { orgUsers } = useOrgUserStore();
+    const { user } = useUserStore();
     console.log("firing here", 1)
 
     const { saveNotebook } = useNotebookConnection({
@@ -88,23 +90,10 @@ export default function ProjectsPage() {
       }
     })
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                redirect('/auth/signin');
-            }
-            const { data: { user: currentUser }, error } = await supabase.auth.getUser();
-            if (!error && currentUser) {
-                setUser(currentUser);
-            }
-        };
-        checkAuth();
-    }, []);
-
     const createNotebookHelper = async (notebookName: string) : Promise<string> => {
       const newNotebook = {
           user_id: user?.id,
+          organization_id: orgUsers[0].organization_id,
           name: notebookName,
           description: "New notebook", // Adding a default description
           created_at: new Date().toISOString(),

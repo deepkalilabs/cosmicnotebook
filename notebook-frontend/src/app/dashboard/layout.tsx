@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { useUserStore } from "@/app/store"
+import { useUserStore, useOrgUserStore } from "@/app/store"
 
 
 const sidebarNavItems = [
@@ -60,28 +60,40 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const { setUser } = useUserStore();
+  const { setOrgUsers } = useOrgUserStore();
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { user }, error } = await supabase.auth.getUser();
+      const { data: { user: authUser }, error } = await supabase.auth.getUser();
 
-      if (error) {
-        console.error('Error getting user:', error);
+      if (error || !authUser || !authUser.email || !authUser.id) {
         setUser(null);
         router.push('/auth/signin');
         return;
       }
 
-      if (!user) {
-        setUser(null);
-        router.push('/auth/signin');
+      const userData = {
+        id: authUser.id,
+        email: authUser.email
+      };
+      
+      setUser(userData);
+
+      //Find and store the users organization they belong to
+      const { data: orgUser, error: orgError } = await supabase
+      .from('org_users')
+      .select('*')
+      .eq('user_id', authUser.id)
+      .single();
+      console.log(orgUser);
+      debugger;
+
+      if (orgError) {
+        console.error('Error getting organization:', orgError);
+        setOrgUsers([]);
         return;
       }
-      //Store locally for dashboard
-      setUser({
-        id: user?.id || '',
-        email: user?.email || ''
-      });
+      setOrgUsers([orgUser]);
     };
     
     checkAuth();

@@ -203,6 +203,34 @@ export interface UserStore {
   setUser: (user: User | null) => void;
 }
 
+export interface Organization {
+  id: string;
+  name: string;
+  domain: string;
+  created_by: string; // user uuid
+}
+
+export interface OrganizationStore {
+  organization: Organization | null;
+  setOrganization: (organization: Organization | null) => void;
+} 
+
+export interface OrgUser {
+  organization_id: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface OrgUserStore {
+  orgUsers: OrgUser[];
+  setOrgUsers: (orgUsers: OrgUser[]) => void;
+}
+
+
+
+
+
 export interface NotebookPageProps {
   notebookId: string;
   userId: string | null;
