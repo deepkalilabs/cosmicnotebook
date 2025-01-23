@@ -11,26 +11,74 @@ export default function AuthCallback() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // Get the session to confirm the user is authenticated
-        const { data: { session }, error } = await supabase.auth.getSession();
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
-        if (error) throw error;
-
-        if (session) {
-          // Successfully authenticated
-          // You can store any user data in your application state here if needed
-          
-          // Redirect to your desired page after successful authentication
-          router.push('/dashboard/projects'); // or dashboard, home, etc.
-        } else {
-          // No session found, redirect to sign in
-          router.push('/auth/signin');
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          throw new Error('Failed to get session');
         }
+     
+        if (!session?.user?.email) {
+          router.push('/auth/signin?error=No valid session found');
+          return;
+        }
+     
+        const allowedGmails = ['shikharsakhuja@gmail.com', 'charlesjavelona@gmail.com'];
+        
+        if (session.user.email.includes('gmail.com') && !allowedGmails.includes(session.user.email)) {
+          await supabase.auth.signOut();
+          router.push('/auth/signin?error=Please use your work email address');
+          return;
+        }
+     
+        const domain = session.user.email.split('@')[1];
+        const { data: org, error: orgError } = await supabase
+          .from('organizations')
+          .select('id')
+          .eq('domain', domain)
+          .single();
+     
+        if (orgError && orgError.code !== 'PGRST116') { // Ignore not found error
+          console.error('Organization fetch error:', orgError);
+          throw new Error('Failed to fetch organization');
+        }
+     
+        if (!org) {
+          const { data: newOrg, error: createOrgError } = await supabase
+            .from('organizations')
+            .insert({
+              name: domain.split('.')[0],
+              domain,
+              created_by: session.user.id
+            })
+            .select('id')
+            .single();
+     
+          if (createOrgError) {
+            console.error('Organization creation error:', createOrgError);
+            throw new Error('Failed to create organization');
+          }
+     
+          const { error: orgUserError } = await supabase
+            .from('org_users')
+            .insert({
+              org_id: newOrg.id,
+              user_id: session.user.id
+            });
+     
+          if (orgUserError) {
+            console.error('Org user creation error:', orgUserError);
+            throw new Error('Failed to link user to organization');
+          }
+        }
+     
+        router.push('/dashboard/projects');
       } catch (error) {
         console.error('Auth callback error:', error);
-        router.push('/auth/signin?error=Authentication failed');
+        const message = error instanceof Error ? error.message : 'Authentication failed';
+        router.push(`/auth/signin?error=${encodeURIComponent(message)}`);
       }
-    };
+     };
 
     handleAuthCallback();
   }, [router]);

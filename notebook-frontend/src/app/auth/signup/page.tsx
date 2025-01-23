@@ -23,12 +23,6 @@ interface SignUpData {
   password: string
   create_at: string
 }
-
-interface Organization {
-  name: string
-  created_at: string
-}
-
 export default function SignUp() {
   const [formData, setFormData] = useState<SignUpData>({
     email: '',
@@ -45,12 +39,11 @@ export default function SignUp() {
       return false;
     }
 
-    /*
+    
     if (!isWorkEmail(formData.email)) {
       setError("Please use a work email to sign up");
       return false;
     }
-    */
 
     if (formData.password.length < 8) {
       setError("Password must be at least 8 characters long");
@@ -106,6 +99,7 @@ export default function SignUp() {
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
+            hd: '*', // allow only work email
           },
         }
       });
