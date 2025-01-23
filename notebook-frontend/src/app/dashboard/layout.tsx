@@ -18,7 +18,7 @@ const sidebarNavItems = [
   },
   {
     title: "Connectors Admin",
-    href: "#",
+    href: "/dashboard/connectors-admin",
     icon: <Plug className="h-4 w-4" />,
   },
   {
@@ -86,7 +86,6 @@ export default function DashboardLayout({
       .eq('user_id', authUser.id)
       .single();
       console.log(orgUser);
-      debugger;
 
       if (orgError) {
         console.error('Error getting organization:', orgError);
