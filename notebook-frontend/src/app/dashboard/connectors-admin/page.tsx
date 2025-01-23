@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit, Loader2 } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Plus, Loader2 } from 'lucide-react';
+//import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -32,6 +32,7 @@ const ConnectorsAdmin = () => {
 
   useEffect(() => {
     fetchConnectors();
+    console.log('Connectors:', connectors);
   }, []);
 
   const fetchConnectors = async () => {
@@ -49,6 +50,7 @@ const ConnectorsAdmin = () => {
         description: "Failed to fetch connectors",
         variant: "destructive"
       });
+      console.warn('Error fetching connectors:', error);
     } finally {
       setIsLoading(false);
     }
@@ -60,6 +62,7 @@ const ConnectorsAdmin = () => {
 
     try {
       if (isEditing) {
+        /*
         const { error } = await supabase
           .from('connectors')
           .update(formData)
@@ -70,6 +73,7 @@ const ConnectorsAdmin = () => {
           title: "Success",
           description: "Connector updated successfully"
         });
+        */
       } else {
         const { error } = await supabase
           .from('connectors')
@@ -90,35 +94,13 @@ const ConnectorsAdmin = () => {
         description: isEditing ? "Failed to update connector" : "Failed to create connector",
         variant: "destructive"
       });
+      console.warn('Error submitting connector:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this connector?')) return;
 
-    try {
-      const { error } = await supabase
-        .from('connectors')
-        .delete()
-        .eq('id', id);
-      
-      if (error) throw error;
-      
-      toast({
-        title: "Success",
-        description: "Connector deleted successfully"
-      });
-      fetchConnectors();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete connector",
-        variant: "destructive"
-      });
-    }
-  };
 
   return (
     <div className="p-6">
@@ -167,42 +149,7 @@ const ConnectorsAdmin = () => {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {connectors.map((connector) => (
-          <Card key={connector.id}>
-            <CardHeader>
-              <CardTitle className="flex justify-between items-center">
-                {connector?.name}
-                <div className="space-x-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setIsEditing(true);
-                      setFormData({
-                        name: connector?.name || '',
-                        connector_type: connector?.connector_type || '',
-                        credentials: connector?.credentials || {}
-                      });
-                      setIsDialogOpen(true);
-                    }}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(connector.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">Type: {connector.connector_type}</p>
-            </CardContent>
-          </Card>
-        ))}
+      
       </div>
     </div>
   );
