@@ -1,6 +1,6 @@
 // src/app/auth/signin/page.tsx
 'use client';
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
@@ -32,6 +32,14 @@ export default function SignIn() {
   });
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+
+  useEffect(() => {
+    const error = new URLSearchParams(window.location.search).get('error');
+    if (error) {
+      setError(error);
+    }
+  }, []);
 
   const handleEmailSignin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

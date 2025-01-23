@@ -7,42 +7,47 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
 import { NotebookCell } from '@/app/types';
-import { User } from '@supabase/supabase-js';
 import { useNotebookConnection } from '@/hooks/useNotebookConnection';
 import { useToast } from '@/hooks/use-toast';
 import NotebookUpload from '@/components/NotebookUpload';
+import { useOrgUserStore, useUserStore } from '@/app/store';
 
 const templateData = {
     "templates": [
         {
             "id": 1,
-            "name": "My First Template",
-            "description": "A template for testing",
-            "example_customer": "See Provision this X and Y and resulted in this"
+            "name": "Posthog Churn Prediction",
+            "description": "A template for churn prediction using Posthog",
+            "example_customer": "See how Provision a YC company used Posthog to predict and prevent churn",
+            "available": false
         },
         {
             "id": 2,
-            "name": "My Second Template",
-            "description": "A template for testing",
-            "example_customer": "See Provision this X and Y and resulted in this"
+            "name": "AI Co Analyst",
+            "description": "A template for building an AI co-analyst that can help you chat with your data",
+            "example_customer": "See how  used AI to build an AI co-analyst",
+            "available": false
         },
         {
             "id": 3,
-            "name": "My Third Template",
-            "description": "A template for testing",
-            "example_customer": "See Provision this X and Y and resulted in this"
+            "name": "Linear AI Task Manager",
+            "description": "A template for building an AI task manager that can help you manage your teams tasks",
+            "example_customer": "See how Provision a YC company used AI to build an AI task manager within Linear",
+            "available": false
         }
     ]
 }
 
+//TODO: Move notebook interface to types.ts
 interface Notebook {
     id: string;
     user_id: string;
     session_id: string;
+    organization_id: string;
     name: string;
     description: string;
     s3_url: string;
@@ -61,9 +66,9 @@ export default function ProjectsPage() {
     console.log("filterNotebooks", filterNotebooks);
     const [importNotebookDialogOpen, setImportNotebookDialogOpen] = useState(false);
     const router = useRouter();
-    const [user, setUser] = useState<User | null>(null);  // Add at the top with other state declarations
     const { toast } = useToast();
-
+    const { orgUsers } = useOrgUserStore();
+    const { user } = useUserStore();
     console.log("firing here", 1)
 
     const { saveNotebook } = useNotebookConnection({
@@ -85,23 +90,10 @@ export default function ProjectsPage() {
       }
     })
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                redirect('/auth/signin');
-            }
-            const { data: { user: currentUser }, error } = await supabase.auth.getUser();
-            if (!error && currentUser) {
-                setUser(currentUser);
-            }
-        };
-        checkAuth();
-    }, []);
-
     const createNotebookHelper = async (notebookName: string) : Promise<string> => {
       const newNotebook = {
           user_id: user?.id,
+          organization_id: orgUsers[0].organization_id,
           name: notebookName,
           description: "New notebook", // Adding a default description
           created_at: new Date().toISOString(),
@@ -270,16 +262,22 @@ export default function ProjectsPage() {
           <ScrollArea className="flex-1">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {filterNotebooks.map((notebook) => (
-                <Card key={notebook.id} className="hover:shadow-md transition-shadow">
-                  <CardHeader className="space-y-0 pb-2">
+                <Card 
+                  key={notebook.id} 
+                  className="group hover:shadow-lg transition-all duration-200 border-border/50"
+                >
+                  <CardHeader className="space-y-2 pb-4">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <MessageCircle className="h-4 w-4 text-muted-foreground" />
-                        <h4 className="font-medium">{notebook.name}</h4>
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                          <MessageCircle className="h-5 w-5 text-primary" />
+                        </div>
+                        <h4 className="text-lg font-semibold tracking-tight">{notebook.name}</h4>
                       </div>
                       <Button
                         variant="ghost"
                         size="icon"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
                         onClick={(e) => {
                           e.stopPropagation();
                           deleteNotebook(notebook.id);
@@ -289,21 +287,25 @@ export default function ProjectsPage() {
                       </Button>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">
-                      {notebook.description}
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground/90 line-clamp-2">
+                      {!notebook.description || ""}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Modified: {notebook.updated_at}
-                    </p>
+                    <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                      <div className="flex items-center">
+                        <div className="w-2 h-2 rounded-full bg-primary/50 mr-2" />
+                        Last modified: {new Date(notebook.updated_at).toLocaleDateString()}
+                      </div>
+                    </div>
                   </CardContent>
-                  <CardFooter>
+                  <CardFooter className="pt-4">
                     <Button
-                      variant="secondary" 
-                      className="w-full"
+                      variant="default" 
+                      className="w-full group-hover:bg-primary/90 transition-colors"
                       onClick={() => openNotebook(notebook.id, notebook.name)}
                     >
                       Open Notebook
+                      <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </CardFooter>
                 </Card>
@@ -325,21 +327,36 @@ export default function ProjectsPage() {
             
             <div className="grid gap-4 md:grid-cols-3">
               {templateData.templates.map((template) => (
-                <Card key={template.id} className="hover:shadow-md transition-shadow">
-                  <CardHeader className="space-y-0 pb-2">
-                    <div className="flex items-center space-x-2">
-                      <BookTemplate className="h-4 w-4 text-muted-foreground" />
-                      <h4 className="font-medium">{template.name}</h4>
+                <Card 
+                  key={template.id} 
+                  className="group relative overflow-hidden transition-colors hover:bg-muted/50"
+                >
+                  <CardHeader className="space-y-2">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 rounded-xl bg-primary/10">
+                        <BookTemplate className="h-5 w-5 text-primary" />
+                      </div>
+                      <h4 className="text-lg font-semibold">{template.name}</h4>
                     </div>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="space-y-4">
                     <p className="text-sm text-muted-foreground">
                       {template.description}
                     </p>
+
+                    <div className="flex items-center">
+                      <span className="text-xs bg-secondary px-2.5 py-0.5 rounded-md text-secondary-foreground">
+                        {template.example_customer}
+                      </span>
+                    </div>
                   </CardContent>
                   <CardFooter>
-                    <Button variant="secondary" className="w-full">
-                      Use Template
+                    <Button 
+                      className="w-full"
+                      variant="default"
+                      disabled={!template.available}
+                    >
+                      {template.available ? "Use Template" : "Template will be available soon"}
                     </Button>
                   </CardFooter>
                 </Card>

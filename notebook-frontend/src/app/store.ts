@@ -1,7 +1,7 @@
 // app/store.ts
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
-import { CellType, NotebookStore, UserStore, ConnectorsStore } from './types';
+import { CellType, NotebookStore, UserStore, ConnectorsStore, OrganizationStore, OrgUserStore } from './types';
 
 export const useNotebookStore = create<NotebookStore>((set) => ({
   cells: [],
@@ -68,6 +68,16 @@ export const useUserStore = create<UserStore>((set) => ({
   setUser: (user) => set({ user })
 }));
 
+export const useOrganizationStore = create<OrganizationStore>((set) => ({
+  organization: null,
+  setOrganization: (organization) => set({ organization })
+}));
+  
+
+export const useOrgUserStore = create<OrgUserStore>((set) => ({
+  orgUsers: [],
+  setOrgUsers: (orgUsers) => set({ orgUsers })
+}));
 
 
 export const useConnectorStore = create<ConnectorsStore>((set, get) => ({

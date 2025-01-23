@@ -16,17 +16,18 @@ import { Icons } from "@/components/ui/icons"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { supabase } from '@/lib/supabase';
 import { AuthError } from '@supabase/supabase-js';
+import { isWorkEmail } from '@/app/lib/emailValidator';
 
 interface SignUpData {
   email: string
   password: string
+  create_at: string
 }
-
-
 export default function SignUp() {
   const [formData, setFormData] = useState<SignUpData>({
     email: '',
-    password: ''
+    password: '',
+    create_at: new Date().toISOString()
   });
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -37,6 +38,13 @@ export default function SignUp() {
       setError("Email and password are required");
       return false;
     }
+
+    
+    if (!isWorkEmail(formData.email)) {
+      setError("Please use a work email to sign up");
+      return false;
+    }
+
     if (formData.password.length < 8) {
       setError("Password must be at least 8 characters long");
       return false;
@@ -56,7 +64,7 @@ export default function SignUp() {
     }
 
     try {
-      const { error: signupError } = await supabase.auth.signUp({
+      const { data: userData, error: signupError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {
@@ -64,11 +72,13 @@ export default function SignUp() {
         },
       });
 
+      console.log('userData', userData);
+
       if (signupError) {
         setError(signupError.message);
       } else {
         setSuccessMessage("User created successfully. Please check your email for verification.");
-        setFormData({ email: '', password: '' });
+        setFormData({ email: '', password: '', create_at: new Date().toISOString() });
       }
     } catch (error) {
       console.error('Error signing up:', error);
@@ -89,6 +99,7 @@ export default function SignUp() {
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
+            hd: '*', // allow only work email
           },
         }
       });
