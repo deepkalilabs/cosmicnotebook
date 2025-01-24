@@ -6,7 +6,7 @@ import { useConnectorStore } from '@/app/store';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { ConnectorsButton } from '@/components/connectors/ConnectorsButton';
-import { useUserStore, useOrgUserStore } from '@/app/store';
+import { useOrgUserStore } from '@/app/store';
 import {
   Table,
   TableBody,
@@ -20,7 +20,6 @@ const ConnectorsAdmin = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [visibleCredentials, setVisibleCredentials] = useState<string[]>([]);
-  const { user } = useUserStore(); 
   const { orgUsers } = useOrgUserStore();
   const { connectors, setConnectors } = useConnectorStore();
 
@@ -36,12 +35,13 @@ const ConnectorsAdmin = () => {
   }, [connectors]);
 
 
+  //TODO: This is a temporary fetch to get the connectors. Change to use the API endpoint in the backend.
   const fetchConnectors = async (orgId: string) => {
     try {
       const { data, error } = await supabase
         .from('connector_credentials')
         .select('*')
-        .eq('org_id', orgUsers[0].org_id);  
+        .eq('org_id', orgId);  
 
       if (error) {
         console.error('Supabase error:', error.message);
@@ -83,21 +83,27 @@ const ConnectorsAdmin = () => {
         body: JSON.stringify({ connectorId })
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to delete connector');
+      const data = await response.json();
+      if (data.status !== 200) {
+        toast({
+          title: "Error",
+          description: "Failed to delete connector",
+          variant: "destructive",
+        });
+        console.warn('Failed to delete connector', data);
+        setIsLoading(false);
+        return; 
       }
 
-      // Refresh connectors list
-      if (orgUsers && orgUsers.length > 0) {
-        await fetchConnectors(orgUsers[0].org_id);
-      }
-      
+      console.log('Delete connector response:', data);
+      setConnectors(connectors.filter(connector => connector.id !== connectorId));
+
       toast({
         title: "Success",
         description: "Connector deleted successfully",
       });
     } catch (error) {
-      console.error('Error deleting connector:', error);
+      console.warn('Error deleting connector:', error);
       toast({
         title: "Error",
         description: "Failed to delete connector",

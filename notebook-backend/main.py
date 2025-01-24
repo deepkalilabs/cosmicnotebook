@@ -9,7 +9,7 @@ from helpers.notebook import notebook
 import logging
 from helpers.scheduler.notebook_scheduler import NotebookScheduler
 from typing import List
-from helpers.supabase.connector_credentials import create_connector_credentials, get_connector_credentials, get_is_type_connected 
+from helpers.supabase.connector_credentials import create_connector_credentials, get_connector_credentials, get_is_type_connected, delete_connector_credentials
 from helpers.types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, ConnectorResponse
 from uuid import UUID
 from helpers.notebook import notebook
@@ -265,6 +265,10 @@ async def create_connector(connector_data: ConnectorCredentials):
         connector_data.connector_type,
         connector_data.credentials
     )
+
+@app.delete("/connectors/delete/{connector_id}")
+async def delete_connector(connector_id: str):
+    return delete_connector_credentials(connector_id)
   
 @app.get("/connectors/{user_id}/{notebook_id}")
 async def get_connectors(user_id: UUID, notebook_id: UUID):

@@ -102,43 +102,39 @@ async def create_connector_credentials(org_id: str, user_id: str, connector_type
             'body': None
         }
 
-def delete_connector_credentials(id: str):
-    if not id:
+def delete_connector_credentials(connector_id: str):
+    if not connector_id:
         return {
             'statusCode': 400,
-            'body': json.dumps({'error': 'ID is required'}),
-            'message': 'ID is required'
+            'body': json.dumps({'error': 'Connector ID is required'}),
+            'message': 'Connector ID is required'
         }
     
     try:
-        response = supabase.table('connect_credentials') \
+        response = supabase.table('connector_credentials') \
             .delete() \
-            .eq('id', id) \
+            .eq('id', connector_id) \
             .execute()
         
         return {
             'statusCode': 200,
-            'message': 'Connector credentials deleted successfully'
+            'message': 'Connector credentials deleted successfully',
+            'body': json.dumps(response.data)
         }
     except Exception as e:
         logger.error(f"Error deleting connector credentials: {str(e)}")
         return {
             'statusCode': 500,
-            'message': 'Error deleting connector credentials'
+            'message': 'Error deleting connector credentials',
+            'body': None
         }
     
 
-def get_is_type_connected(user_id: str, notebook_id: str, type: str):
-    if not user_id:
+def get_is_type_connected(org_id: str, type: str):
+    if not org_id:
         return {
             'statusCode': 400,
-            'message': 'User ID is required'
-        }
-    
-    if not notebook_id:
-        return {
-            'statusCode': 400,
-            'message': 'Notebook ID is required'
+            'message': 'Org ID is required'
         }
     
     if not type:
@@ -150,8 +146,7 @@ def get_is_type_connected(user_id: str, notebook_id: str, type: str):
     try:
         response = supabase.table('connector_credentials') \
             .select('id') \
-            .eq('user_id', user_id) \
-            .eq('notebook_id', notebook_id) \
+            .eq('org_id', org_id) \
             .eq('connector_type', type) \
             .limit(1) \
             .execute()
@@ -160,7 +155,11 @@ def get_is_type_connected(user_id: str, notebook_id: str, type: str):
             'statusCode': 200,
             'body': json.dumps({'is_connected': len(response.data) > 0}),
             'message': 'Successfully retrieved connector credentials'
-        }
+        }   
     except Exception as e:
         logger.error(f"Error checking connector connection: {str(e)}")
-        return False
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'error': str(e)}),
+            'message': 'Error checking connector connection'
+        }
