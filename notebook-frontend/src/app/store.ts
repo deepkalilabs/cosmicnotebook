@@ -93,8 +93,21 @@ export const useConnectorStore = create<ConnectorsStore>((set, get) => ({
   resetDialog: () => set({ isDialogOpen: false, selectedConnector: null }),
   setLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error }),
+  addConnector: (connector) => set((state) => ({
+    connectors: [...state.connectors, connector]
+  })),
+  updateConnector: (connector) => set((state) => ({
+    connectors: state.connectors.map(c => c.id === connector.id ? connector : c)
+  })),
+  deleteConnector: (connector) => set((state) => ({
+    connectors: state.connectors.filter(c => c.id !== connector.id)
+  })),
   getConnectorByType: (type) => get().connectors.find(c => c.connector_type === type) || null,
   getConnectorById: (id) => get().connectors.find(c => c.id === id) || null,
-  hasConnector: (type) => get().connectors.some(c => c.connector_type === type)
+  hasConnector: (type) => get().connectors.some(c => c.connector_type === type),
+  removeConnector: (connector) => set((state) => ({
+    connectors: state.connectors.filter(c => c.id !== connector.id)
+  })),
+  resetConnectors: () => set({ connectors: [] })
 }));
 

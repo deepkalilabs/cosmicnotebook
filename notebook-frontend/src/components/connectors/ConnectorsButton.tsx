@@ -17,7 +17,7 @@ interface DataSource {
 }
 
 export function ConnectorsButton({
-  onHandleCreateConnector
+  onHandleCreateConnector,
 }: ConnectorsButtonProps) {
   const { isDialogOpen, handleOpenDialog, handleCloseDialog } = useConnectorHook();
   const [selectedSource, setSelectedSource] = useState<string | null>(null);

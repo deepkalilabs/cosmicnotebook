@@ -10,6 +10,7 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useUserStore, useOrgUserStore } from '@/app/store'
 import { ConnectorsButtonProps } from '@/app/types'
+import { useConnectorStore } from '@/app/store'
 import { toast } from '@/hooks/use-toast'
 
 const formSchema = z.object({
@@ -18,9 +19,10 @@ const formSchema = z.object({
   userId: z.string().min(5, { message: "User ID is required" })
 })
 
-export default function FormsPosthog({onHandleCreateConnector, handleCloseDialog}: ConnectorsButtonProps) {
+export default function FormsPosthog({onHandleCreateConnector, handleCloseDialog}: ConnectorsButtonProps & {handleCloseDialog: () => void}) {
   const { user } = useUserStore();
   const { orgUsers } = useOrgUserStore();
+  const { addConnector } = useConnectorStore();
   const userId = user?.id || '';
   const orgId = orgUsers[0]?.org_id || '';
   const [isConnecting, setIsConnecting] = useState(false);
@@ -49,12 +51,11 @@ export default function FormsPosthog({onHandleCreateConnector, handleCloseDialog
           message: res.error
         });
       }
-      
-
-      //TODO: refresh connectors
-      //TODO: close modal
+    
       handleCloseDialog();
       setIsConnecting(false);
+      let connector = JSON.parse(res.data.body);
+      addConnector(connector[0]);
       toast({
         title: "Success",
         description: "Connector created",

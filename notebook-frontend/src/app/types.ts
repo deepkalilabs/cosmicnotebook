@@ -64,7 +64,7 @@ interface ConnectorStatus {
 
 export interface ConnectorsButtonProps {
   onHandleCreateConnector: (connector: string,  values:Record<string, string | number | boolean>, userId: string, notebookId: string) => Promise<ConnectorResponse>;
-  handleCloseDialog: () => void;
+  setConnectors: (connectors: ConnectorCredentials[]) => void;
 }
 
 export interface ConnectorCredentials {
@@ -264,12 +264,11 @@ export interface ConnectorsStore {
   resetDialog: () => void;
 
   //Connector actions
-  // addConnector 
-  // updateConnector
-  // deleteConnector
-  // removeConnector
-  // resetConnectors
-  // setConnectors
+  addConnector: (connector: ConnectorCredentials) => void;
+  updateConnector: (connector: ConnectorCredentials) => void;
+  deleteConnector: (connector: ConnectorCredentials) => void;
+  removeConnector: (connector: ConnectorCredentials) => void;
+  resetConnectors: () => void;
 
   // Status management
   setLoading: (loading: boolean) => void;
