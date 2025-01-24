@@ -63,7 +63,8 @@ interface ConnectorStatus {
 }
 
 export interface ConnectorsButtonProps {
-  onHandleCreateConnector: (connector: string,  values:Record<string, string | number | boolean>, userId: string, notebookId: string) => void;
+  onHandleCreateConnector: (connector: string,  values:Record<string, string | number | boolean>, userId: string, notebookId: string) => Promise<ConnectorResponse>;
+  handleCloseDialog: () => void;
 }
 
 export interface ConnectorCredentials {
@@ -153,13 +154,10 @@ export interface OutputDeployMessage {
 }
 
 export interface ConnectorResponse {
-    type: string;
-    success: boolean;
-    message: string;
-    cell: NotebookCell;
-    code: string;
-    docstring: string;
-}
+    error: string | null;
+    status: number;
+    data: Record<string, any>;
+} 
 
 export interface Job {
     completed: boolean | null;
@@ -216,7 +214,7 @@ export interface OrganizationStore {
 } 
 
 export interface OrgUser {
-  organization_id: string;
+  org_id: string;
   user_id: string;
   created_at: string;
   updated_at: string;

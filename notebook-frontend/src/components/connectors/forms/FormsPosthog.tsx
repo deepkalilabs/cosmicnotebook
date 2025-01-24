@@ -8,10 +8,9 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { useUserStore } from '@/app/store'
-import { getApiUrl } from '@/app/lib/config'
+import { useUserStore, useOrgUserStore } from '@/app/store'
 import { ConnectorsButtonProps } from '@/app/types'
-
+import { toast } from '@/hooks/use-toast'
 
 const formSchema = z.object({
   apiKey: z.string().min(30, { message: "API Key is required" }),
@@ -19,10 +18,11 @@ const formSchema = z.object({
   userId: z.string().min(5, { message: "User ID is required" })
 })
 
-export default function FormsPosthog({onHandleCreateConnector}: ConnectorsButtonProps) {
+export default function FormsPosthog({onHandleCreateConnector, handleCloseDialog}: ConnectorsButtonProps) {
   const { user } = useUserStore();
+  const { orgUsers } = useOrgUserStore();
   const userId = user?.id || '';
-  const notebookId = window.location.pathname.split('/').pop()?.split('?')[0] || '';
+  const orgId = orgUsers[0]?.org_id || '';
   const [isConnecting, setIsConnecting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -41,48 +41,34 @@ export default function FormsPosthog({onHandleCreateConnector}: ConnectorsButton
     setIsConnecting(true);
     
     try {
-      const response = await fetch(`${getApiUrl()}/connectors/${userId}/${notebookId}/posthog`);
-      console.log("Checking if PostHog is connected", response)
-      const data = await response.json();
-      const dataBody = JSON.parse(data.body)
+      const res = await onHandleCreateConnector('posthog', values, userId, orgId);
+      console.log("Response from onHandleCreateConnector", res);
       
-      const isConnected = dataBody.is_connected;
-      console.log("isConnected", isConnected)
-      
-      if (isConnected) {
+      if (res && res.error) {
         form.setError("root", { 
-          message: "PostHog is already connected. Support for multiple connections is in the roadmap." 
+          message: res.error
         });
-        setIsConnecting(false);
-        return;
       }
+      
 
-      if (!notebookId) {
-        form.setError("root", { message: "Invalid notebook ID" });
-        setIsConnecting(false);
-        return;
-      }
+      //TODO: refresh connectors
+      //TODO: close modal
+      handleCloseDialog();
+      setIsConnecting(false);
+      toast({
+        title: "Success",
+        description: "Connector created",
+        variant: "default"
+      });
 
-      onHandleCreateConnector(
-        'posthog',
-        {
-          api_key: values.apiKey,
-          base_url: values.baseUrl,
-        },
-        values.userId,
-        notebookId
-      );
-      setTimeout(() => {
-        setIsConnecting(false);
-      }, 4000);
+  
     } catch (err) {
-      //TODO: Load error message from backend
       console.error("Error connecting to PostHog", err);
       form.setError("root", { 
         message: "Failed to connect to PostHog. Please check your credentials." 
       });
       setIsConnecting(false);
-
+      throw err; // Re-throw the error to be handled by the caller
     } 
   };
 

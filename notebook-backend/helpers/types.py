@@ -85,7 +85,9 @@ class ConnectorResponse(BaseModel):
 
 class ConnectorCredentials(BaseModel):
     user_id: str
-    notebook_id: str
+    org_id: str
+    notebook_id: Optional[str] = None
     connector_type: str
     credentials: dict
+
 
