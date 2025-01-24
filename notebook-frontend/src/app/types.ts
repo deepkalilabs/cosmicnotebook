@@ -287,3 +287,14 @@ export interface ConnectorCredentialsList {
   credentials: ConnectorCredentials[];
 }
 
+export interface MarimoFile {
+  id?: string;
+  initializationId?: string | null;
+  lastModified?: number | null;
+  name: string;
+  path: string;
+  sessionId?: string | null;
+  description?: string;
+  created_at: string;
+  updated_at: string;
+};

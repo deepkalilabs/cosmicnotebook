@@ -10,11 +10,13 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
-import { NotebookCell } from '@/app/types';
+import { MarimoFile, NotebookCell } from '@/app/types';
 import { useNotebookConnection } from '@/hooks/useNotebookConnection';
 import { useToast } from '@/hooks/use-toast';
 import NotebookUpload from '@/components/NotebookUpload';
-import { useUserStore } from '@/app/store';
+import MarimoFileComponent from '@/components/marimo/MarimoFileComponent';
+import { newNotebookURL } from '@/lib/marimo/urls';
+import { useOrgUserStore, useUserStore } from '@/app/store';
 
 const templateData = {
     "templates": [
@@ -55,73 +57,86 @@ interface Notebook {
     created_at: string;
 }
 
+interface NewNotebookButtonProps {
+  onCreateNotebook: (name: string) => void;
+}
+
+function NewNotebookButton({ user_id, notebook_id }: { user_id: string, notebook_id: string }) {
+
+  const notebook_url = newNotebookURL(user_id, notebook_id);
+  const router = useRouter();
+  return (
+    <Button onClick={() => {
+      sessionStorage.setItem('returnUrl', document.location.href);
+      router.push(notebook_url.toString());
+    }}>
+      <Plus className="mr-2 h-4 w-4" />
+      New Notebook
+    </Button>
+  );
+}
+
+interface ImportNotebookButtonProps {
+  onFileSelect: (fileName: string, fileContent: { cells: any[] }) => void;
+}
+
+const NotebookList: React.FC<{
+  header: React.ReactNode;
+  files: MarimoFile[];
+}> = ({ header, files }) => {
+  if (files.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      {header}
+      <div className="flex flex-col divide-y divide-[var(--slate-3)] border rounded overflow-hidden max-h-[48rem] overflow-y-auto shadow-sm bg-background">
+        {files.map((file) => {
+          return <MarimoFileComponent key={file.path} file={file} returnUrl={document.location.href} />;
+        })}
+      </div>
+    </div>
+  );
+};
+
+
+function ImportNotebookButton({ onFileSelect }: ImportNotebookButtonProps) {
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  return (
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <DialogTrigger asChild>
+        <Button>
+          <Upload className="mr-2 h-4 w-4" />
+          Import Notebook
+        </Button>
+      </DialogTrigger>
+      <DialogContent aria-describedby="import-notebook-description">
+        <DialogHeader>
+          <DialogTitle>Import Notebook</DialogTitle>
+          <DialogDescription id="import-notebook-description">
+            Upload a Jupyter notebook file to import it into your workspace.
+          </DialogDescription>
+        </DialogHeader>
+        <NotebookUpload onFileSelect={(fileName: string, fileContent: { cells: any[] }) => {
+          onFileSelect(fileName, fileContent);
+          setDialogOpen(false);
+        }} />
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export default function ProjectsPage() {
-    const [notebooks, setNotebooks] = useState<Notebook[]>([]);
-    const [search, setSearch] = useState("");
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [newNotebookName, setNewNotebookName] = useState("");
-    const filterNotebooks = notebooks.filter((notebook: { name: string }) => notebook.name.toLowerCase().includes(search.toLowerCase()));
-
-    console.log("notebooks", notebooks);
-    console.log("filterNotebooks", filterNotebooks);
-    const [importNotebookDialogOpen, setImportNotebookDialogOpen] = useState(false);
-    const router = useRouter();
-    const { toast } = useToast();
+    const [marimoNotebooks, setMarimoNotebooks] = useState<MarimoFile[]>([]);
     const { user } = useUserStore();
-    console.log("firing here", 1)
 
-    const { saveNotebook } = useNotebookConnection({
-      onNotebookSaved: (data) => {
-        if (data.success) {
-          console.log(`Toasting: Received notebook_saved: ${data.type}, success: ${data.success}, message: ${data.message}`);
-          toast({
-            title: "Notebook imported",
-            description: data.message,
-            variant: "default"
-          });
-        } else {
-          toast({
-            title: "Failed to save",
-            description: data.message,
-            variant: "destructive"
-          });
-        }
-      }
-    })
+    
+    localStorage.setItem('user_id', user?.id || '');
 
-    const createNotebookHelper = async (notebookName: string) : Promise<string> => {
-      const newNotebook = {
-          user_id: user?.id,
-          name: notebookName,
-          description: "New notebook", // Adding a default description
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-      }
-
-      // Supabase create notebook
-      const { data, error } = await supabase
-          .from('notebooks')
-          .insert(newNotebook)
-          .select()
-          .single();
-
-      if (error) {
-          console.error('Error creating notebook:', error);
-          return "";
-      }
-
-      setNotebooks(prevNotebooks => [...prevNotebooks, data]);
-      setNewNotebookName("");
-
-      return data.id;
-    }
-
-    const createNotebook = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        const notebookId = await createNotebookHelper(newNotebookName);
-        console.log(`Notebook created successfully at ${notebookId}`);
-        openNotebook(notebookId, newNotebookName);
-        setDialogOpen(false);
+    if (!user?.id) {
+      console.log("User should not be null for creating notebook.");
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -140,57 +155,25 @@ export default function ProjectsPage() {
       })
 
       console.log("cosmicCells", cosmicCells);
-
-      setImportNotebookDialogOpen(false);
-      const notebookId = await createNotebookHelper(fileName);
-      console.log(`Notebook created successfully at ${notebookId}`);
-
-      // TODO: Save the notebook cells to S3 associated with the notebook name
-      if (user?.id) {
-        saveNotebook(cosmicCells, fileName, notebookId, user?.id)
-      } else {
-        console.error("User should not be null for saving notebook.")
-      }
-      console.log('cosmicCells', cosmicCells);
-      // openNotebook(notebookId, fileName);
     }
 
-    const getAllNotebooksByUser = async (userId: string) => {
+    const getAllMarimoNotebooksByUser = async (userId: string) => {
         const { data, error } = await supabase.from('notebooks').select().eq('user_id', userId);
         if (error) {
             console.error('Failed to fetch notebooks: ' + error.message);
             return;
         }
-        setNotebooks(data || [] as Notebook[]); // Type assertion with proper interface
+        setMarimoNotebooks(data || [] as MarimoFile[]); // Type assertion with proper interface
     }
 
-    const deleteNotebook = async (notebookId: string) => {
-        const { error } = await supabase
-            .from('notebooks')
-            .delete()
-            .eq('id', notebookId);
-            
-        if (error) {
-            console.error('Failed to delete notebook: ' + error.message);
-            return;
-        }
-        
-        setNotebooks(notebooks.filter((notebook: { id: string }) => notebook.id !== notebookId));
-    }
-
-    const openNotebook = (notebookId: string, name: string) => {
-        router.push(`/dashboard/notebook/${notebookId}?name=${name}`);
-    }
-
-    useEffect(() => {
-        console.log(newNotebookName);
-    }, [newNotebookName]);
 
     useEffect(() => {
         if (user?.id) {
-            getAllNotebooksByUser(user?.id);
+            // getAllNotebooksByUser(user?.id);
+            getAllMarimoNotebooksByUser(user?.id);
         }
     }, [user]);
+
 
     return (
         <div className="flex flex-col h-screen bg-background">
@@ -205,61 +188,14 @@ export default function ProjectsPage() {
             </div>
             
             <div className="flex items-center space-x-2">
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  New Notebook
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Create New Notebook</DialogTitle>
-                </DialogHeader>
-                <div className="flex gap-4">
-                  <Input
-                    value={newNotebookName}
-                    onChange={(e) => setNewNotebookName(e.target.value)}
-                    placeholder="Enter notebook name"
-                  />
-                  <Button onClick={createNotebook}>Create</Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-
-            <Dialog open={importNotebookDialogOpen} onOpenChange={setImportNotebookDialogOpen}> 
-                <Button onClick={() => setImportNotebookDialogOpen(true)}>
-                  <Upload className="mr-2 h-4 w-4" />
-                  Import Notebook
-                </Button>
-              <DialogContent aria-describedby="import-notebook-description">
-                <DialogHeader>
-                  <DialogTitle>Import Notebook</DialogTitle>
-                  <DialogDescription id="import-notebook-description">
-                    Upload a Jupyter notebook file to import it into your workspace.
-                  </DialogDescription>
-                </DialogHeader>
-                <NotebookUpload onFileSelect={handleFileSelect} />
-              </DialogContent>
-            </Dialog>
+              <NewNotebookButton user_id={user?.id || ''} notebook_id={uuidv4()} />
+              <ImportNotebookButton onFileSelect={handleFileSelect} />
             </div>
           </div>
-  
-          {/* Search */}
-          <div className="flex items-center space-x-2 max-w-md">
-            <Search className="h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search notebooks..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="h-9"
-            />
-          </div>
-  
-          {/* Notebooks Grid */}
+    
           <ScrollArea className="flex-1">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {filterNotebooks.map((notebook) => (
+              {marimoNotebooks.map((notebook) => (
                 <Card 
                   key={notebook.id} 
                   className="group hover:shadow-lg transition-all duration-200 border-border/50"
@@ -278,7 +214,8 @@ export default function ProjectsPage() {
                         className="opacity-0 group-hover:opacity-100 transition-opacity"
                         onClick={(e) => {
                           e.stopPropagation();
-                          deleteNotebook(notebook.id);
+                          // TODO: Implement delete notebook
+                          // deleteNotebook(notebook?.id || '');
                         }}
                       >
                         <Trash2 className="h-4 w-4 text-muted-foreground hover:text-red-500" />
@@ -291,30 +228,27 @@ export default function ProjectsPage() {
                     </p>
                     <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                       <div className="flex items-center">
-                        <div className="w-2 h-2 rounded-full bg-primary/50 mr-2" />
+                        <div className="flex flex-col flex-wrap items-center">
+                        {notebook.description ? notebook.description : ""} 
+                        <br/>
                         Last modified: {new Date(notebook.updated_at).toLocaleDateString()}
+                        </div>
                       </div>
                     </div>
                   </CardContent>
                   <CardFooter className="pt-4">
-                    <Button
-                      variant="default" 
-                      className="w-full group-hover:bg-primary/90 transition-colors"
-                      onClick={() => openNotebook(notebook.id, notebook.name)}
-                    >
-                      Open Notebook
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
+                    <MarimoFileComponent file={notebook} returnUrl={document.location.href} user_id={user?.id || ''} notebook_id={notebook.id}/>
                   </CardFooter>
                 </Card>
               ))}
-            </div>
-          </ScrollArea>
+              </div>
+            </ScrollArea>
+          </div>  
   
           <Separator className="my-4" />
   
           {/* Templates Section */}
-          <div className="space-y-4">
+          <div className="flex-1 space-y-8 p-8 pt-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium">Templates</h3>
               <Button variant="outline">
@@ -362,6 +296,5 @@ export default function ProjectsPage() {
             </div>
           </div>
         </div>
-      </div>
     );
 }
