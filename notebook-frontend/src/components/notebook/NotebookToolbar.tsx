@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { ShowCodeButton } from './toolbar/ShowCodeButton';
 import { SaveNotebookButton } from './toolbar/SaveNotebookButton';
-import { ConnectorsButton } from '../connectors/ConnectorsButton';
 //import { LoadNotebookButton } from './toolbar/LoadNotebookButton';
 import { DeployButton } from './toolbar/DeployButton';
 import { RestartKernelButton } from './toolbar/RestartKernelButton';
@@ -31,7 +30,6 @@ export function NotebookToolbar({
   isConnected,
   allCells,
   onHandleDeploy,
-  onHandleCreateConnector,
 }: NotebookToolbarProps) {
 
   const [ isAddCellOpen, setIsAddCellOpen ] = useState(false);
@@ -119,9 +117,6 @@ export function NotebookToolbar({
 
       <SaveNotebookButton onHandleSave={onHandleSave} />
 
-      <ConnectorsButton 
-        onHandleCreateConnector={onHandleCreateConnector} 
-      />
 
       <ShowCodeButton allCells={allCells} />
       

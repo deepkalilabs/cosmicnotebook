@@ -44,7 +44,7 @@ const ConnectorsAdmin = () => {
         .eq('org_id', orgId);  
 
       if (error) {
-        console.error('Supabase error:', error.message);
+        console.warn('Supabase error:', error.message);
         return;
       }
 
@@ -57,6 +57,7 @@ const ConnectorsAdmin = () => {
     }
   };
 
+  //TODO: Only enable one connector type at a time.
   const handleCreateConnector = async (type: string, credentials: Record<string, string | number | boolean>, userId: string, orgId: string) => {
     console.log('Creating connector', type, credentials, userId, orgId);
 
@@ -122,7 +123,7 @@ const ConnectorsAdmin = () => {
     );
   };
 
-  const handleCopyCredentials = (credentials: any) => {
+  const handleCopyCredentials = (credentials: JSON) => {
     const credentialsString = JSON.stringify(credentials, null, 2);
     navigator.clipboard.writeText(credentialsString).then(() => {
       toast({
@@ -143,7 +144,7 @@ const ConnectorsAdmin = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Connectors Administration</h1>
-        <ConnectorsButton onHandleCreateConnector={handleCreateConnector} setConnectors={setConnectors}/>
+        <ConnectorsButton onHandleCreateConnector={handleCreateConnector} />
       </div>
 
       <div className="rounded-md border">
@@ -163,16 +164,13 @@ const ConnectorsAdmin = () => {
                   {connector.connector_type}
                 </TableCell>
                 <TableCell>
-                  {new Date(connector?.created_at).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
                   {visibleCredentials.includes(connector.id) ? (
                     <div className="flex items-start gap-2">
                       <pre className="text-xs whitespace-pre-wrap">
                         {JSON.stringify(connector.credentials, null, 2)}
                       </pre>
                       <button
-                        onClick={() => handleCopyCredentials(connector.credentials)}
+                        onClick={() => handleCopyCredentials(connector?.credentials)}
                         className="p-1 text-gray-600 hover:bg-gray-100 rounded"
                         title="Copy credentials"
                       >

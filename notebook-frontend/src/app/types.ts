@@ -64,7 +64,6 @@ interface ConnectorStatus {
 
 export interface ConnectorsButtonProps {
   onHandleCreateConnector: (connector: string,  values:Record<string, string | number | boolean>, userId: string, notebookId: string) => Promise<ConnectorResponse>;
-  setConnectors: (connectors: ConnectorCredentials[]) => void;
 }
 
 export interface ConnectorCredentials {
@@ -156,7 +155,7 @@ export interface OutputDeployMessage {
 export interface ConnectorResponse {
     error: string | null;
     status: number;
-    data: Record<string, any>;
+    data: Record<string, string | number | boolean>;
 } 
 
 export interface Job {

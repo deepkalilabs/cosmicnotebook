@@ -54,7 +54,7 @@ export default function FormsPosthog({onHandleCreateConnector, handleCloseDialog
     
       handleCloseDialog();
       setIsConnecting(false);
-      let connector = JSON.parse(res.data.body);
+      const connector = JSON.parse(res.data.body as string);
       addConnector(connector[0]);
       toast({
         title: "Success",
