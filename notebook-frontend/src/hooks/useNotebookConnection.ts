@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState, useMemo } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 import { NotebookCell, OutputDeployMessage, NotebookConnectionProps } from '@/app/types';
-import { OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputConnectorCreatedMessage } from '@/app/types';
+import { OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage } from '@/app/types';
 import { useToast } from '@/hooks/use-toast';
 //import { useWebSocketContext } from '@/contexts/WebSocketContext'; May need this later for avoiding multiple connections and reusing the same connection
 import { getApiUrl } from '@/app/lib/config';
@@ -17,7 +17,6 @@ export function useNotebookConnection({
   onError,
   notebookDetails,
   onConnectorStatus,
-  onConnectorCreated,
 }: NotebookConnectionProps) {
   const { toast } = useToast();
   const notebookId = notebookDetails?.id
@@ -111,12 +110,6 @@ export function useNotebookConnection({
         case 'connector_status':
           console.log("Received connector_status")
           onConnectorStatus?.({success: data.success, message: data.message});
-          break;
-        case 'connector_created':
-          console.log("Received connector_created")
-          parsedData = data as OutputConnectorCreatedMessage;
-          console.log("Received connector_created in useNotebookConnection", parsedData)
-          onConnectorCreated?.(parsedData);
           break;
         case 'error':
           onError?.(data.message);

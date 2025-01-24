@@ -17,7 +17,7 @@ interface DataSource {
 }
 
 export function ConnectorsButton({
-  onHandleCreateConnector
+  onHandleCreateConnector,
 }: ConnectorsButtonProps) {
   const { isDialogOpen, handleOpenDialog, handleCloseDialog } = useConnectorHook();
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
@@ -32,15 +32,15 @@ export function ConnectorsButton({
   }
   const handleReset = () => setSelectedSource(null);
 
+
   const [dataSources] = useState<DataSource[]>([
-    { id: 'posthog', name: 'PostHog', available: true, icon: `https://img.logo.dev/posthog.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsPosthog onHandleCreateConnector={onHandleCreateConnector}/> },
+    { id: 'posthog', name: 'PostHog', available: true, icon: `https://img.logo.dev/posthog.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsPosthog onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog}/> },
     { id: 'dbt', name: 'dbt', available: false, icon: `https://img.logo.dev/dbt.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsDbt /> },
     { id: 'clickhouse', name: 'ClickHouse', available: false, icon: `https://img.logo.dev/clickhouse.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsClickhouse /> },
     { id: 'snowflake', name: 'Snowflake', available: false, icon: `https://img.logo.dev/snowflake.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsSnowflake /> },
     { id: 'looker', name: 'Looker', available: false, icon: `https://img.logo.dev/looker.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsLooker /> },
     { id: 'amplitude', name: 'Amplitude', available: false, icon: `https://img.logo.dev/amplitude.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsAmplitude /> },
     { id: 'redshift', name: 'Redshift', available: false, icon: `https://img.logo.dev/aws.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsRedshift /> },
-
   ]);
 
   return (
@@ -48,9 +48,9 @@ export function ConnectorsButton({
       <SheetHeader>
         <SheetTitle>
           <SheetTrigger asChild>
-            <Button variant="outline" className="justify-end gap-2">
+            <Button variant="default" className="justify-end gap-2">
               <Plus className="h-4 w-4 mr-2" />
-              Connect Data Source
+              Add Data Source
             </Button>
           </SheetTrigger>
         </SheetTitle>

@@ -9,7 +9,7 @@ from helpers.notebook import notebook
 import logging
 from helpers.scheduler.notebook_scheduler import NotebookScheduler
 from typing import List
-from helpers.supabase.connector_credentials import get_connector_credentials, get_is_type_connected 
+from helpers.supabase.connector_credentials import create_connector_credentials, get_connector_credentials, get_is_type_connected, delete_connector_credentials
 from helpers.types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, ConnectorResponse
 from uuid import UUID
 from helpers.notebook import notebook
@@ -253,12 +253,29 @@ async def delete_schedule(schedule_id: str):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+
+#----------------------------------
+# Connectors
+#----------------------------------
+@app.post("/connectors/create")
+async def create_connector(connector_data: ConnectorCredentials):
+    return await create_connector_credentials(
+        connector_data.org_id,
+        connector_data.user_id,
+        connector_data.connector_type,
+        connector_data.credentials
+    )
+
+@app.delete("/connectors/delete/{connector_id}")
+async def delete_connector(connector_id: str):
+    return delete_connector_credentials(connector_id)
+  
 @app.get("/connectors/{user_id}/{notebook_id}")
 async def get_connectors(user_id: UUID, notebook_id: UUID):
     print(f"Getting connectors for user {user_id} and notebook {notebook_id}")
     return get_connector_credentials(user_id, notebook_id)
 
-@app.get("/connectors/{user_id}/{notebook_id}/{type}")
+@app.get("/connectors/{user_id}/{type}")
 async def check_connector_connection(user_id: UUID, notebook_id: UUID, type: str):
     return get_is_type_connected(user_id, notebook_id, type)
 

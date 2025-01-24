@@ -6,7 +6,6 @@ export const useConnectorHook = () => {
     const handleOpenDialog = () => {
         openDialog();
     }
-
     const handleCloseDialog = () => {
         closeDialog();
     }
@@ -14,7 +13,7 @@ export const useConnectorHook = () => {
     return {
         isDialogOpen,
         handleOpenDialog,
-        handleCloseDialog
+        handleCloseDialog,
     }
  
 }

@@ -80,6 +80,7 @@ export default function DashboardLayout({
       setUser(userData);
 
       //Find and store the users organization they belong to
+      //TODO Switch to backend call
       const { data: orgUser, error: orgError } = await supabase
       .from('org_users')
       .select('*')

@@ -14,7 +14,7 @@ import { NotebookCell } from '@/app/types';
 import { useNotebookConnection } from '@/hooks/useNotebookConnection';
 import { useToast } from '@/hooks/use-toast';
 import NotebookUpload from '@/components/NotebookUpload';
-import { useOrgUserStore, useUserStore } from '@/app/store';
+import { useUserStore } from '@/app/store';
 
 const templateData = {
     "templates": [
@@ -67,7 +67,6 @@ export default function ProjectsPage() {
     const [importNotebookDialogOpen, setImportNotebookDialogOpen] = useState(false);
     const router = useRouter();
     const { toast } = useToast();
-    const { orgUsers } = useOrgUserStore();
     const { user } = useUserStore();
     console.log("firing here", 1)
 
@@ -93,7 +92,6 @@ export default function ProjectsPage() {
     const createNotebookHelper = async (notebookName: string) : Promise<string> => {
       const newNotebook = {
           user_id: user?.id,
-          organization_id: orgUsers[0].organization_id,
           name: notebookName,
           description: "New notebook", // Adding a default description
           created_at: new Date().toISOString(),
