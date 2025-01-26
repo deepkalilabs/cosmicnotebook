@@ -12,6 +12,7 @@
     "@hookform/resolvers": "^3.9.1",
     "@monaco-editor/react": "^4.6.0",
     "@next-auth/supabase-adapter": "^0.2.1",
+    "@paralleldrive/cuid2": "^2.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.4",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
