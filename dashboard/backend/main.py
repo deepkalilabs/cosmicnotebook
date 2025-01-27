@@ -1,31 +1,33 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from helpers.lambda_generator import lambda_generator
-from helpers.supabase import job_status
-from helpers.types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, OutputPosthogSetupMessage, ScheduledJob, NotebookDetails
+from src.helpers.lambda_generator import lambda_generator
+from src.helpers.types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, OutputPosthogSetupMessage, ScheduledJob, NotebookDetails
 from uuid import UUID
-from helpers.notebook import notebook
+from src.helpers.notebook import notebook
 import logging
-from helpers.scheduler.notebook_scheduler import NotebookScheduler
+from src.helpers.scheduler.notebook_scheduler import NotebookScheduler
 from typing import List
-from helpers.supabase.connector_credentials import create_connector_credentials, get_connector_credentials, get_is_type_connected, delete_connector_credentials
-from helpers.types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, ConnectorResponse
+from src.helpers.types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, ConnectorResponse
 from uuid import UUID
-from helpers.notebook import notebook
+from src.helpers.notebook import notebook
 import logging
-from helpers.types import ConnectorCredentials
-import time
+from src.helpers.types import ConnectorCredentials
 logging.basicConfig(level=logging.INFO)
 import resend 
 
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from src.helpers.supabase import job_status
+from src.helpers.supabase.connector_credentials import create_connector_credentials, get_connector_credentials, get_is_type_connected, delete_connector_credentials
+
 from supabase import Client
-from helpers.supabase.client import get_supabase_client
+from src.helpers.supabase.client import get_supabase_client
 supabase: Client = get_supabase_client()
 resend.api_key = os.getenv('RESEND_API_KEY')
 
 app = FastAPI()
-scheduler = NotebookScheduler()  # Single instance
+# scheduler = NotebookScheduler()  # Single instance
 # Enable CORS for frontend communication
 app.add_middleware(
     CORSMiddleware,
@@ -185,13 +187,13 @@ async def status_endpoint_job_by_request_id(user_id: int, request_id: str):
 async def status_endpoint_jobs_for_notebook(notebook_id: UUID): 
     return job_status.get_all_jobs_for_notebook(notebook_id)
 
-@app.on_event("startup")
-async def start_scheduler():
-    scheduler.start()
+# @app.on_event("startup")
+# async def start_scheduler():
+#     scheduler.start()
 
-@app.on_event("shutdown")
-async def shutdown_scheduler():
-    scheduler.shutdown()
+# @app.on_event("shutdown")
+# async def shutdown_scheduler():
+#     scheduler.shutdown()
 
 @app.on_event("shutdown")
 async def cleanup():

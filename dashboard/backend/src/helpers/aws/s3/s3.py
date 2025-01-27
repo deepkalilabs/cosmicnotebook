@@ -15,7 +15,7 @@ bucket_name = 'notebook-lambda-generator'
 
 
 # TODO: Save the notebook to s3.
-def save_or_update_notebook(notebook_id: str, user_id: str, notebook: dict, bucket_name = bucket_name):
+def save_or_update_notebook(notebook_id: str, user_id: str, notebook: dict, notebook_name: str, bucket_name = bucket_name):
     if not notebook_id:
         raise ValueError("Notebook ID is required")
     if not user_id:
@@ -53,7 +53,7 @@ def save_or_update_notebook(notebook_id: str, user_id: str, notebook: dict, buck
         print(f"Error saving notebook: {e}")
         return {
             'statusCode': 500,
-            'body': json.dumps({'message': 'Error saving notebook'}),
+            'body': json.dumps({'message': 'Error saving notebook', 'error': str(e)}),
             'url': None
         }
     
