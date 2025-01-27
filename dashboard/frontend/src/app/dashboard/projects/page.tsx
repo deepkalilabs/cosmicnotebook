@@ -80,25 +80,25 @@ interface ImportNotebookButtonProps {
   onFileSelect: (fileName: string, fileContent: { cells: any[] }) => void;
 }
 
-const NotebookList: React.FC<{
-  header: React.ReactNode;
-  files: MarimoFile[];
-}> = ({ header, files }) => {
-  if (files.length === 0) {
-    return null;
-  }
+// const NotebookList: React.FC<{
+//   header: React.ReactNode;
+//   files: MarimoFile[];
+// }> = ({ header, files }) => {
+//   if (files.length === 0) {
+//     return null;
+//   }
 
-  return (
-    <div className="flex flex-col gap-2">
-      {header}
-      <div className="flex flex-col divide-y divide-[var(--slate-3)] border rounded overflow-hidden max-h-[48rem] overflow-y-auto shadow-sm bg-background">
-        {files.map((file) => {
-          return <MarimoFileComponent key={file.path} file={file} returnUrl={document.location.href} />;
-        })}
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div className="flex flex-col gap-2">
+//       {header}
+//       <div className="flex flex-col divide-y divide-[var(--slate-3)] border rounded overflow-hidden max-h-[48rem] overflow-y-auto shadow-sm bg-background">
+//         {files.map((file) => {
+//           return <MarimoFileComponent key={file.path} file={file} returnUrl={document.location.href} />;
+//         })}
+//       </div>
+//     </div>
+//   );
+// };
 
 
 function ImportNotebookButton({ onFileSelect }: ImportNotebookButtonProps) {
@@ -174,7 +174,6 @@ export default function ProjectsPage() {
         }
     }, [user]);
 
-
     return (
         <div className="flex flex-col h-screen bg-background">
         <div className="flex-1 space-y-8 p-8 pt-6">
@@ -195,7 +194,12 @@ export default function ProjectsPage() {
     
           <ScrollArea className="flex-1">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {marimoNotebooks.map((notebook) => (
+              {marimoNotebooks.length == 0 && (
+                <div className="flex h-full">
+                  <p className="text-muted-foreground">No notebooks found</p>
+                </div>
+              )}
+              {marimoNotebooks.length > 0 && marimoNotebooks.map((notebook) => (
                 <Card 
                   key={notebook.id} 
                   className="group hover:shadow-lg transition-all duration-200 border-border/50"

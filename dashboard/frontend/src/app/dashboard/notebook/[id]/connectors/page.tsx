@@ -62,7 +62,6 @@ export default function ConnectorsPage() {
     
     fetchConnectors().then((data) => {
       if (data) {
-        debugger;
         const body = JSON.parse(data.data?.body);
         if (body?.credentials) {
           setList(body);

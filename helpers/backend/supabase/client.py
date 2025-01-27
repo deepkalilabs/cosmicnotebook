@@ -1,8 +1,6 @@
 import os
 from supabase import create_client, Client
 from typing import Optional
-from dotenv import load_dotenv
-load_dotenv()
 
 class SupabaseClient():
     _instance: Optional[None] = None
@@ -10,8 +8,8 @@ class SupabaseClient():
     @classmethod 
     def get_client(cls) -> Client:
         if cls._instance is None:
-            SUPABASE_URL=os.environ.get('SUPABASE_URL')
-            SUPABASE_SERVICE_KEY=os.environ.get('SUPABASE_SERVICE_KEY')
+            SUPABASE_URL=os.getenv('SUPABASE_URL')
+            SUPABASE_SERVICE_KEY=os.getenv('SUPABASE_SERVICE_KEY')
 
             if not SUPABASE_SERVICE_KEY or not SUPABASE_URL:
                 raise ValueError("Supabase keys not found.")
