@@ -13,7 +13,7 @@ from datetime import datetime
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 from supabase import Client
-from helpers.supabase.client import get_supabase_client
+from helpers.backend.supabase.client import get_supabase_client
 supabase: Client = get_supabase_client()
 
 class LambdaGenerator:

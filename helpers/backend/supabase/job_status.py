@@ -1,13 +1,18 @@
 # status_handler.py
 import sys
 import os
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+print(sys.path)
+
 import json
 from uuid import UUID
 from typing import Dict, Any
 import logging
 from pydantic import BaseModel
-from ..types import SupabaseJobDetails, SupabaseJobList
+from common_types import SupabaseJobDetails, SupabaseJobList
+
 logger = logging.getLogger(__name__)
 from supabase import Client
 from client import get_supabase_client

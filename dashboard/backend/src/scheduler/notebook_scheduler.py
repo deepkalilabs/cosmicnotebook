@@ -4,16 +4,16 @@ import httpx
 from datetime import datetime
 from typing import Dict, Optional
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from supabase import Client
-from helpers.supabase.client import get_supabase_client
-from helpers.types import ScheduledJob, NotebookDetails
+from helpers.backend.supabase.client import get_supabase_client
+from backend_types import ScheduledJob, NotebookDetails
 from typing import List
 import uuid
 import json
 import logging
 
-load_dotenv()
+# load_dotenv()
 
 logger = logging.getLogger(__name__)
 

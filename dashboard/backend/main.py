@@ -1,28 +1,27 @@
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-import os
-from src.helpers.lambda_generator import lambda_generator
-from src.helpers.types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, OutputPosthogSetupMessage, ScheduledJob, NotebookDetails
 from uuid import UUID
-from src.helpers.notebook import notebook
 import logging
-from src.helpers.scheduler.notebook_scheduler import NotebookScheduler
 from typing import List
-from src.helpers.types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, ConnectorResponse
 from uuid import UUID
-from src.helpers.notebook import notebook
 import logging
-from src.helpers.types import ConnectorCredentials
 logging.basicConfig(level=logging.INFO)
 import resend 
 
-import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-from src.helpers.supabase import job_status
-from src.helpers.supabase.connector_credentials import create_connector_credentials, get_connector_credentials, get_is_type_connected, delete_connector_credentials
+from src.lambda_generator import lambda_generator
+from src.backend_types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, OutputPosthogSetupMessage, ScheduledJob, NotebookDetails, ConnectorResponse
+from src.helpers.notebook import notebook
+from src.scheduler.notebook_scheduler import NotebookScheduler
+from src.backend_types import ConnectorCredentials
 
 from supabase import Client
-from src.helpers.supabase.client import get_supabase_client
+from helpers.backend.supabase import job_status
+from helpers.backend.supabase.connector_credentials import create_connector_credentials, get_connector_credentials, get_is_type_connected, delete_connector_credentials
+from helpers.backend.supabase.client import get_supabase_client
 supabase: Client = get_supabase_client()
 resend.api_key = os.getenv('RESEND_API_KEY')
 

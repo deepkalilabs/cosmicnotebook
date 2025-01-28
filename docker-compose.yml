@@ -45,11 +45,15 @@ services:
   dashboard-backend:
     env_file: 
       - .env
+    volumes:
+      - ${PWD}/dashboard/backend:/app/backend  # Use absolute path of current directory
+      - ${PWD}/helpers:/app/helpers  # Mount helpers with absolute path
     build:
       context: dashboard/backend/
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+    command: /bin/sh -c "sleep infinity"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000"]
       interval: 30s

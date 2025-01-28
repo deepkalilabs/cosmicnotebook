@@ -1,10 +1,4 @@
-import os
-import json
-from uuid import UUID
-from typing import Dict, Any
 import logging
-from pydantic import BaseModel
-from ..types import SupabaseJobDetails, SupabaseJobList
 logger = logging.getLogger(__name__)
 from supabase import Client
 from helpers.backend.supabase.client import get_supabase_client

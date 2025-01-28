@@ -1,7 +1,7 @@
 from typing import Optional
 from fastapi import WebSocket
 from .factory import ConnectorFactory
-from ..types import ConnectorResponse, ConnectorCredentials
+from backend_types import ConnectorResponse, ConnectorCredentials
 import logging
 
 logging.basicConfig(level=logging.INFO)

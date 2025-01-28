@@ -5,7 +5,7 @@ sys.path.append((os.path.dirname(os.getcwd())))
 from supabase import Client
 import logging
 from helpers.backend.supabase.client import get_supabase_client
-from helpers.backend.types import SupabaseConnectorCredential, SupabaseConnectorCredentialList
+from helpers.backend.common_types import SupabaseConnectorCredential, SupabaseConnectorCredentialList
 logger = logging.getLogger(__name__)
 supabase: Client = get_supabase_client()
 
