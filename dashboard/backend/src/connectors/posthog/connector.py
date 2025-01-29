@@ -269,6 +269,6 @@ For more examples and detailed usage, refer to our documentation.
 
 ### WIP: Batch Exports
 The connector automatically sets up a daily batch export of your PostHog events to our own data warehouse.
-If you want need this service now, please contact us at charlesjavelona@gmail.com.
+If you want this service now, please contact us at charlesjavelona@gmail.com.
         """
         return doc
