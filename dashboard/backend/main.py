@@ -12,16 +12,17 @@ import logging
 logging.basicConfig(level=logging.INFO)
 import resend 
 
-from src.lambda_generator import lambda_generator
-from src.backend_types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, OutputPosthogSetupMessage, ScheduledJob, NotebookDetails, ConnectorResponse
-from src.helpers.notebook import notebook
-from src.scheduler.notebook_scheduler import NotebookScheduler
-from src.backend_types import ConnectorCredentials
 
 from supabase import Client
-from helpers.backend.supabase import job_status
-from helpers.backend.supabase.connector_credentials import create_connector_credentials, get_connector_credentials, get_is_type_connected, delete_connector_credentials
 from helpers.backend.supabase.client import get_supabase_client
+from helpers.backend.supabase import job_status
+from helpers.backend.supabase.connector_credentials import get_connector_credentials, get_is_type_connected, delete_connector_credentials
+
+from src.lambda_generator import lambda_generator
+from src.backend_types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, ScheduledJob, NotebookDetails, ConnectorCredentials
+from src.helpers.notebook import notebook
+from src.connectors.manager import ConnectorManager
+
 supabase: Client = get_supabase_client()
 resend.api_key = os.getenv('RESEND_API_KEY')
 
@@ -259,13 +260,22 @@ async def delete_schedule(schedule_id: str):
 # Connectors
 #----------------------------------
 @app.post("/connectors/create")
-async def create_connector(connector_data: ConnectorCredentials):
-    return await create_connector_credentials(
-        connector_data.org_id,
-        connector_data.user_id,
-        connector_data.connector_type,
-        connector_data.credentials
-    )
+async def create_connector(connector_data: dict):
+    try:
+        # Convert the raw dict to ConnectorCredentials
+        credentials = ConnectorCredentials(
+            user_id=connector_data['user_id'],
+            org_id=connector_data['org_id'],
+            notebook_id=connector_data.get('notebook_id'),  # Using .get() since it's optional
+            connector_type=connector_data['connector_type'],
+            credentials=connector_data['credentials'],
+        )
+        connector_manager = ConnectorManager()
+        return await connector_manager.setup_connector(credentials)
+    except Exception as e:
+        logging.error(f"Error creating connector: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+    
 
 @app.delete("/connectors/delete/{connector_id}")
 async def delete_connector(connector_id: str):

@@ -7,6 +7,7 @@ from ..base import BaseConnector
 from helpers.types import ConnectorResponse
 from helpers.supabase.connector_credentials import create_connector_credentials
 from helpers.supabase.connector_sync_runs import insert_connector_sync_run
+import json
 
 
 logger = logging.getLogger(__name__)
@@ -15,15 +16,15 @@ class PosthogConnector(BaseConnector):
     def __init__(self, credentials: dict):
         logger.info(f"Initializing PosthogConnector with credentials: {credentials}")
         # Extract the nested credentials
-        self.user_id = credentials.get('user_id')
-        self.org_id = credentials.get('org_id')
-        self.notebook_id = credentials.get('notebook_id')
+        self.user_id = credentials.user_id
+        self.org_id = credentials.org_id
+        self.notebook_id = credentials.notebook_id
         self.connector_id = None # Get after inserting into database
-        self.connector_type = 'posthog'
+        self.connector_type = credentials.connector_type
         self.credentials = {
-            'api_key': credentials.get('credentials.apiKey'),
-            'base_url': credentials.get('credentials.baseUrl'),
-            'project_id': credentials.get('credentials.projectId')
+            'api_key': credentials.credentials['apiKey'],
+            'base_url': credentials.credentials['baseUrl'],
+            'project_id': credentials.credentials['projectId']
         }
         self.s3_config = {
             'bucket': os.getenv('AWS_BUCKET_NAME'),
@@ -41,8 +42,10 @@ class PosthogConnector(BaseConnector):
                 return {
                     'success': False,
                     'message': f"Invalid credentials format. Expected dict, got {type(self.credentials)}",
-                    'code': None,
-                    'docstring': None
+                    'code_string': None,
+                    'doc_string': None,
+                    'body': None,
+                    'type': self.connector_type
                 }
             
             if 'api_key' not in self.credentials:
@@ -51,36 +54,33 @@ class PosthogConnector(BaseConnector):
                     'success': False,
                     'message': "Missing required credential: 'api_key'. Available keys: " + 
                               ", ".join(self.credentials.keys()),
-                    'code': None,
-                    'docstring': None
+                    'code_string': None,
+                    'doc_string': None,
+                    'body': None,
+                    'type': self.connector_type
                 }
             
             # Submit connector credentials to database
             response = await create_connector_credentials(
                 user_id=self.user_id,
-                notebook_id=self.notebook_id,
                 org_id=self.org_id,
                 connector_type=self.connector_type,
-                credentials=self.credentials
+                credentials=self.credentials,
+                doc_string=self.get_connector_docstring(),
+                code_string=self.get_connector_code()
             )
-            logger.info(f"Connector credentials response: {response}")
 
-
-            if response['statusCode'] != 200:
-                return {
-                    'success': False,
-                    'message': response['message'],
-                    'code': None,
-                    'docstring': None
-                }
+            # Convert the list response to a dictionary by taking the first item
+            data = response['body'][0] if isinstance(response['body'], list) else response['body']
+            self.connector_id = data['id']
             
-            # Get connector id from database
-            self.connector_id = response['data']['id']
             return {
                 'success': True,
                 'message': 'Posthog submitted to database',
-                'code': self.get_connector_code(),
-                'docstring': self.get_connector_docstring()
+                'code_string': self.get_connector_code(),
+                'doc_string': self.get_connector_docstring(),
+                'body': data,  # Now data is a dictionary, not a list
+                'type': self.connector_type
             }
 
         except Exception as e:
@@ -88,8 +88,10 @@ class PosthogConnector(BaseConnector):
             return {
                 'success': False,
                 'message': f"Failed to setup PostHog connector: {str(e)}",
-                'code': None,
-                'docstring': None
+                'code_string': None,
+                'doc_string': None,
+                'body': None,
+                'type': self.connector_type
             }
 
     async def _prepare_batch_export(self, project_id: str) -> Dict[str, Any]:
@@ -237,4 +239,36 @@ class PosthogConnector(BaseConnector):
             logger.error(f"Error creating batch export: {e}")
             return None
     
- 
+    def get_connector_code(self):
+        code = f"""
+from cosmic.connectors import PostHogService
+
+# Initialize PostHog service
+posthog_service = PostHogService({self.credentials})
+
+print("PostHog connector initialized successfully! ✅")
+"""
+        return code.lstrip()
+
+    def get_connector_docstring(self):
+        """
+        Return the connector docstring that will be displayed in the notebook cell.
+        """
+        doc = """
+## PostHog Connector
+This connector allows you to interact with your PostHog data directly in your notebook.
+It can be used to fetch raw data from PostHog or to try out our own AI recipes.
+It can only support fetching events less than or equal to 10,000 events at a time.
+To fetch more than 10,000 events, please ask for the batch export feature.
+
+## Documentation
+For more examples and detailed usage, refer to our documentation.
+- Cosmic SDK Documentation: https://github.com/deepkalilabs/cosmic-sdk/posthog
+- Cosmic SDK Recipes: https://github.com/deepkalilabs/cosmic-sdk/posthog/recipes
+
+
+### WIP: Batch Exports
+The connector automatically sets up a daily batch export of your PostHog events to our own data warehouse.
+If you want need this service now, please contact us at charlesjavelona@gmail.com.
+        """
+        return doc

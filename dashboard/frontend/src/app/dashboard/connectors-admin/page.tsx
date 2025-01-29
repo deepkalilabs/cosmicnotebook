@@ -1,12 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactNode } from 'react';
 
 import { useConnectorStore } from '@/app/store';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { ConnectorsButton } from '@/components/connectors/ConnectorsButton';
 import { useOrgUserStore } from '@/app/store';
+import { marked } from 'marked';
+  import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+
 import {
   Table,
   TableBody,
@@ -15,6 +18,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import CodeBlock from '@/components/CodeBlock';
+
 
 const ConnectorsAdmin = () => {
   const { toast } = useToast();
@@ -22,6 +34,9 @@ const ConnectorsAdmin = () => {
   const [visibleCredentials, setVisibleCredentials] = useState<string[]>([]);
   const { orgUsers } = useOrgUserStore();
   const { connectors, setConnectors } = useConnectorStore();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [selectedDocstring, setSelectedDocstring] = useState<string>("");
+  const [selectedCode, setSelectedCode] = useState<string>("");
 
   useEffect(() => {
     if (orgUsers && orgUsers.length > 0) {
@@ -70,6 +85,7 @@ const ConnectorsAdmin = () => {
     });
 
     const data = await response.json();
+    console.log('Create connector response:', data);
     return data;
   };
 
@@ -140,6 +156,15 @@ const ConnectorsAdmin = () => {
     });
   };
 
+  const handleShowDocs = (e: React.MouseEvent<HTMLButtonElement>, docstring: string, code: string) => {
+    e.preventDefault();
+    setSelectedDocstring(docstring);
+    setSelectedCode(code);
+    setIsSheetOpen(true);
+  };
+
+
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -152,14 +177,14 @@ const ConnectorsAdmin = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Type</TableHead>
-              <TableHead>Created</TableHead>
               <TableHead>Credentials</TableHead>
               <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead>Docs</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {connectors.map((connector) => (
-              <TableRow key={connector.id}>
+              <TableRow key={`row-${connector.id}`}>
                 <TableCell className="font-medium capitalize">
                   {connector.connector_type}
                 </TableCell>
@@ -211,11 +236,66 @@ const ConnectorsAdmin = () => {
                     </svg>
                   </button>
                 </TableCell>
+                <TableCell>
+                  <button
+                    onClick={(e) => handleShowDocs(e, connector?.doc_string, connector?.code_string)}
+                    className="p-1 text-gray-600 hover:bg-gray-100 rounded"
+                    title="View docstring"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M19 11H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v2" />
+                    </svg>
+                  </button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
+
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <SheetContent className="overflow-y-auto w-1/2 hover:max-w-[80%] transition-all duration-300" side="right">
+        <SheetHeader>
+          <SheetTitle>Connector Documentation</SheetTitle>
+          <SheetDescription>View and copy connector details</SheetDescription>
+        </SheetHeader>
+        <div className="mt-4 space-y-6 pb-8">
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <h2 className="text-lg font-semibold mb-4">Docstring</h2>
+            <div 
+              className="prose prose-sm max-w-none bg-white p-6 rounded border min-h-[300px] max-h-[600px] overflow-y-auto"
+              dangerouslySetInnerHTML={{ 
+                __html: marked.parse(selectedDocstring || '') 
+              }}
+            />
+          </div>
+            
+      <div className="bg-gray-50 p-6 rounded-lg">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Code</h2>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(selectedCode);
+              toast({
+                title: "Copied",
+                description: "Code copied to clipboard",
+              });
+            }}
+            className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+            title="Copy code"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+        </div>
+
+        <CodeBlock code={selectedCode} />
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };

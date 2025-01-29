@@ -79,9 +79,9 @@ class ConnectorResponse(BaseModel):
     type: str
     success: bool
     message: str
-    cell: Optional[Dict[str, Any]] = None
-    code: Optional[str] = None
-    docstring: Optional[str] = None
+    body: Optional[dict] = None
+    code_string: Optional[str] = None
+    doc_string: Optional[str] = None
 
 class ConnectorCredentials(BaseModel):
     user_id: str
@@ -89,5 +89,7 @@ class ConnectorCredentials(BaseModel):
     notebook_id: Optional[str] = None
     connector_type: str
     credentials: dict
+    doc_string: Optional[str] = None
+    code_string: Optional[str] = None
 
 
