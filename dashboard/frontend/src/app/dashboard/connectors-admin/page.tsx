@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, ReactNode } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { useConnectorStore } from '@/app/store';
 import { supabase } from '@/lib/supabase';
@@ -8,7 +8,6 @@ import { useToast } from '@/hooks/use-toast';
 import { ConnectorsButton } from '@/components/connectors/ConnectorsButton';
 import { useOrgUserStore } from '@/app/store';
 import { marked } from 'marked';
-  import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 import {
   Table,
@@ -84,9 +83,18 @@ const ConnectorsAdmin = () => {
       body: JSON.stringify({ userId, orgId, type, credentials })
     });
 
-    const data = await response.json();
-    console.log('Create connector response:', data);
-    return data;
+    const body = await response.json();
+    console.log('Create connector response:', body);
+
+    //If the connector is created successfully, open the doc dialog
+    if (body.status === 200) {
+      setTimeout(() => {
+        console.log('Opening doc dialog', body.data);
+        handleShowDocs(body.data.doc_string, body.data.code_string);
+      }, 2000);
+    }
+
+    return body;
   };
 
   const handleDeleteConnector = async (connectorId: string) => {
@@ -156,13 +164,11 @@ const ConnectorsAdmin = () => {
     });
   };
 
-  const handleShowDocs = (e: React.MouseEvent<HTMLButtonElement>, docstring: string, code: string) => {
-    e.preventDefault();
+  const handleShowDocs = (docstring: string, code: string) => {
     setSelectedDocstring(docstring);
     setSelectedCode(code);
     setIsSheetOpen(true);
   };
-
 
 
   return (
@@ -238,7 +244,7 @@ const ConnectorsAdmin = () => {
                 </TableCell>
                 <TableCell>
                   <button
-                    onClick={(e) => handleShowDocs(e, connector?.doc_string, connector?.code_string)}
+                    onClick={() => handleShowDocs(connector?.doc_string, connector?.code_string)}
                     className="p-1 text-gray-600 hover:bg-gray-100 rounded"
                     title="View docstring"
                   >
