@@ -4,9 +4,9 @@ import logging
 import requests
 from typing import Dict, Any, List
 from ..base import BaseConnector
-from helpers.types import ConnectorResponse
-from helpers.supabase.connector_credentials import create_connector_credentials
-from helpers.supabase.connector_sync_runs import insert_connector_sync_run
+from src.backend_types import ConnectorResponse
+from helpers.backend.supabase.connector_credentials import create_connector_credentials
+from helpers.backend.supabase.connector_sync_runs import insert_connector_sync_run
 import json
 
 
