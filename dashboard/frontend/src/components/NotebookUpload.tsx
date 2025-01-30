@@ -10,6 +10,13 @@ import { FileInput } from '@uppy/react';
 import { Button } from '@/components/ui/button';
 import '@uppy/core/dist/style.min.css';
 import { NotebookUploadProps } from '@/app/types';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const uppy = new Uppy({
   restrictions: {
@@ -39,24 +46,34 @@ export default function NotebookUpload({ onFileSelect }: NotebookUploadProps) {
   }, [onFileSelect]);
 
   return (
-    <div>
-      <FileInput
-        uppy={uppy}
-        pretty={false}
-        inputName="files"
-        locale={{
-          strings: {
-            chooseFiles: 'Select Python File',
-            noFiles: 'No Python file selected',
-          }        
-        }}
-      >
-        {({ openPicker }) => (
-          <Button onClick={openPicker}>
-            Select Python File
-          </Button>
-        )}
-      </FileInput>
-    </div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button>Upload Notebook</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Upload Notebook</DialogTitle>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <FileInput
+            uppy={uppy}
+            pretty={false}
+            inputName="files"
+            locale={{
+              strings: {
+                chooseFiles: 'Select Python File',
+                noFiles: 'No Python file selected',
+              }        
+            }}
+          >
+            {({ openPicker }) => (
+              <Button onClick={openPicker}>
+                Select Python File
+              </Button>
+            )}
+          </FileInput>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -25,7 +25,7 @@ RUN uv venv && \
     uv pip install .
 
 # Expose the port your FastAPI app will run on (typically 8000)
-EXPOSE 8000
+EXPOSE 47153
 
 # Command to run the application
-CMD ["uv", "run", "main.py"]
+CMD ["uv", "run", "python", "main.py"]
