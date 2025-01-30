@@ -12,8 +12,8 @@ class SupabaseClient():
             SUPABASE_SERVICE_KEY=os.getenv('SUPABASE_SERVICE_KEY')
 
             if not SUPABASE_SERVICE_KEY or not SUPABASE_URL:
-                raise ValueError("Supabase keys not found.")
-            
+                print("Supabase keys not found.")
+                return None
             cls._instance: Client = create_client(
                 supabase_url=SUPABASE_URL,
                 supabase_key=SUPABASE_SERVICE_KEY

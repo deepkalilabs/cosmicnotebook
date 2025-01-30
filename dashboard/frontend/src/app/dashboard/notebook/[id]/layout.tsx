@@ -1,9 +1,10 @@
 "use client"
 
-import { Database, Notebook, Activity, Clock } from "lucide-react"
+import { Database, Notebook, Activity, Clock, Rocket } from "lucide-react"
 import { useParams, useSearchParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { cn } from "@/lib/utils";
+import { useUserStore } from "@/app/store"; 
 
 const getNotebookNavItems = (id: string, name: string) => [
   {
@@ -12,10 +13,15 @@ const getNotebookNavItems = (id: string, name: string) => [
     icon: <Notebook className="h-4 w-4" />,
   },
   {
-    title: "Connectors",
-    href: `/dashboard/notebook/${id}/connectors?name=${encodeURIComponent(name)}`,
-    icon: <Database className="h-4 w-4" />,
+    title: "Deployment",
+    href: `/dashboard/notebook/${id}/deployment?name=${encodeURIComponent(name)}`,
+    icon: <Rocket className="h-4 w-4" />,
   },
+  // {
+  //   title: "Connectors",
+  //   href: `/dashboard/notebook/${id}/connectors?name=${encodeURIComponent(name)}`,
+  //   icon: <Database className="h-4 w-4" />,
+  // },
   {
     title: "Jobs",
     href: `/dashboard/notebook/${id}/jobs?name=${encodeURIComponent(name)}`,
@@ -39,19 +45,28 @@ function SidebarNav() {
 
   return (
     <nav className="grid items-start gap-1">
-      {items.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
+      {items.map((item) => {
+
+        const itemPath = item.href.split('?')[0];
+        const currentPath = pathname.split('?')[0];
+        const isActive = itemPath === currentPath;
+
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
           className={cn(
             "flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground",
-            pathname === item.href ? "bg-accent" : "transparent"
+            isActive
+              ? "bg-accent text-accent-foreground font-medium" 
+              : "text-muted-foreground"
           )}
         >
           {item.icon}
           {item.title}
-        </Link>
-      ))}
+          </Link>
+        )
+      })}
     </nav>
   )
 }
@@ -60,7 +75,7 @@ function Sidebar() {
   return (
     <div className="w-[240px] border-r bg-background">
       <div className="flex h-14 items-center border-b px-6">
-        <span className="font-medium">Notebook Editor</span>
+        <span className="font-medium">Notebook Settings</span>
       </div>
       <div className="py-2 px-2">
         <SidebarNav />

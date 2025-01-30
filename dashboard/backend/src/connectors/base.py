@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any
-from backend_types import ConnectorResponse
+from src.backend_types import ConnectorResponse
 
 class BaseConnector(ABC):
     def __init__(self, credentials: dict):

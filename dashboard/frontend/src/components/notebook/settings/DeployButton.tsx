@@ -6,14 +6,14 @@ import { Cloud, Loader2 } from 'lucide-react';
 
 interface DeployButtonProps {
   onDeploy?: () => Promise<void>;
-  isConnected: boolean;
   disabled?: boolean;
+  isConnected?: boolean;
 }
 
 export function DeployButton({ 
   onDeploy, 
-  isConnected,
-  disabled
+  disabled,
+  isConnected
 }: DeployButtonProps) {
   const [isDeploying, setIsDeploying] = useState(false);
 
@@ -30,10 +30,10 @@ export function DeployButton({
 
   return (
     <Button
-      variant="outline"
+      variant="default"
       className="gap-2"
       onClick={handleDeploy}
-      disabled={!isConnected || isDeploying || disabled}
+      disabled={isDeploying || disabled || !isConnected}
     >
       {isDeploying ? (
         <>

@@ -7,7 +7,7 @@ import os
 # from dotenv import load_dotenv
 from supabase import Client
 from helpers.backend.supabase.client import get_supabase_client
-from backend_types import ScheduledJob, NotebookDetails
+from src.backend_types import ScheduledJob, NotebookDetails
 from typing import List
 import uuid
 import json

@@ -2,7 +2,7 @@ import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
+from fastapi import FastAPI, WebSocket, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from uuid import UUID
 import logging
@@ -11,21 +11,29 @@ from uuid import UUID
 import logging
 logging.basicConfig(level=logging.INFO)
 import resend 
+import pdb
+from src.lambda_generator import lambda_generator
+from src.backend_types import ScheduledJob, NotebookDetails
+from src.helpers.notebook import notebook
+from src.scheduler.notebook_scheduler import NotebookScheduler
+from src.backend_types import ConnectorCredentials
 
 
 from supabase import Client
 from helpers.backend.supabase.client import get_supabase_client
+from helpers.backend.aws.s3 import s3
 from helpers.backend.supabase import job_status
 from helpers.backend.supabase.connector_credentials import get_connector_credentials, get_is_type_connected, delete_connector_credentials
 
 from src.lambda_generator import lambda_generator
-from src.backend_types import OutputExecutionMessage, OutputSaveMessage, OutputLoadMessage, OutputGenerateLambdaMessage, ScheduledJob, NotebookDetails, ConnectorCredentials
+from src.backend_types import ScheduledJob, NotebookDetails, ConnectorCredentials
 from src.helpers.notebook import notebook
 from src.connectors.manager import ConnectorManager
 
 supabase: Client = get_supabase_client()
 resend.api_key = os.getenv('RESEND_API_KEY')
-
+import traceback
+import json
 app = FastAPI()
 # scheduler = NotebookScheduler()  # Single instance
 # Enable CORS for frontend communication
@@ -42,137 +50,94 @@ notebook_sessions = {}
 # TODO: This should only load in a notebook if it's not already loaded. It currently loads /dashboard/projects
 @app.websocket("/ws/{notebook_id}")
 async def websocket_endpoint(websocket: WebSocket, notebook_id: str):
-    print(f"New connection with notebook ID: {notebook_id}")
-    
-    await websocket.accept()
     
     try:
+        logging.info(f"New connection with notebook ID: {notebook_id}")    
+        await websocket.accept()
+
         while True:
-            if notebook_id not in notebook_sessions:
-                nb = notebook.NotebookUtils(notebook_id, websocket)
-                await websocket.send_json({"type": "init", "message": "Kernel initializing. Please wait."})
-                kernel_manager, kernel_client = nb.initialize_kernel()
-                notebook_sessions[notebook_id] = {'km': kernel_manager, 'kc': kernel_client, 'nb': nb}
-            
-            nb = notebook_sessions[notebook_id]['nb']
+            logging.info("Waiting for message")
             data = await websocket.receive_json()
-            
-            if data['type'] == 'execute':
-                code = data['code']
-                output = await nb.execute_code(code=code)
-
-                # print(f"Sending output: {output}, type: {type(output)}, cellId: {data['cellId']}\n\n")
-                msgOutput = OutputExecutionMessage(type='output', cellId=data['cellId'], output=output)
-                await websocket.send_json(msgOutput.model_dump())
-            
-            elif data['type'] == 'save_notebook':
-                response = await nb.save_notebook(data)
-                # print("response", response)
-                response = OutputSaveMessage(type='notebook_saved', success=response['success'], message=response['message'])
-                await websocket.send_json(response.model_dump())
-                
-            elif data['type'] == 'load_notebook':
-                response = await nb.load_notebook_handler(data['filename'], data['notebook_id'], data['user_id'])
-                # print("response", response)
-                output = OutputLoadMessage(type='notebook_loaded', success=response['status'] == 'success', message=response['message'], cells=response['notebook'])
-                await websocket.send_json(output.model_dump())
- 
-            elif data['type'] == 'create_connector':
-                try:
-                    print("Creating connector", data)
-                    credentials: ConnectorCredentials = {
-                        "connector_type": data['connector_type'],
-                        "user_id": data['user_id'],
-                        "notebook_id": data['notebook_id'],
-                        "credentials": data['credentials']
-                    }
-                    # print("Installing dependencies")
-                    dependency_list = ['cosmic-sdk', 'pydantic', 'requests']
-                    dependencies = await nb.execute_code(code='!pip install ' + ' '.join(dependency_list))
-
-                    # print("dependencies", dependencies)
-                    output = await nb.handle_connector_request(credentials)
-                    # print("Connector created response", output)
-                    await websocket.send_json(output.model_dump())
-                except Exception as e:
-                    logging.error(f"Error creating connector: {e}")
-                    await websocket.send_json({
-                        'type': 'error',
-                        'message': str(e)
-                    })
-                continue  # Continue listening for more messages
-               
-            elif data['type'] == 'deploy_lambda':
+       
+            if data['type'] == 'deploy_notebook':
                 # TODO: Better dependency management here.
                 # TODO: Get status/msg directly from function.
                 # TODO: Make a base lambda layer for basic dependencies.
-                dependencies = await nb.execute_code(code='!pip list --format=freeze')
-                lambda_handler = lambda_generator.LambdaGenerator(data['all_code'], data['user_id'], data['notebook_name'], data['notebook_id'], dependencies)
-                status = False
+                # dependencies = await nb.execute_code(code='!pip list --format=freeze')
+                # logging.info(f"Received message in the block 2: {data}")
 
-                msg = "Processing the notebook"
-                response = OutputGenerateLambdaMessage(type='lambda_generated', success=status, message=msg)
-                await websocket.send_json(response.model_dump())
-                lambda_handler.save_lambda_code()
+                print(data)
 
-                msg = "Preparing your code for prod"
-                lambda_handler.prepare_container()
-                response = OutputGenerateLambdaMessage(type='lambda_generated', success=status, message=msg)
-                await websocket.send_json(response.model_dump())
+                python_script = s3.get_python_script_from_s3(
+                    notebook_id=notebook_id,
+                    user_id=data['user_id'],
+                )
 
-                msg = "Shipping your code to the cloud"
-                lambda_handler.build_and_push_container()
-                response = OutputGenerateLambdaMessage(type='lambda_generated', success=status, message=msg)
-                await websocket.send_json(response.model_dump())
-                response = lambda_handler.create_lambda_fn()
+                print(f"Python script: {python_script}")
+
+                # lambda_handler = lambda_generator.LambdaGenerator(data['all_code'], data['user_id'], data['notebook_name'], data['notebook_id'], dependencies)
+                # status = False
+
+                # msg = "Processing the notebook"
+                # response = OutputGenerateLambdaMessage(type='lambda_generated', success=status, message=msg)
+                # await websocket.send_json(response.model_dump())
+                # lambda_handler.save_lambda_code()
+
+                # msg = "Preparing your code for prod"
+                # lambda_handler.prepare_container()
+                # response = OutputGenerateLambdaMessage(type='lambda_generated', success=status, message=msg)
+                # await websocket.send_json(response.model_dump())
+
+                # msg = "Shipping your code to the cloud"
+                # lambda_handler.build_and_push_container()
+                # response = OutputGenerateLambdaMessage(type='lambda_generated', success=status, message=msg)
+                # await websocket.send_json(response.model_dump())
+                # response = lambda_handler.create_lambda_fn()
                 
-                msg = "Creating an API for you"
-                response = OutputGenerateLambdaMessage(type='lambda_generated', success=status, message=msg)
-                await websocket.send_json(response.model_dump())
+                # msg = "Creating an API for you"
+                # response = OutputGenerateLambdaMessage(type='lambda_generated', success=status, message=msg)
+                # await websocket.send_json(response.model_dump())
                 
-                status, message = lambda_handler.create_api_endpoint()
-                response = OutputGenerateLambdaMessage(type='lambda_generated', success=status, message=message)
-                await websocket.send_json(response.model_dump())
+                # status, message = lambda_handler.create_api_endpoint()
+                # response = OutputGenerateLambdaMessage(type='lambda_generated', success=status, message=message)
+                # await websocket.send_json(response.model_dump())
 
-                api = message
+                # api = message
 
-                # Get user email from Supabase
-                # TODO: Move this to a helper class.
-                user_data = supabase.table('notebooks').select('user_id').eq('id', data['notebook_id']).execute()
-                if user_data and user_data.data:
-                    user_id = user_data.data[0]['user_id']
+                # # Get user email from Supabase
+                # # TODO: Move this to a helper class.
+                # user_data = supabase.table('notebooks').select('user_id').eq('id', data['notebook_id']).execute()
+                # if user_data and user_data.data:
+                #     user_id = user_data.data[0]['user_id']
                 
-                user_obj = supabase.auth.admin.get_user_by_id(user_id)
-                if user_obj and user_obj.user:
-                    email = user_obj.user.email
-                else:
-                    raise Exception("User email not found for user_id: " + user_id)
+                # user_obj = supabase.auth.admin.get_user_by_id(user_id)
+                # if user_obj and user_obj.user:
+                #     email = user_obj.user.email
+                # else:
+                #     raise Exception("User email not found for user_id: " + user_id)
                 
-                # Sending email with the attachment
-                resend.Emails.send({
-                    "from": "shikhar@agentkali.ai",
-                    "to": email,
-                    "subject": "Your API is ready",
-                    "html": f"<p>Congrats on creating your <strong>first API</strong>!</p><p>You can find it here: {api}</p>",
-                })
+                # # Sending email with the attachment
+                # resend.Emails.send({
+                #     "from": "shikhar@agentkali.ai",
+                #     "to": email,
+                #     "subject": "Your API is ready",
+                #     "html": f"<p>Congrats on creating your <strong>first API</strong>!</p><p>You can find it here: {api}</p>",
+                # })
 
             msgOutput = ''
             
-    except WebSocketDisconnect:
-        logging.info(f"WebSocket disconnected for notebook ID: {notebook_id}")
+    # except WebSocketDisconnect as Exception:
+    #     logging.info(f"WebSocket disconnected for notebook ID: {notebook_id}")
+    #     logging.error(f"Error in websocket connection: {str(e)}")
+    #     logging.error(f"Traceback:\n{traceback.format_exc()}")
     except Exception as e:
         logging.error(f"Error in websocket connection: {str(e)}")
-        try:
-            await websocket.send_json({
-                'type': 'error',
-                'message': str(e)
-            })
-        except:
-            pass
-    finally:
-        if notebook_id in notebook_sessions:
-            # Clean up kernel if needed
-            pass
+        logging.error(f"Traceback:\n{traceback.format_exc()}")
+
+    # finally:
+    #     if notebook_id in notebook_sessions:
+    #         # Clean up kernel if needed
+    #         pass
 
 @app.get("/status/jobs/{user_id}")
 async def status_endpoint_jobs_for_user(user_id: UUID):
@@ -292,9 +257,7 @@ async def check_connector_connection(user_id: UUID, notebook_id: UUID, type: str
 
 
 if __name__ == "__main__":
-    if not os.path.exists('notebooks'):
-        os.makedirs('notebooks')
-
+    print("Starting server")
     import uvicorn
     uvicorn.run(
         "main:app", 
@@ -308,6 +271,6 @@ if __name__ == "__main__":
             "**/requirements.txt"                 # Exclude any requirements.txt
         ],
         log_level="info",
-        access_log=True
+        access_log=True,
     )
 
