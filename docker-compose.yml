@@ -9,11 +9,9 @@ services:
     ports:
       - "2718:2718"
     volumes:
-      - ${PWD}:${PWD}  # Use absolute path of current directory
-      - ${PWD}/helpers:${PWD}/helpers  # Mount helpers with absolute path
-      - marimo-cache:/root/.cache/marimo    
+      - ${PWD}/helpers:/helpers  # Mount helpers with absolute path
     environment:
-      - PYTHONPATH=${PWD}:${PWD}/helpers  # Add helpers to Python path
+      - PYTHONPATH=/ide:/helpers  # Add helpers to Python path
       - MARIMO_NO_ANALYTICS=1
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:2718"]
@@ -34,6 +32,9 @@ services:
       - NEXT_PUBLIC_MARIMO_URL=http://localhost:2718
     ports:
       - "3000:3000"
+    volumes:
+      - ./dashboard/frontend:/app
+      - /app/node_modules
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 30s
@@ -41,21 +42,21 @@ services:
       retries: 3
     networks:
       - cosmic-network
-
+      
   dashboard-backend:
     env_file: 
       - .env
     volumes:
-      - ${PWD}/dashboard/backend:/app/backend  # Use absolute path of current directory
+      - ${PWD}/dashboard/backend:/app  # Use absolute path of current directory
       - ${PWD}/helpers:/app/helpers  # Mount helpers with absolute path
     build:
       context: dashboard/backend/
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
-    command: /bin/sh -c "sleep infinity"
+      - "47153:47153"
+    # command: /bin/sh -c "sleep infinity"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      test: ["CMD", "curl", "-f", "http://localhost:47153"]
       interval: 30s
       timeout: 10s
       retries: 3

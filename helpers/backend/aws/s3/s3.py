@@ -15,19 +15,20 @@ bucket_name = 'notebook-lambda-generator'
 
 
 # TODO: Save the notebook to s3.
-def save_or_update_notebook(notebook_id: str, user_id: str, notebook: str, filename: str, bucket_name = bucket_name):
+def save_or_update_notebook(notebook_id: str, user_id: str, contents: str, 
+                            filename: str, bucket_name: str = bucket_name, type: str = "marimo_notebook"):
     if not notebook_id:
         raise ValueError("Notebook ID is required")
     if not user_id:
         raise ValueError("User ID is required")
-    if not notebook:
+    if not contents:
         raise ValueError("Notebook is required")    
     
     try:
-        file_path = f"notebooks/{user_id}/{notebook_id}.py"
+        file_path = f"notebooks/{user_id}/{notebook_id}_{type}.py"
         # Check if notebook exists and get its content if it does        
         # Save or update notebook to S3
-        aws_response = s3.put_object(Bucket=bucket_name, Key=file_path, Body=json.dumps(notebook))
+        aws_response = s3.put_object(Bucket=bucket_name, Key=file_path, Body=contents)
         print("AWS Response:", aws_response)
 
         if aws_response['ResponseMetadata']['HTTPStatusCode'] != 200:
@@ -43,7 +44,7 @@ def save_or_update_notebook(notebook_id: str, user_id: str, notebook: str, filen
             's3_url': url,
             'updated_at': 'now()',
             'name': filename,
-            'path': filename
+            'path': filename,
         }).execute()
         
         return {
@@ -83,3 +84,8 @@ def load_notebook(s3_url: str):
 def delete_notebook(filename: str, bucket_name = bucket_name):
     pass
 
+
+def get_python_script_from_s3(notebook_id: str, user_id: str, bucket_name = bucket_name, type: str = "python_script"):
+    file_path = f"notebooks/{user_id}/{notebook_id}_{type}.py"
+    response = s3.get_object(Bucket=bucket_name, Key=file_path)
+    return response.get('Body').read().decode('utf-8')

@@ -81,14 +81,8 @@ export interface ConnectorCredentials {
 
 
 export interface NotebookConnectionProps {
-  onOutput?: (cellId: string, output: string) => void;
-  onNotebookLoaded?: (cells: NotebookCell[]) => void;
-  onNotebookSaved?: (data: OutputSaveMessage) => void;
-  onError?: (error: string) => void;
   onNotebookDeployed?: (data: OutputDeployMessage) => void;
   notebookDetails?: NotebookDetails;
-  onConnectorStatus?: (status: ConnectorStatus) => void;
-  onConnectorCreated?: (data: ConnectorResponse) => void;
 }
 
 export interface NotebookDetails {

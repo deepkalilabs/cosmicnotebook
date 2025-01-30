@@ -1,7 +1,8 @@
 /* Copyright 2024 Marimo. All rights reserved. */
 import { generateSessionId } from "@/lib/marimo/sessions";
 
-const URL_BASE = process.env.NEXT_PUBLIC_MARIMO_URL || 'http://localhost:2718';
+const URL_BASE = process.env.NEXT_PUBLIC_MARIMO_URL || 'http://localhost:3002';
+// const URL_BASE = 'http://localhost:3002';
 console.log('URL_BASE', URL_BASE);
 
 export function updateQueryParams(updater: (params: URLSearchParams) => void) {
@@ -27,6 +28,10 @@ export function newNotebookURL(user_id: string, notebook_id: string) {
   const sessionId = generateSessionId();
   const initializationId = `__new__${sessionId}`;
   return asURL(initializationId, user_id, notebook_id).toString();
+}
+
+export function existingNotebookURL(path: string, user_id: string, notebook_id: string) {
+  return asURL(path, user_id, notebook_id).toString();
 }
 
 const urlRegex = /(https?:\/\/\S+)/g;
