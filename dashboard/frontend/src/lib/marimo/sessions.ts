@@ -41,6 +41,11 @@ export function isSessionId(value: string | null): value is SessionId {
 }
 
 const sessionId = (() => {
+  // Check if we're on the client side
+  if (typeof window === 'undefined') {
+    return generateSessionId();
+  }
+
   const url = new URL(window.location.href);
   const id = url.searchParams.get(
     KnownQueryParams.sessionId,

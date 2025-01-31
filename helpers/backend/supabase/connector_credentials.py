@@ -53,7 +53,7 @@ def get_connector_credentials(user_id: str, notebook_id: str):
 
 
 
-async def create_connector_credentials(org_id: str, user_id: str, connector_type: str, credentials: dict):
+async def create_connector_credentials(org_id: str, user_id: str, connector_type: str, credentials: dict, doc_string: str, code_string: str):
     if not user_id:
         return {
             'statusCode': 400,
@@ -88,14 +88,16 @@ async def create_connector_credentials(org_id: str, user_id: str, connector_type
                 'user_id': user_id,
                 'org_id': org_id,
                 'connector_type': connector_type,
-                'credentials': credentials
+                'credentials': credentials,
+                'doc_string': doc_string,
+                'code_string': code_string
             }) \
             .execute()
         
         return {
             'statusCode': 200,
             'message': 'Connector credentials created successfully',
-            'body': json.dumps(response.data)
+            'body': response.data
         }
     except Exception as e:
         logger.error(f"Error creating connector credentials: {str(e)}")

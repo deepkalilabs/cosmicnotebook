@@ -9,14 +9,15 @@ import { Button } from '@/components/ui/button'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useUserStore, useOrgUserStore } from '@/app/store'
-import { ConnectorsButtonProps } from '@/app/types'
+import { ConnectorCredentials, ConnectorsButtonProps } from '@/app/types'
 import { useConnectorStore } from '@/app/store'
 import { toast } from '@/hooks/use-toast'
 
 const formSchema = z.object({
   apiKey: z.string().min(30, { message: "API Key is required" }),
   baseUrl: z.string().min(20, { message: "Base URL is required" }),
-  userId: z.string().min(5, { message: "User ID is required" })
+  userId: z.string().min(5, { message: "User ID is required" }),
+  projectId: z.string().min(5, { message: "Project ID is required" })
 })
 
 export default function FormsPosthog({onHandleCreateConnector, handleCloseDialog}: ConnectorsButtonProps & {handleCloseDialog: () => void}) {
@@ -33,6 +34,7 @@ export default function FormsPosthog({onHandleCreateConnector, handleCloseDialog
       userId: userId,
       apiKey: '',
       baseUrl: 'https://us.posthog.com',
+      projectId: ''
     },
   });
 
@@ -50,12 +52,13 @@ export default function FormsPosthog({onHandleCreateConnector, handleCloseDialog
         form.setError("root", { 
           message: res.error
         });
+        return;
       }
     
       handleCloseDialog();
       setIsConnecting(false);
-      const connector = JSON.parse(res.data.body as string);
-      addConnector(connector[0]);
+      console.log("Connector: ", res.data);
+      addConnector(res.data.body as unknown as ConnectorCredentials);
       toast({
         title: "Success",
         description: "Connector created",
@@ -105,6 +108,23 @@ export default function FormsPosthog({onHandleCreateConnector, handleCloseDialog
                       <ExternalLinkIcon className="w-4 h-4 ml-1" />
                     </a>
                   </span>
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="projectId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Project ID</FormLabel>
+                <FormControl>
+                  <Input placeholder="12354" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Find your project ID in PostHog under Project Settings → Project API Key.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

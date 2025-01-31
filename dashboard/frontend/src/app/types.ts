@@ -74,6 +74,8 @@ export interface ConnectorCredentials {
   connector_type: string;
   credentials: JSON;
   has_seen_doc?: boolean;
+  code_string: string;
+  doc_string: string;
   //status?: 'connected' | 'disconnected' | 'pending' | 'error';
   //created_at?: string;
   //updated_at?: string;
