@@ -17,11 +17,11 @@ const getNotebookNavItems = (id: string, name: string) => [
     href: `/dashboard/notebook/${id}/deployment?name=${encodeURIComponent(name)}`,
     icon: <Rocket className="h-4 w-4" />,
   },
-  // {
-  //   title: "Connectors",
-  //   href: `/dashboard/notebook/${id}/connectors?name=${encodeURIComponent(name)}`,
-  //   icon: <Database className="h-4 w-4" />,
-  // },
+  {
+    title: "Integrations",
+    href: `/dashboard/notebook/${id}/integrations?name=${encodeURIComponent(name)}`,
+    icon: <Database className="h-4 w-4" />,
+  },
   {
     title: "Jobs",
     href: `/dashboard/notebook/${id}/jobs?name=${encodeURIComponent(name)}`,

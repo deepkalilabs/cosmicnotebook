@@ -8,9 +8,11 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { useUserStore } from "@/app/store";
 import { Skeleton } from "@/components/ui/skeleton";
-import { IntegrationsButton } from "@/components/integrations/IntegrationsButton";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-
+//TODO: Show URL for the API when deployed
+//TODO: Do we change url when we redeploy?
 export default function NotebookDeployment() {
     const { user } = useUserStore();
 
@@ -22,6 +24,14 @@ export default function NotebookDeployment() {
     const [ isDeploying, setIsDeploying ] = useState(false);
     const [ deploymentData, setDeploymentData] = useState<OutputDeployMessage>({} as OutputDeployMessage);
     const [ loading, setLoading ] = useState(false);
+    const [buildLogs, setBuildLogs] = useState<string[]>([]);
+    const [apiCallLogs, setApiCallLogs] = useState<Array<{
+        timestamp: string;
+        method: string;
+        path: string;
+        status: number;
+        duration: string;
+    }>>([]);
 
     const notebookDetails: NotebookDetails = {
         id: notebookId,
@@ -42,6 +52,8 @@ export default function NotebookDeployment() {
             console.log(`Received notebook_deployed: ${data.type}, success: ${data.success}, message: ${data.message}`);
             setIsDeploying(true);
             setDeploymentData(data);
+            // Simulated build logs - replace with actual logs from backend
+            setBuildLogs(prev => [...prev, `[${new Date().toISOString()}] ${data.message}`]);
         },
         notebookDetails: notebookDetails
     });
@@ -82,48 +94,98 @@ export default function NotebookDeployment() {
             </div>
             
             <Card>
-                <CardContent className="space-y-8 pt-6">
-                    <div>
-                        <h3 className="text-lg font-semibold mb-6">Deployment Settings</h3>
-                        <div className="border rounded-lg p-4 bg-muted/5"> 
-                            <div className="flex flex-col gap-4">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <div className={`w-2 h-2 rounded-full ${
-                                            isDeploying ? 'bg-yellow-400 animate-pulse' : 
-                                            deploymentData.success ? 'bg-green-500' : 'bg-gray-400'
-                                        }`} />
-                                        <p className="text-sm text-muted-foreground">
-                                            {isDeploying ? 'Deploying...' : 
-                                             deploymentData.success ? 'Deployed' : 'Not deployed'}
-                                        </p>
-                                    </div>
-                                    <DeployButton 
-                                        onDeploy={handleDeploy}
-                                        disabled={isDeploying}
-                                        isConnected={isConnected}
-                                    />
-                                </div>
-                                <p className="text-sm text-muted-foreground">
-                                    {deploymentData.message || 'No deployment information available'}
-                                </p>
-                            </div>
+                <CardHeader>
+                    <div className="flex justify-between items-center">
+                        <div className="space-y-1">
+                            <CardTitle>Deployment Settings</CardTitle>
+                            <CardDescription>
+                                Configure your notebook's deployment settings and monitor its status.
+                            </CardDescription>
                         </div>
+                        <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${
+                                isDeploying ? 'bg-yellow-400 animate-pulse' : 
+                                deploymentData.success ? 'bg-green-500' : 'bg-red-400'
+                            }`} />
+                            <p className="text-sm text-muted-foreground">
+                                {isDeploying ? 'Deploying...' : 
+                                 deploymentData.success ? 'Deployed' : 'Not deployed'}
+                            </p>
+                        </div>
+                    </div>
+                </CardHeader>
+                <CardContent className="space-y-8">
+                    <div className="flex items-center justify-between">
+                        <div className="space-y-2 max-w-[60%]">
+                            <p className="text-sm text-muted-foreground">
+                                {deploymentData.message || 'No deployment information available'}
+                            </p>
+                        </div>
+
+                        <DeployButton 
+                            onDeploy={handleDeploy}
+                            disabled={isDeploying}
+                            isConnected={isConnected}
+                        />
                     </div>
                 </CardContent>
             </Card>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Messaging Integration</CardTitle>
-                    <CardDescription>
-                        Connect your API to messaging platforms to interact with your notebook.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <IntegrationsButton onHandleCreateIntegration={() => {}} />
-                </CardContent>
-            </Card>
+            <Tabs defaultValue="build-logs" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="build-logs">Build Logs</TabsTrigger>
+                    <TabsTrigger value="api-logs">API Logs</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="build-logs" className="mt-4">
+                    <ScrollArea className="h-[300px] w-full rounded-md border p-4">
+                        {buildLogs.length > 0 ? (
+                            buildLogs.map((log, index) => (
+                                <div key={index} className="font-mono text-sm">
+                                    {log}
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-muted-foreground">No build logs available</p>
+                        )}
+                    </ScrollArea>
+                </TabsContent>
+
+                <TabsContent value="api-logs" className="mt-4">
+                    <ScrollArea className="h-[300px] w-full rounded-md border">
+                        <table className="w-full">
+                            <thead>
+                                <tr className="border-b">
+                                    <th className="p-2 text-left">Timestamp</th>
+                                    <th className="p-2 text-left">Method</th>
+                                    <th className="p-2 text-left">Path</th>
+                                    <th className="p-2 text-left">Status</th>
+                                    <th className="p-2 text-left">Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {apiCallLogs.length > 0 ? (
+                                    apiCallLogs.map((log, index) => (
+                                        <tr key={index} className="border-b">
+                                            <td className="p-2">{log.timestamp}</td>
+                                            <td className="p-2">{log.method}</td>
+                                            <td className="p-2">{log.path}</td>
+                                            <td className="p-2">{log.status}</td>
+                                            <td className="p-2">{log.duration}</td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={5} className="p-4 text-center text-muted-foreground">
+                                            No API calls recorded
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </ScrollArea>
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }
