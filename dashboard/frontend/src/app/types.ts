@@ -66,6 +66,10 @@ export interface ConnectorsButtonProps {
   onHandleCreateConnector: (connector: string,  values:Record<string, string | number | boolean>, userId: string, notebookId: string) => Promise<ConnectorResponse>;
 }
 
+export interface IntegrationsButtonProps {
+  onHandleCreateIntegration: (integration: string,  values:Record<string, string | number | boolean>, userId: string, notebookId: string) => Promise<ConnectorResponse>;
+}
+
 export interface ConnectorCredentials {
   id: string;
   connector_id: string;

@@ -8,6 +8,8 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { useUserStore } from "@/app/store";
 import { Skeleton } from "@/components/ui/skeleton";
+import { IntegrationsButton } from "@/components/integrations/IntegrationsButton";
+
 
 export default function NotebookDeployment() {
     const { user } = useUserStore();
@@ -71,27 +73,55 @@ export default function NotebookDeployment() {
             </Card>
         </div>
     ) : (
-        <div>
+        <div className="space-y-6">
+            <div>
+                <h1 className="text-3xl font-bold tracking-tight">Deploy {name}</h1>
+                <p className="text-muted-foreground">
+                    Configure and deploy your notebook as an API.
+                </p>
+            </div>
+            
+            <Card>
+                <CardContent className="space-y-8 pt-6">
+                    <div>
+                        <h3 className="text-lg font-semibold mb-6">Deployment Settings</h3>
+                        <div className="border rounded-lg p-4 bg-muted/5"> 
+                            <div className="flex flex-col gap-4">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <div className={`w-2 h-2 rounded-full ${
+                                            isDeploying ? 'bg-yellow-400 animate-pulse' : 
+                                            deploymentData.success ? 'bg-green-500' : 'bg-gray-400'
+                                        }`} />
+                                        <p className="text-sm text-muted-foreground">
+                                            {isDeploying ? 'Deploying...' : 
+                                             deploymentData.success ? 'Deployed' : 'Not deployed'}
+                                        </p>
+                                    </div>
+                                    <DeployButton 
+                                        onDeploy={handleDeploy}
+                                        disabled={isDeploying}
+                                        isConnected={isConnected}
+                                    />
+                                </div>
+                                <p className="text-sm text-muted-foreground">
+                                    {deploymentData.message || 'No deployment information available'}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
             <Card>
                 <CardHeader>
-                    <CardTitle>Deploy {name} notebook</CardTitle>
+                    <CardTitle>Messaging Integration</CardTitle>
                     <CardDescription>
-                        Configure and deploy your notebook as a web application.
+                        Connect your API to messaging platforms to interact with your notebook.
                     </CardDescription>
                 </CardHeader>
-                <div className="border-t py-2 my-2 mt-2"></div>
-                <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between"> 
-                        <div>
-                            <h4 className="font-medium">Deployment Status</h4>
-                            <p className="text-sm text-muted-foreground">Not deployed</p>
-                        </div>
-                        <DeployButton 
-                            onDeploy={handleDeploy}
-                            disabled={isDeploying}
-                            isConnected={isConnected}
-                        />
-                    </div>
+                <CardContent>
+                    <IntegrationsButton onHandleCreateIntegration={() => {}} />
                 </CardContent>
             </Card>
         </div>
