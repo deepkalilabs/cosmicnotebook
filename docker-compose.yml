@@ -9,9 +9,10 @@ services:
     ports:
       - "2718:2718"
     volumes:
-      - ${PWD}/helpers:/helpers  # Mount helpers with absolute path
+      - ${PWD}/ide:/app
+      - ${PWD}/helpers:/app/helpers  # Mount helpers with absolute path
     environment:
-      - PYTHONPATH=/ide:/helpers  # Add helpers to Python path
+      - PYTHONPATH=/ide:/app/helpers  # Add helpers to Python path
       - MARIMO_NO_ANALYTICS=1
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:2718"]
@@ -42,6 +43,11 @@ services:
       retries: 3
     networks:
       - cosmic-network
+    # depends_on:
+      # dashboard-backend:
+      #   condition: service_healthy
+      # marimo:
+      #   condition: service_healthy
       
   dashboard-backend:
     env_file: 
@@ -49,6 +55,7 @@ services:
     volumes:
       - ${PWD}/dashboard/backend:/app  # Use absolute path of current directory
       - ${PWD}/helpers:/app/helpers  # Mount helpers with absolute path
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     build:
       context: dashboard/backend/
       dockerfile: Dockerfile
@@ -56,15 +63,15 @@ services:
       - "47153:47153"
     # command: /bin/sh -c "sleep infinity"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:47153"]
+      test: ["CMD", "wscat", "-c", "ws://localhost:47153/ws/test/test"]
       interval: 30s
       timeout: 10s
       retries: 3
     networks:
       - cosmic-network
 
-volumes:
-  marimo-cache:
+# volumes:
+  # ide-cache:
 
 networks:
   cosmic-network:

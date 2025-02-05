@@ -22,7 +22,7 @@ class OutputGenerateLambdaMessage(BaseModel):
     success: bool
     message: str
 
-class SupabaseJobDetails(BaseModel):
+class LambdaJobDetails(BaseModel):
     request_id: Optional[str] = None
     input_params: Optional[Dict[str, Any]] = None  # More explicit about expected type
     completed: Optional[bool] = False
@@ -33,8 +33,8 @@ class SupabaseJobDetails(BaseModel):
     error: Optional[str] = None
     notebook_id: Optional[str] = None
     
-class SupabaseJobList(BaseModel):
-    jobs: list[SupabaseJobDetails]
+class LambdaJobList(BaseModel):
+    jobs: list[LambdaJobDetails]
 
 class SupabaseConnectorCredential(BaseModel):
     id: Optional[str] = None
@@ -61,6 +61,9 @@ class ScheduledJob(BaseModel):
     submit_endpoint: Optional[str] = None
     input_params: Optional[str] = None
 
+class ScheduledJobList(BaseModel):
+    schedules: list[ScheduledJob]
+
 class NotebookDetails(BaseModel):
     id: str
     name: str
@@ -74,6 +77,11 @@ class NotebookDetails(BaseModel):
     updated_at: Optional[str] = None
     output: Optional[dict] = None
 
+class NotebookData(BaseModel):
+    notebook_details: NotebookDetails
+    job_details: LambdaJobList
+    schedule_details: ScheduledJobList
+    # connector_details: SupabaseConnectorCredentialList
 
 class ConnectorResponse(BaseModel):
     type: str

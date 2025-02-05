@@ -1,10 +1,12 @@
 "use client"
 
-import { Database, Notebook, Activity, Clock, Rocket } from "lucide-react"
+import { Notebook, Activity, Clock, Rocket, Database } from "lucide-react"
 import { useParams, useSearchParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { cn } from "@/lib/utils";
-import { useUserStore } from "@/app/store"; 
+import { useNotebookDetailStore, useUserStore } from "@/app/store"; 
+import { useEffect } from "react";
+import { WebsocketContextProvider } from "@/contexts/websocket-context-provider";
 
 const getNotebookNavItems = (id: string, name: string) => [
   {
@@ -33,6 +35,7 @@ const getNotebookNavItems = (id: string, name: string) => [
     icon: <Clock className="h-4 w-4" />,
   },
 ]
+
 
 function SidebarNav() {
   const params = useParams();
@@ -89,12 +92,37 @@ export default function NotebookLayout({
 }: {
   children: React.ReactNode
 }) {
+  const { user } = useUserStore();
+  const params = useParams();
+  const notebookId = params.id as string;
+  const { notebookDetails, setNotebookDetails } = useNotebookDetailStore();
+
+  useEffect(() => {
+      if (user && notebookId) {
+          fetch(`/api/notebook_details/${notebookId}`).then(res => {
+            console.log('notebook details response:', res);
+            return res.json();
+          })
+          .then((notebookDetailsData) => {
+            setNotebookDetails(notebookDetailsData);
+          })
+      }
+  }, [user, notebookId]);
+
+  if (!notebookDetails) {
+    return <div>Loading...</div>
+  }
+
+  console.log("notebookDetails", notebookDetails);
+
   return (
-    <div className="flex h-full">
-      <Sidebar />
-      <main className="flex-1 overflow-y-auto p-2">
-        {children}
-      </main>
-    </div>
-  )
+    <WebsocketContextProvider notebookDetails={notebookDetails}>
+      <div className="flex h-full">
+        <Sidebar />
+        <main className="flex-1 overflow-y-auto p-2">
+          {children}
+          </main>
+        </div>
+      </WebsocketContextProvider>
+    )
 } 

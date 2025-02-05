@@ -1,22 +1,15 @@
 "use client"
 import React, { useEffect, useState } from 'react';
-import { Plus, Search, MessageCircle, ArrowRight, BookTemplate, Trash2, Upload } from 'lucide-react';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Plus } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
-import { MarimoFile, NotebookCell } from '@/app/types';
-import { useNotebookConnection } from '@/hooks/useNotebookConnection';
-import { useToast } from '@/hooks/use-toast';
-import NotebookUpload from '@/components/NotebookUpload';
-import MarimoFileComponent from '@/components/marimo/MarimoFileComponent';
+import { MarimoFile } from '@/app/types';
 import { newNotebookURL } from '@/lib/marimo/urls';
-import { useOrgUserStore, useUserStore } from '@/app/store';
+import { useUserStore } from '@/app/store';
 import { NotebookCard } from '@/components/NotebookCard';
 import { Templates } from '@/components/Templates';
 
@@ -38,8 +31,6 @@ function NewNotebookButton({ user_id, notebook_id }: { user_id: string, notebook
 export default function ProjectsPage() {
     const [marimoNotebooks, setMarimoNotebooks] = useState<MarimoFile[]>([]);
     const { user } = useUserStore();
-
-    localStorage.setItem('user_id', user?.id || '');
 
     if (!user?.id) {
       console.log("User should not be null for creating notebook.");

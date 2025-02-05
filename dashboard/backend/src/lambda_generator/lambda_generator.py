@@ -1,12 +1,10 @@
+
 import os
 import shutil
 import boto3
-import sh
-import re
 from botocore.exceptions import ClientError
 from .helpers.ecr_manager import ECRManager
 import json
-import uuid
 import logging
 from datetime import datetime
 # Configure logging
@@ -50,7 +48,7 @@ class LambdaGenerator:
         
         self.lambda_client = boto3.client('lambda', region_name=self.region)
         
-        self.api_gateway_client = boto3.client('apigateway')
+        self.api_gateway_client = boto3.client('apigateway', region_name=self.region)
 
         self.lambda_fn_arn = ''
         self.api_id = ''

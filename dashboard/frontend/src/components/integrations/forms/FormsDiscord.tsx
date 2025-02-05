@@ -9,8 +9,7 @@ import { Button } from '@/components/ui/button'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useUserStore, useOrgUserStore } from '@/app/store'
-import { ConnectorCredentials, IntegrationsButtonProps } from '@/app/types'
-import { useConnectorStore } from '@/app/store'
+import { IntegrationsButtonProps } from '@/app/types'
 import { toast } from '@/hooks/use-toast'
 
 const formSchema = z.object({
@@ -23,7 +22,6 @@ const formSchema = z.object({
 export default function FormsDiscord({onHandleCreateIntegration, handleCloseDialog}: IntegrationsButtonProps & {handleCloseDialog: () => void}) {
   const { user } = useUserStore();
   const { orgUsers } = useOrgUserStore();
-  //const { addConnector } = useConnectorStore();
   const userId = user?.id || '';
   const orgId = orgUsers[0]?.org_id || '';
   const [isConnecting, setIsConnecting] = useState(false);

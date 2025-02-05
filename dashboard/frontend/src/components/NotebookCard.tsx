@@ -1,12 +1,10 @@
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Edit, MessageCircle, Rocket, Settings, Trash2 } from "lucide-react";
+import { MessageCircle, Settings, Trash2 } from "lucide-react";
 import MarimoFileComponent from '@/components/marimo/MarimoFileComponent';
 import { User } from "@/app/types";
 import { MarimoFile } from '@/app/types';
-import { Tooltip, TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip";
 import { useRouter } from "next/navigation";
-import { supabase } from '@/lib/supabase';
 
 export const NotebookCard = ({ marimo_notebook, user, onDeleteNotebook }: { marimo_notebook: MarimoFile, user: User, onDeleteNotebook: (notebook_id: string) => void }) => {
   const router = useRouter();

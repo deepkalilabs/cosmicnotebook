@@ -16,6 +16,7 @@ export async function GET(
 
     const response = await fetch(`${getApiUrl()}/status/jobs/${userId}`, {
       headers: {
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
     });

@@ -57,10 +57,6 @@ export interface NotebookCellProps {
   onMoveDown: () => void;
 }
 
-interface ConnectorStatus {
-  success: boolean;
-  message: string;
-}
 
 export interface ConnectorsButtonProps {
   onHandleCreateConnector: (connector: string,  values:Record<string, string | number | boolean>, userId: string, notebookId: string) => Promise<ConnectorResponse>;
@@ -102,6 +98,11 @@ export interface NotebookDetails {
   session_id?: string;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface NotebookDetailStore {
+  notebookDetails: NotebookDetails | null;
+  setNotebookDetails: (notebookDetails: NotebookDetails | null) => void;
 }
 
 export interface WebSocketMessage {
@@ -224,10 +225,6 @@ export interface OrgUserStore {
   setOrgUsers: (orgUsers: OrgUser[]) => void;
 }
 
-
-
-
-
 export interface NotebookPageProps {
   notebookId: string;
   userId: string | null;
@@ -280,8 +277,6 @@ export interface ConnectorsStore {
   hasConnector: (type: string) => boolean; 
 
 }
-
-
 
 export interface ConnectorCredentialsList {
   credentials: ConnectorCredentials[];

@@ -9,23 +9,23 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     gcc \
     python3-dev \
-    libpq-dev && \
+    libpq-dev \
+    docker.io && \
     rm -rf /var/lib/apt/lists/*
 
 # Install uv
 RUN pip install uv
 
 # Copy project files
-COPY pyproject.toml .
+COPY pyproject.toml uv.lock .
 COPY . .
 
 # Create virtual environment and install dependencies
 RUN uv venv && \
     . .venv/bin/activate && \
-    uv pip install .
+    uv pip install .[dev]
 
 # Expose the port your FastAPI app will run on (typically 8000)
 EXPOSE 47153
-
 # Command to run the application
 CMD ["uv", "run", "python", "main.py"]

@@ -1,40 +1,41 @@
 // hooks/useNotebookConnection.ts
 'use client';
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { OutputDeployMessage, NotebookConnectionProps } from '@/app/types';
+import { getWebsocketUrl } from '@/app/lib/config';
 import { useToast } from '@/hooks/use-toast';
-import { getApiUrl } from '@/app/lib/config';
 
-export function useNotebookConnection({
+export const useNotebookConnection = ({
   onNotebookDeployed, 
   notebookDetails,
-}: NotebookConnectionProps) {
-  const { toast } = useToast();
+}: NotebookConnectionProps) => {
 
   const notebookId = notebookDetails?.id
   const notebookName = notebookDetails?.name
   const userId = notebookDetails?.user_id
-
-  console.log("notebookId", notebookId)
-  console.log("notebookName", notebookName)
-  console.log("userId", userId)
+  const toast = useToast()
+  const [isConnected, setIsConnected] = useState(false)
 
   const socketUrl = useMemo(() => {
-    const socketBaseURL = getApiUrl().split('://')[1];
-
+    const socketBaseURL = getWebsocketUrl();
+  
     if (notebookId) {
       if (process.env.NODE_ENV === 'development') {
-        return `ws://${socketBaseURL}/ws/${notebookId}`;
+        return `${socketBaseURL}/${notebookId}/${notebookName}`;
       } else {
-        return `wss://${socketBaseURL}/ws/${notebookId}`;
+        return `${socketBaseURL}/${notebookId}/${notebookName}`;
       }
     } else {
       return null;
     }
-    
-  }, [notebookId]);
+  }, [notebookDetails?.id]);
+  
+
+  console.log("notebookId", notebookId)
+  console.log("notebookName", notebookName)
+  console.log("userId", userId)
 
   console.log("socketURL", socketUrl)
 
@@ -44,60 +45,82 @@ export function useNotebookConnection({
     readyState,
   } = useWebSocket(socketUrl, {
     onOpen: () => {
-      toast({
-        title: "Connected to Cosmic Backend",
-        description: "Successfully connected to Cosmic Backend"
-      });
+      setIsConnected(true)
+      toast.toast({
+        title: "Connected to notebook",
+        description: "You can now deploy your notebook",
+      })
     },
     onClose: () => {
-      toast({
-        title: "Disconnected from Cosmic Backend",
-        description: "Attempting to reconnect..."
-      });
+      setIsConnected(false)
+      toast.toast({
+        title: "Disconnected from notebook",
+        description: "You can now deploy your notebook",
+      })
     },
     onError: (event) => {
-      console.log("WebSocket error:", event);
-      toast({
-        title: "Failed to connect to Cosmic Backend",
-        description: "Please try again later."
-      });
+      setIsConnected(false)
+      toast.toast({
+        title: "Error connecting to notebook",
+        description: "Please try again",
+      })
+      console.error("WebSocket error:", event);
     },
-    shouldReconnect: (closeEvent) => {
-      console.log("shouldReconnect", closeEvent)
+    shouldReconnect: () => {
+      setIsConnected(false)
+      toast.toast({
+        title: "Reconnecting to notebook",
+        description: "Please wait...",
+      })
       return true;
     },
     reconnectAttempts: 10,
     reconnectInterval: 3000,
     share: true,
+    retryOnError: true
   });
+  
 
   useEffect(() => {
-    if (lastMessage !== null) {
+    if (!lastMessage?.data) return;
+    
+    try {
       const data = JSON.parse(lastMessage.data);
-      let parsedData = null;
-      switch (data.type) {
-        case 'deploying_notebook':
-          parsedData = data as OutputDeployMessage;
-          console.log(`Received deploying_notebook: ${parsedData.type}, success: ${parsedData.success}, message: ${parsedData.message}`);
-          onNotebookDeployed?.(parsedData);
-          break;
+      if (data.type === 'deploying_notebook') {
+        onNotebookDeployed?.(data as OutputDeployMessage);
       }
+    } catch (error) {
+      console.error('Error parsing message:', error);
     }
-  }, [lastMessage]);
+  }, [lastMessage, onNotebookDeployed]);
 
-  const deployLambda = useCallback((user_id: string, name: string, notebook_id: string) => {
-    console.log("deployLambda", user_id, name, notebook_id)
-    sendMessage(JSON.stringify({
+
+  const deployLambda = (user_id: string, name: string, notebook_id: string) => {
+    if (!isConnected) {
+      toast.toast({
+        title: "Not connected to notebook",
+        description: "This is an error on our end. Please try again later.",
+      })
+      return;
+    }
+
+    const message = {
       type: 'deploy_notebook',
-      user_id: user_id,
+      user_id,
       notebook_name: name,
-      notebook_id: notebook_id
-    }));
-  }, [sendMessage]);
+      notebook_id
+    };
+
+    try {
+      sendMessage(JSON.stringify(message));
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
 
   return {
     deployLambda,
-    isConnected: readyState === ReadyState.OPEN,
+    isConnected,
     connectionStatus: {
       [ReadyState.CONNECTING]: 'Connecting',
       [ReadyState.OPEN]: 'Connected',

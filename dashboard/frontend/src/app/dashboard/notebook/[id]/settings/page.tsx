@@ -1,15 +1,13 @@
 'use client'
 
-import { useParams, useSearchParams } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSearchParams } from 'next/navigation';
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function NotebookSettings() {
-  const params = useParams();
   const searchParams = useSearchParams();
-  const id = params.id as string;
   const name = searchParams.get('name') || '';
 
   return (
@@ -30,7 +28,7 @@ export default function NotebookSettings() {
               <CardHeader>
                 <CardTitle>Settings for {name} notebook</CardTitle>
                 <CardDescription>
-                  Manage your notebook's basic settings.
+                  Manage basic settings for your notebook.
                 </CardDescription>
               </CardHeader>
             </Card>

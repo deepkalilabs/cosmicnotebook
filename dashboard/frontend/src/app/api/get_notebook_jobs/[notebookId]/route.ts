@@ -15,7 +15,11 @@ export async function GET(
       return Response.json({ error: 'Notebook ID is required' }, { status: 400 });
     }
 
-    const response = await fetch(endpoint);
+    const response = await fetch(endpoint, {
+      keepalive: true,
+      cache: 'no-store'
+    });
+
     const data = await response.json();
 
     return Response.json(data, { status: 200 });

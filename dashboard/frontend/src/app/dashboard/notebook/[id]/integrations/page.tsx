@@ -1,13 +1,10 @@
 'use client'
-
-import { NotebookDetails, OutputDeployMessage } from "@/app/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useNotebookConnection } from "@/hooks/useNotebookConnection";
 import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { useUserStore } from "@/app/store";
 import { Skeleton } from "@/components/ui/skeleton";
-import { IntegrationsButton } from "@/components/integrations/IntegrationsButton";
+// import { IntegrationsButton } from "@/components/integrations/IntegrationsButton";
 
 
 export default function NotebookIntegrations() {
@@ -18,15 +15,8 @@ export default function NotebookIntegrations() {
     const notebookId = params.id as string;
     const name = searchParams.get('name') || '';
     const userId = user?.id || '';
-    const [ isDeploying, setIsDeploying ] = useState(false);
-    const [ deploymentData, setDeploymentData] = useState<OutputDeployMessage>({} as OutputDeployMessage);
     const [ loading, setLoading ] = useState(false);
 
-    const notebookDetails: NotebookDetails = {
-        id: notebookId,
-        name: name,
-        user_id: userId
-    }
 
     useEffect(() => {
         if (userId && notebookId) {
@@ -35,16 +25,6 @@ export default function NotebookIntegrations() {
             setLoading(true);
         }
     }, [userId, notebookId]);
-    
-    const { deployLambda, isConnected } = useNotebookConnection({
-        onNotebookDeployed: (data) => {
-            console.log(`Received notebook_deployed: ${data.type}, success: ${data.success}, message: ${data.message}`);
-            setIsDeploying(true);
-            setDeploymentData(data);
-        },
-        notebookDetails: notebookDetails
-    });
-
 
     
     return loading ? (
@@ -79,7 +59,7 @@ export default function NotebookIntegrations() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <IntegrationsButton onHandleCreateIntegration={() => {}} />
+                    {/* <IntegrationsButton onHandleCreateIntegration={() => {}} /> */}
                 </CardContent>
             </Card>
         </div>
