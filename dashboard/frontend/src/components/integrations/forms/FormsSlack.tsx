@@ -48,9 +48,7 @@ export default function SlackForm({notebookId, onHandleCreateIntegration, handle
     setIsConnecting(true);
     
     try {
-      debugger;
       const res = await onHandleCreateIntegration(orgId, notebookId, 'slack', credentials);
-      debugger;
       console.log("Response from onHandleCreateIntegration", res);
       
       if (res && res.error) {
@@ -63,8 +61,7 @@ export default function SlackForm({notebookId, onHandleCreateIntegration, handle
     
       handleCloseDialog();
       setIsConnecting(false);
-      console.log("Integration: ", res.data);
-      //addIntegration(res.data.body as unknown as IntegrationCredentials);
+      console.log("Integration: ", res);
       toast({
         title: "Success",
         description: "Integration created",
@@ -89,10 +86,19 @@ export default function SlackForm({notebookId, onHandleCreateIntegration, handle
           Integrate with Slack 
           <BetaTag className="ml-2" />
         </h2>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground mb-2">
           Connect Slack to your notebook to send and receive messages.
         </p>
-        
+        <p className="text-sm text-muted-foreground bg-muted p-2 rounded-md">
+          👉 Need help setting up Slack? Check our <a 
+            href="https://github.com/deepkalilabs/cosmicnotebook/blob/integration/docs/notebook/integrations/slack.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-primary font-medium"
+          >
+            step-by-step guide
+          </a> for detailed instructions.
+        </p>
       </div>
       
 
@@ -107,13 +113,7 @@ export default function SlackForm({notebookId, onHandleCreateIntegration, handle
                   <Input placeholder="xoxb-1234567890" {...field} />
                 </FormControl>
                 <FormDescription>
-                  To find your Bot Token: 
-                  <br />
-                  1. Go to the Slack API
-                  <br />
-                  2. Click on &quot;OAuth & Permissions&quot;
-                  <br />
-                  3. Copy the Bot User OAuth Token
+                  Enter your Bot User OAuth Token (starts with xoxb-)
                 </FormDescription>
               </FormItem>
             )}
@@ -129,13 +129,7 @@ export default function SlackForm({notebookId, onHandleCreateIntegration, handle
                   <Input placeholder="12354" {...field} />
                 </FormControl>
                 <FormDescription>
-                  To find your Channel ID:
-                  <br />
-                  1. Right-click your Slack channel
-                  <br />
-                  2. Click &quot;View channel details&quot;
-                  <br />
-                  3. Scroll to bottom for Channel ID
+                  The ID of the channel where messages will be sent
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -147,6 +141,8 @@ export default function SlackForm({notebookId, onHandleCreateIntegration, handle
             Connect
           </Button>
         </form>
+        
+
         
     </Form>
   )

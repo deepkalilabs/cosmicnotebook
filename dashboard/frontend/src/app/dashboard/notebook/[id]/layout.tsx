@@ -4,9 +4,10 @@ import { Notebook, Activity, Clock, Rocket, Cable } from "lucide-react"
 import { useParams, useSearchParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { cn } from "@/lib/utils";
-import { useUserStore, useNotebookDetailStore } from "@/app/store";
-import { useEffect } from "react";
 import { WebsocketContextProvider } from "@/contexts/websocket-context-provider";
+import { useNotebookDetailStore } from "@/app/store";
+import { useUserStore } from "@/app/store";
+import { useEffect } from "react";
 
 const getNotebookNavItems = (id: string, name: string) => [
   {
