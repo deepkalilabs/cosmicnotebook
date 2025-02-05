@@ -4,7 +4,7 @@ import json
 from supabase import Client
 from helpers.backend.supabase.client import get_supabase_client
 supabase: Client = get_supabase_client()
-
+import logging
 ##Init boto3
 s3 = boto3.client('s3', 
     aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
@@ -13,10 +13,14 @@ s3 = boto3.client('s3',
 )
 bucket_name = 'notebook-lambda-generator'
 
+def get_notebook_file_path(notebook_id: str, user_id: str, filetype: str):
+    path= f"notebooks/{user_id}/{notebook_id}/{filetype}"
+    logging.info(f"path {path}")
+    return path
 
 # TODO: Save the notebook to s3.
-def save_or_update_notebook(notebook_id: str, user_id: str, contents: str, 
-                            filename: str, bucket_name: str = bucket_name, type: str = "marimo_notebook"):
+def save_or_update_notebook(notebook_id: str, user_id: str, contents: dict, 
+                            project_name: str, bucket_name: str = bucket_name):
     if not notebook_id:
         raise ValueError("Notebook ID is required")
     if not user_id:
@@ -24,47 +28,42 @@ def save_or_update_notebook(notebook_id: str, user_id: str, contents: str,
     if not contents:
         raise ValueError("Notebook is required")    
     
-    try:
-        file_path = f"notebooks/{user_id}/{notebook_id}_{type}.py"
-        # Check if notebook exists and get its content if it does        
-        # Save or update notebook to S3
-        aws_response = s3.put_object(Bucket=bucket_name, Key=file_path, Body=contents)
-        print("AWS Response:", aws_response)
+    for filetype, file_content in contents.items():
+        try:
+            file_path = get_notebook_file_path(notebook_id, user_id, filetype)
+            # Check if notebook exists and get its content if it does        
+            # Save or update notebook to S3
+            aws_response = s3.put_object(Bucket=bucket_name, Key=file_path, Body=file_content)
+            logging.info("AWS Response:", aws_response)
 
-        if aws_response['ResponseMetadata']['HTTPStatusCode'] != 200:
-            raise Exception("Failed to save notebook to S3")
+            if aws_response['ResponseMetadata']['HTTPStatusCode'] != 200:
+                raise Exception("Failed to save notebook to S3")
 
-        # Generate the S3 URL for the object
-        url = f"https://{bucket_name}.s3.amazonaws.com/{file_path}"
+            # Generate the S3 URL for the object
+            
+        except Exception as e:
+            logging.error(f"Error saving notebook: {e}")
+            return {
+                'statusCode': 500,
+                'body': json.dumps({'message': 'Error saving notebook'}),
+                'url': None
+            }
+
+    # Generate the S3 URL for the object
+    return_file_path = get_notebook_file_path(notebook_id, user_id, "")
+    url = f"https://{bucket_name}.s3.amazonaws.com/{return_file_path}"
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps({'message': 'Notebook saved successfully'}),
+        'url': url
+    }
         
-        # Save URL to Supabase based on notebook_id and user_id
-        supabase.table('notebooks').upsert({
-            'id': notebook_id, 
-            'user_id': user_id,
-            's3_url': url,
-            'updated_at': 'now()',
-            'name': filename,
-            'path': filename,
-        }).execute()
-        
-        return {
-            'statusCode': 200,
-            'body': json.dumps({'message': 'Notebook saved successfully'}),
-            'url': url
-        }
-    except Exception as e:
-        print(f"Error saving notebook: {e}")
-        return {
-            'statusCode': 500,
-            'body': json.dumps({'message': 'Error saving notebook'}),
-            'url': None
-        }
-    
 # TODO: Load the notebook from s3.
 def load_notebook(s3_url: str):
     try:
         response = s3.get_object(Bucket=bucket_name, Key=s3_url)
-        print("Response:", len(response))
+        logging.info("Response:", len(response))
         # logger.info(f"Response: {response}")
         return {
             'response': response.get('Body').read().decode('utf-8'),
@@ -72,20 +71,35 @@ def load_notebook(s3_url: str):
             'message': 'Notebook loaded successfully'
         }
     except Exception as e:
-        print("Error:", e)
+        logging.error("Error:", e)
         return {
             'response': None,
             'status': 'error',
             'message': str(e)
         }
     
+def rename_notebook(notebook_id: str, user_id: str, new_name: str):
+    pass
 
 # TODO: Delete the notebook from s3.
 def delete_notebook(filename: str, bucket_name = bucket_name):
     pass
 
 
-def get_python_script_from_s3(notebook_id: str, user_id: str, bucket_name = bucket_name, type: str = "python_script"):
-    file_path = f"notebooks/{user_id}/{notebook_id}_{type}.py"
-    response = s3.get_object(Bucket=bucket_name, Key=file_path)
-    return response.get('Body').read().decode('utf-8')
+def get_python_deets_from_s3(notebook_id: str, user_id: str, project_name: str, bucket_name = bucket_name):
+    files = {
+        'python_script': 'python_script.py',
+        'requirements': 'requirements.txt'
+    }
+    
+    results = {}
+    for key, filename in files.items():
+        file_path = get_notebook_file_path(notebook_id, user_id, filename)
+        logging.info(f"file_path {file_path}")
+        response = s3.get_object(Bucket=bucket_name, Key=file_path)
+        results[key] = response.get('Body').read().decode('utf-8')
+    
+    python_script = results['python_script']
+    requirements = results['requirements']
+
+    return python_script, requirements

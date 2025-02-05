@@ -4,6 +4,7 @@ import subprocess
 from botocore.exceptions import ClientError
 import sh
 import os
+import docker
 
 class ECRManager:
     def __init__(self, repository_name, file_base_path, region='us-west-1'):
@@ -13,6 +14,7 @@ class ECRManager:
         self.registry_url = f"{self.account_id}.dkr.ecr.{self.region}.amazonaws.com"
         self.repository_name = repository_name
         self.file_base_path = file_base_path
+        self.docker_client = docker.from_env()
 
     def get_auth_credentials(self):
         """Get ECR authentication credentials"""
@@ -30,10 +32,10 @@ class ECRManager:
         """Perform Docker login to ECR"""
         try:
             username, password = self.get_auth_credentials()
-            sh.docker.login(
-                '--username', username,
-                '--password', password,
-                self.registry_url
+            self.docker_client.login(
+                username=username,
+                password=password,
+                registry=self.registry_url
             )
             return True
         except subprocess.CalledProcessError as e:
@@ -118,7 +120,7 @@ class ECRManager:
         repository_uri = self.get_repository_uri(self.repository_name)
         return f"{repository_uri}:{tag}"
 
-    def build_and_push_image(self, tag='latest', dockerfile_path='.'):
+    def build_and_push_image(self, tag='latest', dockerfile_path='Dockerfile'):
         """Build and push image to ECR"""
         try:
             # Ensure logged in
@@ -132,18 +134,33 @@ class ECRManager:
             os.chdir(self.file_base_path)
             
             # Build image
-            sh.docker.build(
-                '-t', image_uri,
-                dockerfile_path)
+            print(f"Starting Docker build...")
+            print(f"Base path: {self.file_base_path}")
+            print(f"Dockerfile: {dockerfile_path}")
+            print(f"Target image URI: {image_uri}")
+            _, build_logs = self.docker_client.images.build(
+                path=self.file_base_path,
+                dockerfile=dockerfile_path,
+                tag=image_uri
+            )
+            for log in build_logs:
+                if 'stream' in log:
+                    print(log['stream'].strip())
+                elif 'status' in log:
+                    print(f"Status: {log['status']}")
+                elif 'aux' in log:
+                    print(f"Image ID: {log['aux'].get('ID', 'unknown')}")
+                elif 'error' in log:
+                    print(f"Error: {log['error']}")
+            print("Docker build completed")
             
             # Push image
-            sh.docker.push(image_uri)
+            self.docker_client.images.push(image_uri)
             
             return image_uri
             
         except Exception as e:
             print(f"Failed to push image: {str(e)}")
-            print(f"Stderr: {e.stderr}")
             raise
 
     def cleanup_untagged_images(self):

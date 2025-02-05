@@ -7,9 +7,6 @@ import { Upload } from "lucide-react";
 import { DialogHeader } from "./ui/dialog";
 import NotebookUpload from "./NotebookUpload";
 
-{/* TODO: Implement import notebook */}
-{/* Convert ipynb to marimo .py format and then save to directory so user can load it. */}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleFileSelect = async (fileName: string, fileContent: { cells: any[] }) => {
     const codeCells = fileContent?.cells?.filter((cell) => ['code', 'markdown'].includes(cell.cell_type) || []);
@@ -47,6 +44,7 @@ export const ImportNotebookButton = () => {
               Upload a Jupyter notebook file to import it into your workspace.
             </DialogDescription>
           </DialogHeader>
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           <NotebookUpload onFileSelect={(fileName: string, fileContent: { cells: any[] }) => {
             handleFileSelect(fileName, fileContent);
             setDialogOpen(false);

@@ -22,7 +22,7 @@ export type TypedString<T> = string & { __type__: T };
 export type Identified<T> = { id: string } & T;
 
 export function updateQueryParams(updater: (params: URLSearchParams) => void) {
-    const url = new URL(window.location.href);
+    const url = new URL(window.location.toString());
     updater(url.searchParams);
     window.history.replaceState({}, "", url.toString());
 }  
@@ -41,7 +41,6 @@ export function isSessionId(value: string | null): value is SessionId {
 }
 
 const sessionId = (() => {
-  // Check if we're on the client side
   if (typeof window === 'undefined') {
     return generateSessionId();
   }
@@ -66,7 +65,6 @@ const sessionId = (() => {
   Logger.debug("Starting a new session", { sessionId: id });
   return generateSessionId();
 })();
-
 /**
  * Resume an existing session or start a new one
  */

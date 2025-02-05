@@ -9,8 +9,7 @@ import { Button } from '@/components/ui/button'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useUserStore, useOrgUserStore } from '@/app/store'
-import { ConnectorCredentials, IntegrationsButtonProps } from '@/app/types'
-import { useConnectorStore } from '@/app/store'
+import { IntegrationsButtonProps } from '@/app/types'
 import { toast } from '@/hooks/use-toast'
 
 const formSchema = z.object({

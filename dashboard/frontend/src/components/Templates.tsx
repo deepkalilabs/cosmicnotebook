@@ -1,7 +1,6 @@
 import { BookTemplate } from "lucide-react"
 import { ArrowRight } from "lucide-react"
 import { Button } from "./ui/button"
-import { v4 as uuidv4 } from 'uuid';
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card"
 
 export const Templates = () => {

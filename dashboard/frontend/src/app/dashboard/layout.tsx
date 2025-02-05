@@ -28,7 +28,7 @@ const sidebarNavItems = [
   }
 ]
 
-export function AppSidebar() {
+function AppSidebar() {
   return (
     <Sidebar className="border-r bg-background">
       <div className="flex h-[60px] items-center border-b px-6">
@@ -72,6 +72,8 @@ export default function DashboardLayout({
         return;
       }
 
+      console.log(error, authUser, authUser.email, authUser.id);
+
       const userData = {
         id: authUser.id,
         email: authUser.email
@@ -82,14 +84,15 @@ export default function DashboardLayout({
       //Find and store the users organization they belong to
       //TODO Switch to backend call
       const { data: orgUser, error: orgError } = await supabase
-      .from('org_users')
-      .select('*')
-      .eq('user_id', authUser.id)
-      .single();
+        .from('org_users')
+        .select('*')
+        .eq('user_id', authUser.id)
+        .single();
+
       console.log(orgUser);
 
       if (orgError) {
-        console.error('Error getting organization:', orgError);
+        console.log('Error getting organization:', orgError);
         setOrgUsers([]);
         return;
       }
