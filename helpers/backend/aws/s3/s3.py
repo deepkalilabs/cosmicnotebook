@@ -11,7 +11,7 @@ s3 = boto3.client('s3',
     aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
     region_name=os.environ.get('AWS_DEFAULT_REGION')
 )
-bucket_name = 'notebook-lambda-generator'
+bucket_name = os.environ.get('AWS_BUCKET_NAME')
 
 def get_notebook_file_path(notebook_id: str, user_id: str, filetype: str):
     path= f"notebooks/{user_id}/{notebook_id}/{filetype}"
