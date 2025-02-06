@@ -1,8 +1,8 @@
 /* Copyright 2024 Marimo. All rights reserved. */
 import { generateSessionId } from "@/lib/marimo/sessions";
+import { getMarimoUrl } from "@/app/lib/config";
 
-const URL_BASE = process.env.NEXT_PUBLIC_MARIMO_URL || 'http://localhost:3002';
-// const URL_BASE = 'http://localhost:3002';
+const URL_BASE = getMarimoUrl();
 console.log('URL_BASE', URL_BASE);
 
 export function updateQueryParams(updater: (params: URLSearchParams) => void) {
