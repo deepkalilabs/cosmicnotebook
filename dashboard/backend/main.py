@@ -15,7 +15,7 @@ import resend
 from src.lambda_generator import lambda_generator
 from src.backend_types import OutputGenerateLambdaMessage, ScheduledJob, NotebookDetails
 from src.helpers.notebook import notebook
-from src.scheduler.notebook_scheduler import NotebookScheduler
+#from src.scheduler.notebook_scheduler import NotebookScheduler
 from src.backend_types import ConnectorCredentials
 from supabase import Client
 from helpers.backend.supabase.client import get_supabase_client
@@ -36,7 +36,7 @@ import traceback
 
 app = FastAPI()
 
-scheduler = NotebookScheduler()  # Single instance
+#scheduler = NotebookScheduler()  # Single instance
 # Enable CORS for frontend communication
 app.add_middleware(
     CORSMiddleware,
@@ -206,6 +206,7 @@ async def create_schedule(notebook_id: str, schedule: dict):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+""""
 @app.put("/notebook_job_schedule/{schedule_id}")
 async def update_schedule(schedule_id: str, schedule: ScheduledJob):
     try:
@@ -229,6 +230,7 @@ async def delete_schedule(schedule_id: str):
         return {"status": "success"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+"""
 
 
 #----------------------------------
