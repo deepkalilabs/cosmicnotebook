@@ -32,7 +32,7 @@ export const ImportNotebookButton = () => {
     return (
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogTrigger asChild>
-          <Button>
+          <Button disabled={true}>
             <Upload className="mr-2 h-4 w-4" />
             Import Notebook
           </Button>
@@ -44,8 +44,7 @@ export const ImportNotebookButton = () => {
               Upload a Jupyter notebook file to import it into your workspace.
             </DialogDescription>
           </DialogHeader>
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          <NotebookUpload onFileSelect={(fileName: string, fileContent: { cells: any[] }) => {
+          <NotebookUpload onFileSelect={(fileName: string, fileContent: { cells: NotebookCell[] }) => {
             handleFileSelect(fileName, fileContent);
             setDialogOpen(false);
           }} />

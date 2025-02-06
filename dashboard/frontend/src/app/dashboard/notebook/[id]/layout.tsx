@@ -1,10 +1,10 @@
 "use client"
 
-import { Notebook, Activity, Clock, Rocket, Database } from "lucide-react"
+import { Notebook, Activity, Clock, Rocket, Cable } from "lucide-react"
 import { useParams, useSearchParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { cn } from "@/lib/utils";
-import { useNotebookDetailStore, useUserStore } from "@/app/store"; 
+import { useUserStore, useNotebookDetailStore } from "@/app/store";
 import { useEffect } from "react";
 import { WebsocketContextProvider } from "@/contexts/websocket-context-provider";
 
@@ -22,7 +22,7 @@ const getNotebookNavItems = (id: string, name: string) => [
   {
     title: "Integrations",
     href: `/dashboard/notebook/${id}/integrations?name=${encodeURIComponent(name)}`,
-    icon: <Database className="h-4 w-4" />,
+    icon: <Cable className="h-4 w-4" />,
   },
   {
     title: "Jobs",

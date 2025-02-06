@@ -7,7 +7,9 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function NotebookSettings() {
+  //const params = useParams();
   const searchParams = useSearchParams();
+  //const id = params.id as string;
   const name = searchParams.get('name') || '';
 
   return (
@@ -28,7 +30,7 @@ export default function NotebookSettings() {
               <CardHeader>
                 <CardTitle>Settings for {name} notebook</CardTitle>
                 <CardDescription>
-                  Manage basic settings for your notebook.
+                  Manage your notebook&apos;s basic settings.
                 </CardDescription>
               </CardHeader>
             </Card>

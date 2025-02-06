@@ -20,6 +20,7 @@ interface DataSource {
 }
 
 export function IntegrationsButton({
+  notebookId,
   onHandleCreateIntegration,
 }: IntegrationsButtonProps) {
   const { isDialogOpen, handleOpenDialog, handleCloseDialog } = useConnectorHook();
@@ -29,11 +30,11 @@ export function IntegrationsButton({
 
   const [dataSources] = useState<DataSource[]>([
     //Return a logo based on the name
-            { id: 'whatsapp', name: 'WhatsApp', available: false, icon: `https://img.logo.dev/whatsapp.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsWhatsapp onHandleCreateIntegration={onHandleCreateIntegration} handleCloseDialog={handleCloseDialog} /> },
-            { id: 'slack', name: 'Slack', available: true, icon: `https://img.logo.dev/slack.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsSlack onHandleCreateIntegration={onHandleCreateIntegration} handleCloseDialog={handleCloseDialog} /> },
-            { id: 'discord', name: 'Discord', available: false, icon: `https://img.logo.dev/discord.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsDiscord onHandleCreateIntegration={onHandleCreateIntegration} handleCloseDialog={handleCloseDialog} /> },
-            { id: 'telegram', name: 'Telegram', available: false, icon: `https://img.logo.dev/telegram.org?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsTelegram onHandleCreateIntegration={onHandleCreateIntegration} handleCloseDialog={handleCloseDialog} /> },
-            { id: 'microsoftteams', name: 'Microsoft Teams', available: false, icon: `https://img.logo.dev/teams.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsMicrosoftTeams onHandleCreateIntegration={onHandleCreateIntegration} handleCloseDialog={handleCloseDialog} /> },
+            { id: 'whatsapp', name: 'WhatsApp', available: false, icon: `https://img.logo.dev/whatsapp.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsWhatsapp notebookId={notebookId} onHandleCreateIntegration={onHandleCreateIntegration} handleCloseDialog={handleCloseDialog} /> },
+            { id: 'slack', name: 'Slack', available: true, icon: `https://img.logo.dev/slack.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsSlack notebookId={notebookId} onHandleCreateIntegration={onHandleCreateIntegration} handleCloseDialog={handleCloseDialog} /> },
+            { id: 'discord', name: 'Discord', available: false, icon: `https://img.logo.dev/discord.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsDiscord notebookId={notebookId} onHandleCreateIntegration={onHandleCreateIntegration} handleCloseDialog={handleCloseDialog} /> },
+            { id: 'telegram', name: 'Telegram', available: false, icon: `https://img.logo.dev/telegram.org?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsTelegram notebookId={notebookId} onHandleCreateIntegration={onHandleCreateIntegration} handleCloseDialog={handleCloseDialog} /> },
+            { id: 'microsoftteams', name: 'Microsoft Teams', available: false, icon: `https://img.logo.dev/teams.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsMicrosoftTeams notebookId={notebookId} onHandleCreateIntegration={onHandleCreateIntegration} handleCloseDialog={handleCloseDialog} /> },
 
 ]);
 

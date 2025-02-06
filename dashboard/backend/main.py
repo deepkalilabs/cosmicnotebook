@@ -22,6 +22,7 @@ from helpers.backend.supabase.client import get_supabase_client
 from helpers.backend.aws.s3 import s3
 from helpers.backend.supabase import job_status
 from helpers.backend.supabase.connector_credentials import get_connector_credentials, get_is_type_connected, delete_connector_credentials
+from helpers.backend.supabase.integration_credentials import create_credentials, get_integration, update_credentials, delete_credentials, get_all_integrations
 
 from src.lambda_generator import lambda_generator
 from src.backend_types import ScheduledJob, NotebookDetails, ConnectorCredentials
@@ -263,6 +264,28 @@ async def get_connectors(user_id: UUID, notebook_id: UUID):
 @app.get("/connectors/{user_id}/{type}")
 async def check_connector_connection(user_id: UUID, notebook_id: UUID, type: str):
     return get_is_type_connected(user_id, notebook_id, type)
+
+
+#----------------------------------
+# Integrations
+#----------------------------------
+@app.post("/integrations/create")
+async def create_integration(integration_data: dict):
+    print("Creating integration", integration_data)
+    return await create_credentials(
+        org_id=integration_data['org_id'],
+        notebook_id=integration_data['notebook_id'],
+        integration_type=integration_data['integration_type'],
+        credentials=integration_data['credentials']
+    )
+ 
+@app.get("/integrations/{integration_id}")
+async def get_integration(integration_id: str):
+    return get_integration(integration_id)
+
+@app.get("/integrations/all/{org_id}")
+async def get_all_integrations(org_id: str):
+    return get_all_integrations(org_id)   
 
 
 if __name__ == "__main__":

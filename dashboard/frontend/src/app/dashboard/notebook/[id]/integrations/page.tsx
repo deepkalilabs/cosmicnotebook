@@ -1,10 +1,11 @@
 'use client'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { useUserStore } from "@/app/store";
 import { Skeleton } from "@/components/ui/skeleton";
-// import { IntegrationsButton } from "@/components/integrations/IntegrationsButton";
+import { IntegrationsButton } from "@/components/integrations/IntegrationsButton";
 
 
 export default function NotebookIntegrations() {
@@ -25,6 +26,21 @@ export default function NotebookIntegrations() {
             setLoading(true);
         }
     }, [userId, notebookId]);
+
+    const handleCreateIntegration = async (orgId: string, notebookId: string, integration: string, credentials: Record<string, string | number | boolean>) => {
+        
+        console.log("Deploying integration", orgId, notebookId, integration, credentials);
+        const response = await fetch(`/api/integrations/create`, {
+            method: 'POST',
+            body: JSON.stringify({ orgId, notebookId, integration, credentials })
+        });
+
+        const data = await response.json();
+        console.log("Integration deployed", data);
+        return data;
+    }
+    
+   
 
     
     return loading ? (
@@ -59,7 +75,7 @@ export default function NotebookIntegrations() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    {/* <IntegrationsButton onHandleCreateIntegration={() => {}} /> */}
+                    <IntegrationsButton notebookId={notebookId} onHandleCreateIntegration={handleCreateIntegration} />
                 </CardContent>
             </Card>
         </div>

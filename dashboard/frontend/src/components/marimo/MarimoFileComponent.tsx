@@ -1,5 +1,6 @@
+
 import { MarimoFile } from '@/app/types';
-// import { getSessionId } from '@/lib/marimo/sessions';
+//import { getSessionId } from '@/lib/marimo/sessions';
 import { asURL } from '@/lib/marimo/urls';
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
@@ -27,12 +28,13 @@ export function isSessionId(value: string | null): value is SessionId {
  * If its a relative path, it will be resolved to the current origin.
  *
  * If document.baseURI is set, it will be used as the base URL.
- */
+ 
   
-// function tabTarget(path: string) {
-//     // Consistent tab target so we open in the same tab when clicking on the same notebook
-//     return `${getSessionId()}-${encodeURIComponent(path)}`;
-// } 
+function tabTarget(path: string) {
+    // Consistent tab target so we open in the same tab when clicking on the same notebook
+    return `${getSessionId()}-${encodeURIComponent(path)}`;
+} 
+*/
   
   
 export default function MarimoFileComponent(props: MarimoFileComponentProps) {
@@ -53,6 +55,7 @@ export default function MarimoFileComponent(props: MarimoFileComponentProps) {
       ? asURL(file.initializationId || '', user_id, notebook_id)
       : asURL(file.path, user_id, notebook_id);
   
+    //const isMarkdown = file.path?.endsWith(".md") ?? false;
     const router = useRouter(); 
 
     return (

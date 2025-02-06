@@ -57,13 +57,13 @@ export interface NotebookCellProps {
   onMoveDown: () => void;
 }
 
-
 export interface ConnectorsButtonProps {
   onHandleCreateConnector: (connector: string,  values:Record<string, string | number | boolean>, userId: string, notebookId: string) => Promise<ConnectorResponse>;
 }
 
 export interface IntegrationsButtonProps {
-  onHandleCreateIntegration: (integration: string,  values:Record<string, string | number | boolean>, userId: string, notebookId: string) => Promise<ConnectorResponse>;
+  notebookId: string;
+  onHandleCreateIntegration: (orgId: string, notebookId: string, integration: string, credentials:Record<string, string | number | boolean>) => Promise<ConnectorResponse>;
 }
 
 export interface ConnectorCredentials {

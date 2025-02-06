@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 //TODO: Show URL for the API when deployed
 //TODO: Do we change url when we redeploy?
+//TODO: Add CURL request to the API when deployed
 export default function NotebookDeployment() {
     const { notebookDetails } = useNotebookDetailStore()
     const [ loading, setLoading ] = useState(true);

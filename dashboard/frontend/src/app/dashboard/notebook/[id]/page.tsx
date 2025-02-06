@@ -15,21 +15,18 @@ export default function Notebook() {
 
   useEffect(() => {
     if (!user?.id) {
-      console.error("User not found");
+      console.warn("User not found");
       return;
     }
 
     const notebookUrl = existingNotebookURL(name, user.id, notebook_id);
     console.log("notebookUrl", notebookUrl);
     // Store the return URL before redirecting
-    sessionStorage.setItem('returnUrl', returnUrl);
+    if (returnUrl) {
+      sessionStorage.setItem('returnUrl', returnUrl);
+    }
     window.location.replace(notebookUrl);
-  }, [user?.id, notebook_id]);
+  }, [name, user, notebook_id, returnUrl]); // Note: using user instead of user.id since user might be null
 
-  
-  if (!user?.id) {
-    return <div>User not found</div>;
-  }
-
-  return null; // Component will redirect before rendering
+  return <div>Loading...</div>; // Show loading state while redirecting
 }
