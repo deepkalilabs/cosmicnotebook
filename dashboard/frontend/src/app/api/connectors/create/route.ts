@@ -33,7 +33,7 @@ export async function POST(
       })
     });
 
-    console.log('response:', response);
+    console.log('Created connector response:', response);
     const data = await response.json();
     return Response.json({ error: null, data: data, status: 200 });
   } catch (error) {

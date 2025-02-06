@@ -87,10 +87,9 @@ class ConnectorResponse(BaseModel):
     type: str
     success: bool
     message: str
-    cell: Optional[Dict[str, Any]] = None
-    code: Optional[str] = None
-    docstring: Optional[str] = None
-
+    code_string: Optional[str] = None
+    doc_string: Optional[str] = None
+    body: Optional[Dict[str, Any]] = None
 class ConnectorCredentials(BaseModel):
     user_id: str
     org_id: str

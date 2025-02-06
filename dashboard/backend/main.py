@@ -238,6 +238,7 @@ async def delete_schedule(schedule_id: str):
 #----------------------------------
 @app.post("/connectors/create")
 async def create_connector(connector_data: dict):
+    print(f"Creating connector {connector_data}")
     try:
         # Convert the raw dict to ConnectorCredentials
         credentials = ConnectorCredentials(
@@ -247,8 +248,12 @@ async def create_connector(connector_data: dict):
             connector_type=connector_data['connector_type'],
             credentials=connector_data['credentials'],
         )
+        print(f"Connector type: {connector_data['connector_type']}")
+        print("Instantiating connector manager")
         connector_manager = ConnectorManager()
-        return await connector_manager.setup_connector(credentials)
+        print("Calling setup_connector")
+        result = await connector_manager.setup_connector(credentials)
+        return result
     except Exception as e:
         logging.error(f"Error creating connector: {e}")
         raise HTTPException(status_code=400, detail=str(e))
@@ -256,6 +261,7 @@ async def create_connector(connector_data: dict):
 
 @app.delete("/connectors/delete/{connector_id}")
 async def delete_connector(connector_id: str):
+    print(f"Deleting connector {connector_id}")
     return delete_connector_credentials(connector_id)
   
 @app.get("/connectors/{user_id}/{notebook_id}")

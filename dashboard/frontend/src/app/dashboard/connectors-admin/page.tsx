@@ -82,6 +82,7 @@ const ConnectorsAdmin = () => {
       },
       body: JSON.stringify({ userId, orgId, type, credentials })
     });
+    debugger
 
     const body = await response.json();
     console.log('Create connector response:', body);

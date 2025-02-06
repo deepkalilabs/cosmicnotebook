@@ -25,33 +25,36 @@ class ConnectorManager:
                 credentials
             )
             print(f"Connector {credentials.connector_type} created")
+            print(f"Response from connector factory: {connector}")
 
             # 2. Setup connector and get cell data
             result = await connector.setup()
-            if not result['success']:
+            print(f"Result: {result}")
+            print(f"Result type: {type(result)}")
+            print(f"Result success: {result.get('success', False)}")
+            if result.get('success', False):
                 return ConnectorResponse(
-                    type='connector_created',
+                    type=credentials.connector_type,
+                    success=True,
+                    message=result.get('message', 'Connector setup successful'),
+                    body=result.get('body', None),
+                    code_string=result.get('code_string', None),
+                    doc_string=result.get('doc_string', None)
+                )
+            else:
+                return ConnectorResponse(
+                    type=credentials.connector_type,
                     success=False,
-                    message=result['message'],
+                    message=result.get('message', 'Unknown error occurred'),
                     body=None,
                     code_string=None,
                     doc_string=None
-                )           
-
-            # 3. Return response
-            return ConnectorResponse(
-                type='connector_created',
-                success=True,
-                message='Ready to use posthog connector',
-                body=result['body'],
-                code_string=result['code_string'],
-                doc_string=result['doc_string']
-            )
+                )          
 
         except Exception as e:
             print(f"Error setting up connector {credentials.connector_type}: {e}")
             return ConnectorResponse(
-                type='connector_created',
+                type=credentials.connector_type,
                 success=False,
                 message=str(e),
                 body=None,

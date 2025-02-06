@@ -15,14 +15,14 @@ def get_connector_credentials(user_id: str, notebook_id: str):
 
     if not user_id:
         return {
-            'statusCode': 400,
+            'status_code': 400,
             'body': json.dumps({'error': 'User ID are required'}),
             'message': 'User ID are required'
         }
     
     if not notebook_id:
         return {
-            'statusCode': 400,
+            'status_code': 400,
             'body': json.dumps({'error': 'Notebook ID is required'}),
             'message': 'Notebook ID is required'
         }
@@ -39,14 +39,14 @@ def get_connector_credentials(user_id: str, notebook_id: str):
         print(credential_list)
         
         return {
-            'statusCode': 200,
+            'status_code': 200,
             'body': json.dumps(credential_list.model_dump()),
             'message': 'Successfully retrieved connector credentials'
         }
     except Exception as e:
         logger.error(f"Error getting all jobs for user {user_id}: {str(e)}")
         return {
-            'statusCode': 500,
+            'status_code': 500,
             'body': json.dumps({'error': str(e)}),
             'message': 'Error getting connector credentials'
         }
@@ -56,28 +56,28 @@ def get_connector_credentials(user_id: str, notebook_id: str):
 async def create_connector_credentials(org_id: str, user_id: str, connector_type: str, credentials: dict, doc_string: str, code_string: str):
     if not user_id:
         return {
-            'statusCode': 400,
+            'status_code': 400,
             'message': 'User ID is required',
             'body': None
         }
     
     if not org_id:
         return {
-            'statusCode': 400,
+            'status_code': 400,
             'message': 'Org ID is required',
             'body': None
         }
     
     if not connector_type:
         return {
-            'statusCode': 400,
+            'status_code': 400,
             'message': 'Connector type is required',
             'body': None
         }
     
     if not credentials:
         return {
-            'statusCode': 400,
+            'status_code': 400,
             'message': 'Credentials are required',
             'body': None
         }
@@ -95,14 +95,14 @@ async def create_connector_credentials(org_id: str, user_id: str, connector_type
             .execute()
         
         return {
-            'statusCode': 200,
+            'status_code': 200,
             'message': 'Connector credentials created successfully',
             'body': response.data
         }
     except Exception as e:
         logger.error(f"Error creating connector credentials: {str(e)}")
         return {
-            'statusCode': 500,
+            'status_code': 500,
             'message': str(e),
             'body': None
         }

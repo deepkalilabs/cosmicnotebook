@@ -7,7 +7,6 @@ from ..base import BaseConnector
 from src.backend_types import ConnectorResponse
 from helpers.backend.supabase.connector_credentials import create_connector_credentials
 from helpers.backend.supabase.connector_sync_runs import insert_connector_sync_run
-import json
 
 
 logger = logging.getLogger(__name__)
@@ -36,7 +35,7 @@ class PosthogConnector(BaseConnector):
       
     async def setup(self) -> ConnectorResponse:
         try:
-            logger.info(f"Setting up PosthogConnector with credentials: {self.credentials}")
+            print(f"Setting up PosthogConnector with credentials: {self.credentials}")
             
             if not isinstance(self.credentials, dict):
                 return {
@@ -69,19 +68,27 @@ class PosthogConnector(BaseConnector):
                 doc_string=self.get_connector_docstring(),
                 code_string=self.get_connector_code()
             )
-
-            # Convert the list response to a dictionary by taking the first item
-            data = response['body'][0] if isinstance(response['body'], list) else response['body']
-            self.connector_id = data['id']
+            print(f"Response from submit connector credentials: {response}")
+            if response['status_code'] == 200 and response['body']:
+                data = response['body'][0]
             
-            return {
-                'success': True,
-                'message': 'Posthog submitted to database',
-                'code_string': self.get_connector_code(),
-                'doc_string': self.get_connector_docstring(),
-                'body': data,  # Now data is a dictionary, not a list
-                'type': self.connector_type
-            }
+                return {
+                    'success': True,
+                    'message': 'Posthog submitted to database',
+                    'code_string': data['code_string'],
+                    'doc_string': data['doc_string'],
+                    'body': data,  
+                    'type': self.connector_type
+                }
+            else:
+                return {
+                    'success': False,
+                    'code_string': None,
+                    'doc_string': None,
+                    'message': 'Failed to submit Posthog connector to database',
+                    'body': response,
+                    'type': self.connector_type
+                }
 
         except Exception as e:
             logger.error(f"Error in setup: {e}")
@@ -263,8 +270,8 @@ To fetch more than 10,000 events, please ask for the batch export feature.
 
 ## Documentation
 For more examples and detailed usage, refer to our documentation.
-- Cosmic SDK Documentation: https://github.com/deepkalilabs/cosmic-sdk/posthog
-- Cosmic SDK Recipes: https://github.com/deepkalilabs/cosmic-sdk/posthog/recipes
+- Cosmic SDK Documentation: https://github.com/deepkalilabs/cosmicnotebook/docs/connectors/posthog
+- Cosmic SDK Recipes: https://github.com/deepkalilabs/cosmicnotebook/docs/connectors/posthog/recipes
 
 
 ### WIP: Batch Exports
