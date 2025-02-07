@@ -11,7 +11,7 @@ export const NotebookCard = ({ marimo_notebook, user, onDeleteNotebook }: { mari
 
   return (
     <Card 
-        className="group hover:shadow-lg transition-all duration-200 border-border/50"
+        className="group hover:shadow-lg transition-all duration-200 border-border/50 flex flex-col"
     >
         <CardHeader className="space-y-2 pb-4">
         <div className="flex items-center justify-between">
@@ -51,7 +51,7 @@ export const NotebookCard = ({ marimo_notebook, user, onDeleteNotebook }: { mari
             </div>
         </div>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-3 flex-grow">
         <p className="text-sm text-muted-foreground/90 line-clamp-2">
             {!marimo_notebook.description || ""}
         </p>
@@ -59,14 +59,18 @@ export const NotebookCard = ({ marimo_notebook, user, onDeleteNotebook }: { mari
             <div className="flex items-center">
             <div className="flex flex-col flex-wrap items-center">
             {marimo_notebook.description ? marimo_notebook.description : ""} 
-            <br/>
-            Last modified: {new Date(marimo_notebook.updated_at).toLocaleDateString()}
+            
             </div>
             </div>
         </div>
         </CardContent>
-        <CardFooter className="pt-4">
-        <MarimoFileComponent file={marimo_notebook} returnUrl={document.location.href} user_id={user?.id || ''} notebook_id={marimo_notebook.id}/>
+        <CardFooter className="pt-4 flex flex-col items-center space-x-2 text-xs text-muted-foreground">
+            <div className="flex flex-col items-center space-x-2 pb-4">
+                    Last modified: {new Date(marimo_notebook.updated_at).toLocaleDateString()}
+            </div>
+            <div className="w-full">
+                <MarimoFileComponent file={marimo_notebook} returnUrl={document.location.href} user_id={user?.id || ''} notebook_id={marimo_notebook.id}/>
+            </div>
         </CardFooter>
     </Card>
   );

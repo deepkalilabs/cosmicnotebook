@@ -45,7 +45,7 @@ export const Templates = () => {
           {templateData.templates.map((template) => (
             <Card 
               key={template.id} 
-              className="group relative overflow-hidden transition-colors hover:bg-muted/50"
+              className="group relative overflow-hidden transition-colors hover:bg-muted/50 flex flex-col"
             >
               <CardHeader className="space-y-2">
                 <div className="flex items-center space-x-3">
@@ -55,18 +55,17 @@ export const Templates = () => {
                   <h4 className="text-lg font-semibold">{template.name}</h4>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 flex-grow">
                 <p className="text-sm text-muted-foreground">
                   {template.description}
                 </p>
-
-                <div className="flex items-center">
+              </CardContent>
+              <CardFooter className="flex flex-col mt-auto w-full">
+                <div className="flex items-center py-4">
                   <span className="text-xs bg-secondary px-2.5 py-0.5 rounded-md text-secondary-foreground">
                     {template.example_customer}
                   </span>
                 </div>
-              </CardContent>
-              <CardFooter>
                 <Button 
                   className="w-full"
                   variant="default"

@@ -41,6 +41,8 @@ body {
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --font-primary: var(--font-supreme);
+    --font-mono: var(--font-jetbrains);  
   }
   .dark {
     --background: 20 14.3% 4.1%;
@@ -78,6 +80,17 @@ body {
   }
 }
 
+body {
+  font-family: var(--font-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code, pre, .monospace {
+  font-family: var(--font-mono);
+  font-feature-settings: "liga" 1, "calt" 1; /* Enable JetBrains ligatures */
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -86,3 +99,4 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
