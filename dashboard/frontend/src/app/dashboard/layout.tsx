@@ -31,20 +31,20 @@ const sidebarNavItems = [
 function AppSidebar() {
   return (
     <Sidebar className="border-r bg-background">
-      <div className="flex h-[60px] items-center border-b px-6">
-        <span className="font-semibold">Cosmic Notebook</span>
+      <div className="flex h-[60px] items-center border-b px-6 pt-2">
+        <h1 className="text-xl font-bold tracking-tight truncate">Cosmic Notebook</h1>
       </div>
       <nav className="space-y-1 p-2">
         {sidebarNavItems.map((item) => (
           <Button
             key={item.href}
             variant="ghost"
-            className="w-full justify-start gap-2"
+            className="w-full justify-start gap-2 data-[collapsed=true]:justify-center"
             asChild
           >
             <a href={item.href}>
               {item.icon}
-              <span>{item.title}</span>
+              <span className="data-[collapsed=true]:hidden">{item.title}</span>
             </a>
           </Button>
         ))}
@@ -104,8 +104,9 @@ export default function DashboardLayout({
 
   return (
     <SidebarProvider>
+      {/* <SidebarTrigger className="fixed left-0 top-[14px] z-20" /> */}
       <AppSidebar />
-      <main className="flex-1">
+      <main className="flex-1 pl-4">
         <SidebarTrigger />
         {children}
       </main>
