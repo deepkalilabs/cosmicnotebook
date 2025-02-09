@@ -22,7 +22,7 @@ from helpers.backend.supabase.client import get_supabase_client
 from helpers.backend.aws.s3 import s3
 from helpers.backend.supabase import job_status
 from helpers.backend.supabase.connector_credentials import get_connector_credentials, get_is_type_connected, delete_connector_credentials
-from helpers.backend.supabase.integration_credentials import create_credentials, get_integration, update_credentials, delete_credentials, get_all_integrations
+from helpers.backend.supabase.integration_credentials import create_integration_credentials, get_integration, get_all_integrations, update_is_tested, delete_integration_credentials
 
 from src.lambda_generator import lambda_generator
 from src.backend_types import ScheduledJob, NotebookDetails, ConnectorCredentials
@@ -185,7 +185,7 @@ async def get_notebook_data(notebook_id: str) -> NotebookDetails:
 
     return NotebookDetails(**notebook_details.data[0])
 
-
+"""
 @app.get("/notebook_job_schedule/{notebook_id}")
 async def get_schedules(notebook_id: str) -> List[ScheduledJob]:
     schedules = await scheduler.get_schedules(notebook_id)
@@ -206,7 +206,7 @@ async def create_schedule(notebook_id: str, schedule: dict):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-""""
+
 @app.put("/notebook_job_schedule/{schedule_id}")
 async def update_schedule(schedule_id: str, schedule: ScheduledJob):
     try:
@@ -280,7 +280,7 @@ async def check_connector_connection(user_id: UUID, notebook_id: UUID, type: str
 @app.post("/integrations/create")
 async def create_integration(integration_data: dict):
     print("Creating integration", integration_data)
-    return await create_credentials(
+    return await create_integration_credentials(
         org_id=integration_data['org_id'],
         notebook_id=integration_data['notebook_id'],
         integration_type=integration_data['integration_type'],
@@ -291,9 +291,21 @@ async def create_integration(integration_data: dict):
 async def get_integration(integration_id: str):
     return get_integration(integration_id)
 
-@app.get("/integrations/all/{org_id}")
-async def get_all_integrations(org_id: str):
-    return get_all_integrations(org_id)   
+@app.get("/integrations/get_all/{notebook_id}")
+async def get_all(notebook_id: str):
+    print("Getting all integrations for notebook", notebook_id)
+    return await get_all_integrations(notebook_id)   
+
+# Flip the is_tested flag to True.
+@app.put("/integrations/is_tested")
+async def is_tested(data: dict):
+    print("Updating is_tested for integration", data)
+    return await update_is_tested(data['id'], data['is_tested'])
+
+@app.delete("/integrations/delete/{integration_id}")
+async def delete_integration(integration_id: str):
+    print("Deleting integration", integration_id)
+    return await delete_integration_credentials(integration_id)
 
 
 if __name__ == "__main__":
