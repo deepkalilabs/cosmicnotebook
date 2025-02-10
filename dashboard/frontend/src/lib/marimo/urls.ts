@@ -40,6 +40,6 @@ export function isUrl(value: unknown): boolean {
 }
 
 export function asURL(path: string, user_id: string, notebook_id: string): URL {
-    return new URL(`?file=${path}&user_id=${user_id}&notebook_id=${notebook_id}`, URL_BASE);
+    return new URL(`/notebook/?file=${path}&user_id=${user_id}&notebook_id=${notebook_id}`, URL_BASE);
 }
   
