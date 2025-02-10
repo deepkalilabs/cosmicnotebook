@@ -8,6 +8,8 @@ import { useToast } from '@/hooks/use-toast';
 import { ConnectorsButton } from '@/components/connectors/ConnectorsButton';
 import { useOrgUserStore } from '@/app/store';
 import { marked } from 'marked';
+import { getApiUrl } from  '@/app/lib/config';
+
 
 import {
   Table,
@@ -48,6 +50,10 @@ const ConnectorsAdmin = () => {
     console.log('Connectors:', connectors);
   }, [connectors]);
 
+  useEffect(() => {
+    console.log('getApiUrl:', getApiUrl());
+  }, []);
+
 
   //TODO: This is a temporary fetch to get the connectors. Change to use the API endpoint in the backend.
   const fetchConnectors = async (orgId: string) => {
@@ -82,7 +88,6 @@ const ConnectorsAdmin = () => {
       },
       body: JSON.stringify({ userId, orgId, type, credentials })
     });
-    debugger
 
     const body = await response.json();
     console.log('Create connector response:', body);
@@ -110,6 +115,7 @@ const ConnectorsAdmin = () => {
       });
 
       const data = await response.json();
+      console.log('Delete connector response:', data);
       if (data.status !== 200) {
         toast({
           title: "Error",

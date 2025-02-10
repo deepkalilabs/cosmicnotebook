@@ -6,37 +6,35 @@ from supabase import Client
 import logging
 from helpers.backend.supabase.client import get_supabase_client
 from helpers.backend.common_types import SupabaseConnectorCredential, SupabaseConnectorCredentialList
+from helpers.backend.secrets import secrets_manager
+
 logger = logging.getLogger(__name__)
 supabase: Client = get_supabase_client()
 
-def get_connector_credentials(user_id: str, notebook_id: str):
-    print('user_id', user_id)
-    print('notebook_id', notebook_id)
+async def get_connector_credentials(org_id: str):
+    print('org_id', org_id)
 
-    if not user_id:
+    if not org_id:
         return {
             'status_code': 400,
-            'body': json.dumps({'error': 'User ID are required'}),
-            'message': 'User ID are required'
+            'body': json.dumps({'error': 'Org ID are required'}),
+            'message': 'Org ID are required'
         }
-    
-    if not notebook_id:
-        return {
-            'status_code': 400,
-            'body': json.dumps({'error': 'Notebook ID is required'}),
-            'message': 'Notebook ID is required'
-        }
+
     
     try:
         response = supabase.table('connector_credentials') \
             .select('*') \
-            .eq('user_id', user_id) \
-            .eq('notebook_id', notebook_id) \
+            .eq('org_id', org_id) \
             .execute()
     
         credentials = [SupabaseConnectorCredential(**credential) for credential in response.data]
         credential_list = SupabaseConnectorCredentialList(credentials=credentials)
         print(credential_list)
+
+        # Transform secret path into credentials.
+        for credential in credential_list.credentials:
+            credential.credentials = await secrets_manager.get_secret_value(credential.credentials['secret_path'])
         
         return {
             'status_code': 200,
@@ -44,7 +42,7 @@ def get_connector_credentials(user_id: str, notebook_id: str):
             'message': 'Successfully retrieved connector credentials'
         }
     except Exception as e:
-        logger.error(f"Error getting all jobs for user {user_id}: {str(e)}")
+        logger.error(f"Error getting connector credentials for org {org_id}: {str(e)}")
         return {
             'status_code': 500,
             'body': json.dumps({'error': str(e)}),
@@ -82,13 +80,25 @@ async def create_connector_credentials(org_id: str, user_id: str, connector_type
             'body': None
         }
     
+    """
+    Turn credentials into a secret path and save it to the database.
+    """
+    secret_path = secrets_manager.put_secret_value(f"orgs/{org_id}/connectors/{connector_type}", credentials)
+    metadata = {
+        "arn": secret_path['ARN'],
+        "version": secret_path['VersionId']
+    }
+    path = secret_path['Name']
+    print('metadata', metadata)
+    print('path', path)
+
     try:
         response = supabase.table('connector_credentials') \
             .upsert({
                 'user_id': user_id,
                 'org_id': org_id,
                 'connector_type': connector_type,
-                'credentials': credentials,
+                'credentials': {'secret_path': path, 'metadata': metadata},
                 'doc_string': doc_string,
                 'code_string': code_string
             }) \

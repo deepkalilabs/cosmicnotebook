@@ -7,7 +7,7 @@ from ..base import BaseConnector
 from src.backend_types import ConnectorResponse
 from helpers.backend.supabase.connector_credentials import create_connector_credentials
 from helpers.backend.supabase.connector_sync_runs import insert_connector_sync_run
-
+from helpers.backend.secrets import secrets_manager
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +58,8 @@ class PosthogConnector(BaseConnector):
                     'body': None,
                     'type': self.connector_type
                 }
-            
+         
+            print('Submitting connector credentials in setup:')
             # Submit connector credentials to database
             response = await create_connector_credentials(
                 user_id=self.user_id,
@@ -68,10 +69,14 @@ class PosthogConnector(BaseConnector):
                 doc_string=self.get_connector_docstring(),
                 code_string=self.get_connector_code()
             )
-            print(f"Response from submit connector credentials: {response}")
             if response['status_code'] == 200 and response['body']:
                 data = response['body'][0]
-            
+
+                # Get secret path and switch it in credentials
+                secret_path = data['credentials']['secret_path']
+                print('secret_path in response', secret_path)
+                print('Converting secret path to credentials before returning response')
+                data['credentials'] = secrets_manager.get_secret_value(secret_path)
                 return {
                     'success': True,
                     'message': 'Posthog submitted to database',
