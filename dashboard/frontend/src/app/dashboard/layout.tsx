@@ -29,10 +29,14 @@ const sidebarNavItems = [
 ]
 
 function AppSidebar() {
+  const { orgUsers } = useOrgUserStore();
+  const orgId = orgUsers[0]?.org_id;
+
   return (
     <Sidebar className="border-r bg-background">
-      <div className="flex h-[60px] items-center border-b px-6 pt-2">
+      <div className="flex flex-col h-[85px] justify-center border-b px-6 pt-2">
         <h1 className="text-xl font-bold tracking-tight truncate">Cosmic Notebook</h1>
+        {orgId && <span className="text-xs text-muted-foreground mt-2">Org ID: {orgId}</span>}
       </div>
       <nav className="space-y-1 p-2">
         {sidebarNavItems.map((item) => (

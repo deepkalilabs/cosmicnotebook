@@ -74,9 +74,10 @@ class PosthogConnector(BaseConnector):
 
                 # Get secret path and switch it in credentials
                 secret_path = data['credentials']['secret_path']
-                print('secret_path in response', secret_path)
+                #print('secret_path in response', secret_path)
                 print('Converting secret path to credentials before returning response')
                 data['credentials'] = secrets_manager.get_secret_value(secret_path)
+                #Extract org id from secret path and add it to credentials
                 return {
                     'success': True,
                     'message': 'Posthog submitted to database',

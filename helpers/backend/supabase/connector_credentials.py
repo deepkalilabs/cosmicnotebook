@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 supabase: Client = get_supabase_client()
 
 async def get_connector_credentials(org_id: str):
-    print('org_id', org_id)
+    print('In get_connector_credentials', org_id)
 
     if not org_id:
         return {
@@ -34,7 +34,7 @@ async def get_connector_credentials(org_id: str):
 
         # Transform secret path into credentials.
         for credential in credential_list.credentials:
-            credential.credentials = await secrets_manager.get_secret_value(credential.credentials['secret_path'])
+            credential.credentials = secrets_manager.get_secret_value(credential.credentials['secret_path'])
         
         return {
             'status_code': 200,
