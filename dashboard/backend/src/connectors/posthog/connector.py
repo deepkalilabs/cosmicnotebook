@@ -254,16 +254,14 @@ class PosthogConnector(BaseConnector):
     
     def get_connector_code(self):
         code = f"""
-from cosmic.connectors import PostHogService
-from cosmic.secrets import secrets_manager
+from cosmic_sdk.secrets import SecretsManager
+from cosmic_sdk.connectors import PostHogService
 
-# Initialize path to secret and get secret value
-credentials = secrets_manager.get_secret_value(org_id, connector_type, path)
+secrets_manager = SecretsManager()
 
-# Initialize PostHog service
+credentials = secrets_manager.get_secrets(org_id="org_123", connector_type="posthog")
 posthog_service = PostHogService(credentials)
-
-print("PostHog connector initialized successfully! ✅")
+posthog_service.get_user_logins("2024-01-01")
 """
         return code.lstrip()
 
