@@ -278,8 +278,8 @@ To fetch more than 10,000 events, please ask for the batch export feature.
 
 ## Documentation
 For more examples and detailed usage, refer to our documentation.
-- Cosmic SDK Documentation: https://github.com/deepkalilabs/cosmicnotebook/docs/connectors/posthog
-- Cosmic SDK Recipes: https://github.com/deepkalilabs/cosmicnotebook/docs/connectors/posthog/recipes
+- <a href="https://github.com/deepkalilabs/cosmicnotebook/docs/connectors/posthog" target="_blank">Cosmic SDK Documentation</a>
+- <a href="https://github.com/deepkalilabs/cosmicnotebook/docs/connectors/posthog/recipes" target="_blank">Cosmic SDK Recipes</a>
 
 
 ### WIP: Batch Exports

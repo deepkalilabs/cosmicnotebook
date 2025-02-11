@@ -43,6 +43,8 @@ class SupabaseConnectorCredential(BaseModel):
     notebook_id: Optional[str] = None
     connector_type: Optional[str] = None
     credentials: Optional[dict] = None
+    doc_string: Optional[str] = None
+    code_string: Optional[str] = None
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
 
