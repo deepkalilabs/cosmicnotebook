@@ -264,10 +264,10 @@ async def delete_connector(connector_id: str):
     print(f"Deleting connector {connector_id}")
     return delete_connector_credentials(connector_id)
   
-@app.get("/connectors/{user_id}/{notebook_id}")
-async def get_connectors(user_id: UUID, notebook_id: UUID):
-    print(f"Getting connectors for user {user_id} and notebook {notebook_id}")
-    return get_connector_credentials(user_id, notebook_id)
+@app.get("/connectors/all/{org_id}")
+async def get_connectors(org_id: str):
+    print(f"Getting connectors for org {org_id}")
+    return await get_connector_credentials(org_id)
 
 @app.get("/connectors/{user_id}/{type}")
 async def check_connector_connection(user_id: UUID, notebook_id: UUID, type: str):

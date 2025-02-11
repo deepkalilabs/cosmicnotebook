@@ -30,20 +30,30 @@ function NewNotebookButton({ user_id, notebook_id }: { user_id: string, notebook
 
 export default function ProjectsPage() {
     const [marimoNotebooks, setMarimoNotebooks] = useState<MarimoFile[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const { user } = useUserStore();
 
-    if (!user?.id) {
-      console.log("User should not be null for creating notebook.");
-    }
 
+    useEffect(() => {
+        if (user?.id) {
+          console.log("User ID: " + user.id);
+          getAllMarimoNotebooksByUser(user.id);
+        }
+        setIsLoading(false);
+    }, [user]);
 
     const getAllMarimoNotebooksByUser = async (userId: string) => {
-        const { data, error } = await supabase.from('notebooks').select().eq('user_id', userId);
+        const { data, error } = await supabase
+            .from('notebooks')
+            .select('*')
+            .eq('user_id', userId)
+            .order('created_at', { ascending: false });
+
         if (error) {
             console.error('Failed to fetch notebooks: ' + error.message);
             return;
         }
-        setMarimoNotebooks(data || [] as MarimoFile[]); // Type assertion with proper interface
+        setMarimoNotebooks(data || [] as MarimoFile[]); 
     }
 
     const onDeleteNotebook = async (notebook_id: string) => {
@@ -55,14 +65,16 @@ export default function ProjectsPage() {
       return data;
     }
 
-    useEffect(() => {
-        if (user?.id) {
-            getAllMarimoNotebooksByUser(user?.id);
-        }
-    }, [user]);
-
     if (!user?.id) {
       return null;
+    }
+
+    if (isLoading) {
+      return (
+        <div className="flex h-screen items-center justify-center">
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      );
     }
 
     return (

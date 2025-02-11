@@ -7,7 +7,7 @@ from ..base import BaseConnector
 from src.backend_types import ConnectorResponse
 from helpers.backend.supabase.connector_credentials import create_connector_credentials
 from helpers.backend.supabase.connector_sync_runs import insert_connector_sync_run
-
+from helpers.backend.secrets import secrets_manager
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +58,8 @@ class PosthogConnector(BaseConnector):
                     'body': None,
                     'type': self.connector_type
                 }
-            
+         
+            print('Submitting connector credentials in setup:')
             # Submit connector credentials to database
             response = await create_connector_credentials(
                 user_id=self.user_id,
@@ -68,10 +69,15 @@ class PosthogConnector(BaseConnector):
                 doc_string=self.get_connector_docstring(),
                 code_string=self.get_connector_code()
             )
-            print(f"Response from submit connector credentials: {response}")
             if response['status_code'] == 200 and response['body']:
                 data = response['body'][0]
-            
+
+                # Get secret path and switch it in credentials
+                secret_path = data['credentials']['secret_path']
+                #print('secret_path in response', secret_path)
+                print('Converting secret path to credentials before returning response')
+                data['credentials'] = secrets_manager.get_secret_value(secret_path)
+                #Extract org id from secret path and add it to credentials
                 return {
                     'success': True,
                     'message': 'Posthog submitted to database',
@@ -248,12 +254,14 @@ class PosthogConnector(BaseConnector):
     
     def get_connector_code(self):
         code = f"""
-from cosmic.connectors import PostHogService
+from cosmic_sdk.secrets import SecretsManager
+from cosmic_sdk.connectors import PostHogService
 
-# Initialize PostHog service
-posthog_service = PostHogService({self.credentials})
+secrets_manager = SecretsManager()
 
-print("PostHog connector initialized successfully! ✅")
+credentials = secrets_manager.get_secrets(org_id="org_123", connector_type="posthog")
+posthog_service = PostHogService(credentials)
+posthog_service.get_user_logins("2024-01-01")
 """
         return code.lstrip()
 
@@ -270,8 +278,8 @@ To fetch more than 10,000 events, please ask for the batch export feature.
 
 ## Documentation
 For more examples and detailed usage, refer to our documentation.
-- Cosmic SDK Documentation: https://github.com/deepkalilabs/cosmicnotebook/docs/connectors/posthog
-- Cosmic SDK Recipes: https://github.com/deepkalilabs/cosmicnotebook/docs/connectors/posthog/recipes
+- <a href="https://github.com/deepkalilabs/cosmicnotebook/docs/connectors/posthog" target="_blank">Cosmic SDK Documentation</a>
+- <a href="https://github.com/deepkalilabs/cosmicnotebook/docs/connectors/posthog/recipes" target="_blank">Cosmic SDK Recipes</a>
 
 
 ### WIP: Batch Exports

@@ -3,11 +3,12 @@
 import React, { useState, useEffect } from 'react';
 
 import { useConnectorStore } from '@/app/store';
-import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { ConnectorsButton } from '@/components/connectors/ConnectorsButton';
 import { useOrgUserStore } from '@/app/store';
 import { marked } from 'marked';
+import { getApiUrl } from  '@/app/lib/config';
+
 
 import {
   Table,
@@ -48,22 +49,37 @@ const ConnectorsAdmin = () => {
     console.log('Connectors:', connectors);
   }, [connectors]);
 
+  useEffect(() => {
+    console.log('getApiUrl:', getApiUrl());
+  }, []);
+
 
   //TODO: This is a temporary fetch to get the connectors. Change to use the API endpoint in the backend.
   const fetchConnectors = async (orgId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('connector_credentials')
-        .select('*')
-        .eq('org_id', orgId);  
+      const response = await fetch(`/api/connectors/all/${orgId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log('Fetch connectors response:', response);
 
-      if (error) {
-        console.warn('Supabase error:', error.message);
+      if (response.status !== 200) {
+        console.warn('Error fetching connectors:', response.statusText);
         return;
       }
 
-      console.log('Query successful, data:', data);
-      setConnectors(data || []);
+      const data = await response.json();
+
+      if (data.status !== 200) {
+        console.warn('Error fetching connectors:', data);
+        return;
+      }
+
+      console.log('Connectors:', data.data.body);
+      const connectors = JSON.parse(data.data.body);
+      setConnectors(connectors.credentials || []);
     } catch (error) {
       console.warn('Error fetching connectors:', error);
     } finally {
@@ -82,7 +98,6 @@ const ConnectorsAdmin = () => {
       },
       body: JSON.stringify({ userId, orgId, type, credentials })
     });
-    debugger
 
     const body = await response.json();
     console.log('Create connector response:', body);
@@ -110,6 +125,7 @@ const ConnectorsAdmin = () => {
       });
 
       const data = await response.json();
+      console.log('Delete connector response:', data);
       if (data.status !== 200) {
         toast({
           title: "Error",

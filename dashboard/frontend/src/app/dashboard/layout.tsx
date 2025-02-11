@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { useUserStore, useOrgUserStore } from "@/app/store"
+import { toast } from "@/hooks/use-toast";
 
 
 const sidebarNavItems = [
@@ -29,10 +30,49 @@ const sidebarNavItems = [
 ]
 
 function AppSidebar() {
+  const { orgUsers } = useOrgUserStore();
+  const orgId = orgUsers[0]?.org_id;
+
+  const copyOrgId = () => {
+    if (orgId) {
+      navigator.clipboard.writeText(orgId);
+      toast({
+        title: "Org ID copied to clipboard",
+        description: "You can now paste it into your connector configuration.",
+      });
+    }
+  };
+
   return (
     <Sidebar className="border-r bg-background">
-      <div className="flex h-[60px] items-center border-b px-6 pt-2">
+      <div className="flex flex-col h-[85px] justify-center border-b px-6 pt-2">
         <h1 className="text-xl font-bold tracking-tight truncate">Cosmic Notebook</h1>
+        {orgId && (
+          <div className="flex items-center gap-1">
+            <span className="text-xs text-muted-foreground mt-2">Org ID: {orgId}</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0 mt-2"
+              onClick={copyOrgId}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+              </svg>
+            </Button>
+          </div>
+        )}
       </div>
       <nav className="space-y-1 p-2">
         {sidebarNavItems.map((item) => (
