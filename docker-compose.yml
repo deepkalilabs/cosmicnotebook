@@ -8,6 +8,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "2718:2718"
+      - "5900:5900"
     volumes:
       - ${PWD}/ide:/app
       - ${PWD}/helpers:/app/helpers  # Mount helpers with absolute path
