@@ -5,7 +5,7 @@
 import { Input } from '@/components/ui/input'
 import { useState } from 'react'
 
-export default function FormsDbt() {
+export default function FormsDBT() {
   const [apiKey, setApiKey] = useState('')
   const [hostUrl, setHostUrl] = useState('')
 

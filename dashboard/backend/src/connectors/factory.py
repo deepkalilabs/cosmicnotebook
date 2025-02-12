@@ -1,13 +1,14 @@
 from typing import Type
 from .base import BaseConnector
 from .posthog.connector import PosthogConnector
-
+from .slack.connector import SlackConnector
 class ConnectorFactory:
     """
     Factory design pattern for creating connector instances.
     """
     _connectors = {
-        "posthog": PosthogConnector
+        "posthog": PosthogConnector,
+        "slack": SlackConnector
         # Add more connectors here
         # "EX: snowflake": SnowflakeConnector
     }

@@ -253,6 +253,7 @@ class PosthogConnector(BaseConnector):
             return None
     
     def get_connector_code(self):
+        print(f"Getting connector code for {self.org_id} and {self.connector_type}")
         code = f"""
 from cosmic_sdk.secrets import SecretsManager
 from cosmic_sdk.connectors import PostHogService
@@ -278,8 +279,8 @@ To fetch more than 10,000 events, please ask for the batch export feature.
 
 ## Documentation
 For more examples and detailed usage, refer to our documentation.
-- <a href="https://github.com/deepkalilabs/cosmicnotebook/docs/connectors/posthog" target="_blank">Cosmic SDK Documentation</a>
-- <a href="https://github.com/deepkalilabs/cosmicnotebook/docs/connectors/posthog/recipes" target="_blank">Cosmic SDK Recipes</a>
+- <a href="https://github.com/deepkalilabs/cosmicnotebook/tree/main/docs/connectors/posthog" target="_blank">Cosmic SDK Documentation</a>
+- <a href="https://github.com/deepkalilabs/cosmicnotebook/tree/main/docs/connectors/posthog/recipes" target="_blank">Cosmic SDK Recipes</a>
 
 
 ### WIP: Batch Exports
