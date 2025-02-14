@@ -8,8 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { useOrgUserStore } from '@/app/store'
-import { IntegrationsButtonProps } from '@/app/types'
+import { ConnectorsButtonProps } from '@/app/types'
 import BetaTag from '@/components/BetaTag'
 
 import { toast } from '@/hooks/use-toast'
@@ -21,18 +20,9 @@ const formSchema = z.object({
 
 //TODO: Add a way to test the connection to Slack
 //TODO: Add doc to the form to get the channel id and bot token
-export default function MicrosoftTeamsForm({notebookId, onHandleCreateIntegration, handleCloseDialog}: IntegrationsButtonProps & {handleCloseDialog: () => void}) {
-  //const { user } = useUserStore();
-  const { orgUsers } = useOrgUserStore();
-
-  //const { addConnector } = useConnectorStore();
-  //const userId = user?.id || '';
-  const orgId = orgUsers[0]?.org_id || '';
+export default function MicrosoftTeamsForm({onHandleCreateConnector, handleCloseDialog}: ConnectorsButtonProps & {handleCloseDialog: () => void}) {
   const [isConnecting, setIsConnecting] = useState(false);
-
-
   
-  // Update Slack install URL with the correct redirect URI
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,7 +38,7 @@ export default function MicrosoftTeamsForm({notebookId, onHandleCreateIntegratio
     setIsConnecting(true);
     
     try {
-      const res = await onHandleCreateIntegration(orgId, notebookId, 'slack', credentials);
+      const res = await onHandleCreateConnector('microsoftteams', credentials);
       console.log("Response from onHandleCreateIntegration", res);
       
       if (res && res.error) {

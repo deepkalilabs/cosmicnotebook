@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { useOrgUserStore, useUserStore } from "@/app/store";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -42,7 +42,7 @@ export default function NotebookIntegrations() {
     const [selectedDocstring, setSelectedDocstring] = useState<string>("");
     const [selectedCode, setSelectedCode] = useState<string>("");
     const [showCredentials, setShowCredentials] = useState<Record<string, boolean>>({});
-    const [copiedStates, setCopiedStates] = useState<Record<string, boolean>>({});
+    const [ copiedStates, setCopiedStates ] = useState<Record<string, boolean>>({});
     const orgId = orgUsers[0]?.org_id;
 
     useEffect(() => {
@@ -202,6 +202,10 @@ export default function NotebookIntegrations() {
         });
         }).catch((error) => {
         console.error('Failed to copy credentials:', error);
+        setCopiedStates(prev => ({
+            ...prev,
+            [connectors.credentials[0].id]: false
+        }));
         toast({
             title: "Error",
             description: "Failed to copy credentials",
@@ -246,7 +250,7 @@ export default function NotebookIntegrations() {
         <div className="space-y-6">
             <div className="flex flex-row justify-between items-center gap-2">
                 <h1 className="text-3xl font-bold tracking-tight">Data Connectors and Secrets</h1>
-                <IntegrationsButton notebookId={notebookId} onHandleCreateConnector={handleCreateConnector} />
+                <IntegrationsButton onHandleCreateConnector={handleCreateConnector} />
             </div>
             <div>
                 <p className="text-muted-foreground">

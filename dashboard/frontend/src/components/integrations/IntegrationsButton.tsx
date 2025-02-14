@@ -4,12 +4,11 @@ import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Plus } from 'lucide-react'
 import { useConnectorHook } from '@/hooks/useConnectorHook'
-import { IntegrationsButtonProps } from '@/app/types'
+import { ConnectorsButtonProps } from '@/app/types'
 import FormsWhatsapp from './forms/FormsWhatsapp'
 import FormsSlack from './forms/FormsSlack'
 import FormsDiscord from './forms/FormsDiscord'
 import FormsTelegram from './forms/FormsTelegram'
-import FormsMicrosoftTeams from './forms/FormsMicrosoftTeams'
 import FormsPosthog from '@/components/connectors/forms/FormsPosthog'
 import FormsDbt from '@/components/connectors/forms/FormsDBT'
 import FormsClickhouse from '@/components/connectors/forms/FormsClickHouse'
@@ -33,9 +32,8 @@ interface DataSource {
 }
 
 export function IntegrationsButton({
-  notebookId,
   onHandleCreateConnector,
-}: IntegrationsButtonProps) {
+}: ConnectorsButtonProps) {
   const { isDialogOpen, handleOpenDialog, handleCloseDialog } = useConnectorHook();
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
 

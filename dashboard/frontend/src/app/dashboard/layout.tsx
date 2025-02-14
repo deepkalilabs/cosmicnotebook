@@ -1,6 +1,6 @@
 "use client"
 
-import { Home, Activity, Plug } from "lucide-react"
+import { Home, Activity } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sidebar } from "@/components/ui/sidebar"
 import { supabase } from '@/lib/supabase';

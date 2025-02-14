@@ -9,17 +9,14 @@ import { Button } from '@/components/ui/button'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { toast } from '@/hooks/use-toast'
-import { IntegrationsButtonProps } from '@/app/types'
-import {  useOrgUserStore } from '@/app/store'
+import { ConnectorsButtonProps } from '@/app/types'
 
 
 const formSchema = z.object({
   api_key: z.string().min(5, { message: "API Key is required" }),
 })
 
-export default function ModalForm({notebookId, onHandleCreateConnector, handleCloseDialog}: IntegrationsButtonProps & {handleCloseDialog: () => void}) {
-  const { orgUsers } = useOrgUserStore();
-  const orgId = orgUsers[0]?.org_id || '';
+export default function ModalForm({onHandleCreateConnector, handleCloseDialog}: ConnectorsButtonProps & {handleCloseDialog: () => void}) {
   const [isConnecting, setIsConnecting] = useState(false);
 
 
@@ -35,7 +32,7 @@ export default function ModalForm({notebookId, onHandleCreateConnector, handleCl
     setIsConnecting(true);
     
     try {
-      const res = await onHandleCreateConnector('pylon', credentials, orgId, notebookId);
+      const res = await onHandleCreateConnector('modal', credentials);
       console.log("Response from onHandleCreateConnector", res);
       
       if (res && res.error) {

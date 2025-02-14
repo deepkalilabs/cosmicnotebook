@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { useOrgUserStore } from '@/app/store'
 import { ConnectorsButtonProps } from '@/app/types'
 import BetaTag from '@/components/BetaTag'
 
