@@ -84,12 +84,15 @@ class NotebookData(BaseModel):
     # connector_details: SupabaseConnectorCredentialList
 
 class ConnectorResponse(BaseModel):
-    type: str
-    success: bool
-    message: str
+    id: str
+    status_code: int
+    connector_type: str
+    credentials: Optional[dict] = None
     code_string: Optional[str] = None
     doc_string: Optional[str] = None
-    body: Optional[Dict[str, Any]] = None
+    message: Optional[str] = None
+    success: Optional[bool] = None
+    
 class ConnectorCredentials(BaseModel):
     user_id: str
     org_id: str

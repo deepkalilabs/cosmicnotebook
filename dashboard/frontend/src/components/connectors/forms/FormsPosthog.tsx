@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useUserStore, useOrgUserStore } from '@/app/store'
-import { ConnectorCredentials, ConnectorsButtonProps } from '@/app/types'
+import { ConnectorCredential, ConnectorsButtonProps } from '@/app/types'
 import { useConnectorStore } from '@/app/store'
 import { toast } from '@/hooks/use-toast'
 
@@ -20,18 +20,13 @@ const formSchema = z.object({
   projectId: z.string().min(5, { message: "Project ID is required" })
 })
 
-export default function FormsPosthog({onHandleCreateConnector, handleCloseDialog}: ConnectorsButtonProps & {handleCloseDialog: () => void}) {
-  const { user } = useUserStore();
-  const { orgUsers } = useOrgUserStore();
-  const { addConnector } = useConnectorStore();
-  const userId = user?.id || '';
-  const orgId = orgUsers[0]?.org_id || '';
-  const [isConnecting, setIsConnecting] = useState(false);
+export default function FormsPosthog({ onHandleCreateConnector, handleCloseDialog}: ConnectorsButtonProps & {handleCloseDialog: () => void}) {
 
+  const [isConnecting, setIsConnecting] = useState(false);
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      userId: userId,
       apiKey: '',
       baseUrl: 'https://us.posthog.com',
       projectId: ''
@@ -45,7 +40,7 @@ export default function FormsPosthog({onHandleCreateConnector, handleCloseDialog
     setIsConnecting(true);
     
     try {
-      const res = await onHandleCreateConnector('posthog', values, userId, orgId);
+      const res = await onHandleCreateConnector('posthog', values);
       console.log("Response from onHandleCreateConnector", res);
       
       if (res && res.error) {
@@ -57,8 +52,6 @@ export default function FormsPosthog({onHandleCreateConnector, handleCloseDialog
     
       handleCloseDialog();
       setIsConnecting(false);
-      console.log("Connector: ", res.data);
-      addConnector(res.data.body as unknown as ConnectorCredentials);
       toast({
         title: "Success",
         description: "Connector created",

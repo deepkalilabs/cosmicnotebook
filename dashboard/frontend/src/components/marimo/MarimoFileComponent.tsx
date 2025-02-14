@@ -41,7 +41,6 @@ export default function MarimoFileComponent(props: MarimoFileComponentProps) {
     const { file, returnUrl, user_id, notebook_id } = props;
     // If path is a sessionId, then it has not been saved yet
     // We want to keep the sessionId in this case
-    debugger
     const isNewNotebook = isSessionId(file.path);
 
     if (!user_id) {

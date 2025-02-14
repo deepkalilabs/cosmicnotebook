@@ -48,9 +48,7 @@ export default function MicrosoftTeamsForm({notebookId, onHandleCreateIntegratio
     setIsConnecting(true);
     
     try {
-      debugger;
       const res = await onHandleCreateIntegration(orgId, notebookId, 'slack', credentials);
-      debugger;
       console.log("Response from onHandleCreateIntegration", res);
       
       if (res && res.error) {

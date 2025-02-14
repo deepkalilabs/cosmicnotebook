@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server'
 import { getApiUrl } from  '@/app/lib/config';
-
+import { ConnectorCredentialRequest } from '@/app/types';
 /**
  * This endpoint is used to create a connector.
  * @param req - The request object.
@@ -10,14 +10,17 @@ export async function POST(
   req: NextRequest
 ) {
   try {
+    const connectorRequest = await req.json() as ConnectorCredentialRequest;
+    console.log('connectorRequest:', connectorRequest);
+    console.log('userId:', connectorRequest.user_id);
+    console.log('orgId:', connectorRequest.org_id);
+    console.log('type:', connectorRequest.type);
+    console.log('credentials:', connectorRequest.credentials);
+    console.log('notebookId:', connectorRequest.notebook_id);
 
-    const { userId, orgId, type, credentials } = await req.json();
-    console.log('userId:', userId);
-    console.log('orgId:', orgId);
-    console.log('type:', type);
-    console.log('credentials:', credentials);
-    if (!userId || !orgId || !type || !credentials) {
-      return Response.json({ error: 'User ID, Org ID, Type, and Credentials are required', data: null, status: 400 });
+    if (!connectorRequest.user_id || !connectorRequest.org_id || !connectorRequest.type || !connectorRequest.credentials || !connectorRequest.notebook_id) {
+      console.error('User ID, Org ID, Type, Credentials, and Notebook ID are required');
+      return Response.json({ error: 'User ID, Org ID, Type, Credentials, and Notebook ID are required', data: null, status: 400 });
     }
 
     const response = await fetch(`${getApiUrl()}/connectors/create`, {
@@ -26,16 +29,23 @@ export async function POST(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        user_id: userId,
-        org_id: orgId,
-        connector_type: type,
-        credentials: credentials
+        user_id: connectorRequest.user_id,
+        org_id: connectorRequest.org_id,
+        connector_type: connectorRequest.type,
+        credentials: connectorRequest.credentials,
+        notebook_id: connectorRequest.notebook_id
       })
     });
 
     console.log('Created connector response:', response);
     const data = await response.json();
-    return Response.json({ error: null, data: data, status: 200 });
+    console.log('Created connector data:', data);
+
+    if (data.status_code === 200) {
+      return Response.json({ error: null, data: data, status: 200 });
+    }
+
+    return Response.json({ error: data.message, status: data.status_code });
   } catch (error) {
     console.error('Error fetching connectors:', error);
     return Response.json({ error: 'Failed to fetch connectors', data: null, status: 500 });
