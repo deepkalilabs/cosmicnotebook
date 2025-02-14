@@ -1,13 +1,13 @@
 'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from "react";
-import { useConnectorStore, useOrgUserStore, useUserStore } from "@/app/store";
+import { useOrgUserStore, useUserStore } from "@/app/store";
 import { Skeleton } from "@/components/ui/skeleton";
 import { IntegrationsButton } from "@/components/integrations/IntegrationsButton";
 import { useToast } from "@/hooks/use-toast";
-import { ConnectorCredential, ConnectorCredentialsList } from "@/app/types";
+import { ConnectorCredentialsList } from "@/app/types";
 import {
     Table,
     TableBody,
@@ -25,20 +25,17 @@ import {
   } from "@/components/ui/sheet";
   import { marked } from 'marked';
   import CodeBlock from '@/components/CodeBlock';
-  import { Plus, MoreVertical, Pencil, Trash2, Eye, EyeOff, Copy, CheckCircle2, BookOpen } from 'lucide-react';
+  import { Pencil, Trash2, Eye, EyeOff, Copy, CheckCircle2, BookOpen } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
 export default function NotebookIntegrations() {
     const { user } = useUserStore();
 
     const params = useParams();
-    const searchParams = useSearchParams();
     const notebookId = params.id as string;
-    const name = searchParams.get('name') || '';
     const userId = user?.id || '';
-    const [ loading, setLoading ] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
     const { toast } = useToast();
-    const [isLoading, setIsLoading] = useState(false);
     const { orgUsers } = useOrgUserStore();
     const [connectors, setConnectors] = useState<ConnectorCredentialsList>({ credentials: [] });
     const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -52,9 +49,9 @@ export default function NotebookIntegrations() {
         if (userId && notebookId && orgUsers && orgUsers.length > 0) {
             console.log('Fetching connectors for org:', orgUsers[0].org_id);
             fetchConnectors(orgUsers[0].org_id);
-            setLoading(false);
+            setIsLoading(false);
         } else {
-            setLoading(true);
+            setIsLoading(true);
         }
     }, [userId, notebookId, orgUsers]);
 
@@ -230,7 +227,7 @@ export default function NotebookIntegrations() {
 
     console.log("Connectors: ", connectors);
 
-    return loading ? (
+    return isLoading ? (
         <div>
             <Card>
                 <CardHeader>

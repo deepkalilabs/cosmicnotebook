@@ -4,6 +4,8 @@ from .posthog.connector import PosthogConnector
 from src.backend_types import ConnectorResponse, ConnectorCredentials
 from .pylon.connector import PylonConnector
 from .slack.connector import SlackConnector
+from .openai.connector import OpenAIConnector
+from .claude.connector import ClaudeConnector
 class ConnectorFactory:
     """
     Factory design pattern for creating connector instances.
@@ -12,6 +14,8 @@ class ConnectorFactory:
         "posthog": PosthogConnector,
         "pylon": PylonConnector,
         "slack": SlackConnector,
+        "openai": OpenAIConnector,
+        "claude": ClaudeConnector,
     }
 
     @classmethod
@@ -20,7 +24,7 @@ class ConnectorFactory:
         print(f"Creating connector {connector_type} with credentials: {connector_details}")
         connector_class = cls._connectors.get(connector_type)
         if not connector_class:
-            raise ValueError(f"Unknown connector type: {connector_type}")
+            raise ValueError(f"Unknown connector type: {connector_type}. Add connector to the list of connectors in the factory.")
         return connector_class(connector_details)
 
     @classmethod

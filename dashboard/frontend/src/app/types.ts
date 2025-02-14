@@ -57,11 +57,6 @@ export interface NotebookCellProps {
   onMoveDown: () => void;
 }
 
-export interface IntegrationsButtonProps {
-  notebookId: string;
-  onHandleCreateConnector: (connector: string,  values:Record<string, string | number | boolean>) => Promise<ConnectorResponse>;
-}
-
 export interface ConnectorsButtonProps {
   onHandleCreateConnector: (connector: string,  values:Record<string, string | number | boolean>) => Promise<ConnectorResponse>;
 }

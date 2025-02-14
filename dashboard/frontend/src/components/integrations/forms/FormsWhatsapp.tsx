@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useOrgUserStore } from '@/app/store'
-import { IntegrationsButtonProps } from '@/app/types'
+import { ConnectorsButtonProps } from '@/app/types'
 import BetaTag from '@/components/BetaTag'
 
 import { toast } from '@/hooks/use-toast'
@@ -21,7 +21,7 @@ const formSchema = z.object({
 
 //TODO: Add a way to test the connection to Slack
 //TODO: Add doc to the form to get the channel id and bot token
-export default function WhatsAppForm({notebookId, onHandleCreateIntegration, handleCloseDialog}: IntegrationsButtonProps & {handleCloseDialog: () => void}) {
+export default function WhatsAppForm({onHandleCreateConnector, handleCloseDialog}: ConnectorsButtonProps & {handleCloseDialog: () => void}) {
   //const { user } = useUserStore();
   const { orgUsers } = useOrgUserStore();
 
@@ -48,7 +48,7 @@ export default function WhatsAppForm({notebookId, onHandleCreateIntegration, han
     setIsConnecting(true);
     
     try {
-      const res = await onHandleCreateIntegration(orgId, notebookId, 'slack', credentials);
+      const res = await onHandleCreateConnector('whatsapp', credentials);
       console.log("Response from onHandleCreateIntegration", res);
       
       if (res && res.error) {

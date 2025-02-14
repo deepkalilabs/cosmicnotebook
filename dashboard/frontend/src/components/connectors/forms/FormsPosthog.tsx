@@ -8,9 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { useUserStore, useOrgUserStore } from '@/app/store'
-import { ConnectorCredential, ConnectorsButtonProps } from '@/app/types'
-import { useConnectorStore } from '@/app/store'
+import { ConnectorsButtonProps } from '@/app/types'
 import { toast } from '@/hooks/use-toast'
 
 const formSchema = z.object({
@@ -23,7 +21,7 @@ const formSchema = z.object({
 export default function FormsPosthog({ onHandleCreateConnector, handleCloseDialog}: ConnectorsButtonProps & {handleCloseDialog: () => void}) {
 
   const [isConnecting, setIsConnecting] = useState(false);
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

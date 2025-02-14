@@ -14,14 +14,14 @@ import FormsPosthog from '@/components/connectors/forms/FormsPosthog'
 import FormsDbt from '@/components/connectors/forms/FormsDBT'
 import FormsClickhouse from '@/components/connectors/forms/FormsClickHouse'
 import FormsSnowflake from '@/components/connectors/forms/FormsSnowflake'
-import FormsLooker from '@/components/connectors/forms/FormsLooker'
-import FormsAmplitude from '@/components/connectors/forms/FormsAmplitude'
-import FormsRedshift from '@/components/connectors/forms/FormsRedshift'
 import PylonForm from '@/components/connectors/forms/FormsPylon'
 import FormsOpenAI from '@/components/connectors/forms/FormsOpenAI'
 import FormsAnthropic from '@/components/connectors/forms/FormsAnthropic'
 import FormsOpenRouter from '@/components/connectors/forms/FormsOpenRouter'
 import FormsFal from '@/components/connectors/forms/FormsFal'
+import FormsLooker from '@/components/connectors/forms/FormsLooker'
+import FormsAmplitude from '@/components/connectors/forms/FormsAmplitude'
+import FormsRedshift from '@/components/connectors/forms/FormsRedshift'
 import FormsModal from '@/components/connectors/forms/FormsModal'
 
 interface DataSource {
@@ -42,11 +42,11 @@ export function IntegrationsButton({
   const [message_connectors] = useState<DataSource[]>([
     //Return a logo based on the name
     // TODO: Clean up functions being passed around. lots of duplicate code across create connectors and integrations.
-    // { id: 'whatsapp', name: 'WhatsApp', available: false, icon: `https://img.logo.dev/whatsapp.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsWhatsapp notebookId={notebookId} onHandleCreateIntegration={onHandleCreateIntegration} onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
+    { id: 'whatsapp', name: 'WhatsApp', available: false, icon: `https://img.logo.dev/whatsapp.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsWhatsapp onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
     { id: 'slack', name: 'Slack', available: true, icon: `https://img.logo.dev/slack.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsSlack onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
-    // { id: 'discord', name: 'Discord', available: false, icon: `https://img.logo.dev/discord.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsDiscord notebookId={notebookId} onHandleCreateIntegration={onHandleCreateIntegration} onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
-    // { id: 'telegram', name: 'Telegram', available: false, icon: `https://img.logo.dev/telegram.org?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsTelegram notebookId={notebookId} onHandleCreateIntegration={onHandleCreateIntegration} onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
-    // { id: 'microsoftteams', name: 'Microsoft Teams', available: false, icon: `https://img.logo.dev/teams.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsMicrosoftTeams notebookId={notebookId} onHandleCreateIntegration={onHandleCreateIntegration} onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
+    { id: 'discord', name: 'Discord', available: false, icon: `https://img.logo.dev/discord.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsDiscord onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
+    { id: 'telegram', name: 'Telegram', available: false, icon: `https://img.logo.dev/telegram.org?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsTelegram onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
+    // { id: 'microsoftteams', name: 'Microsoft Teams', available: false, icon: `https://img.logo.dev/teams.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsMicrosoftTeams onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
   ]);
 
 
@@ -54,19 +54,20 @@ export function IntegrationsButton({
     { id: 'posthog', name: 'PostHog', available: true, icon: `https://img.logo.dev/posthog.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsPosthog onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog}/> },
     { id: 'pylon', name: 'Pylon', available: true, icon: `https://img.logo.dev/usepylon.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <PylonForm onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog}/> },
     { id: 'dbt', name: 'dbt', available: false, icon: `https://img.logo.dev/dbt.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsDbt /> },
-    // { id: 'clickhouse', name: 'ClickHouse', available: false, icon: `https://img.logo.dev/clickhouse.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsClickhouse /> },
-    // { id: 'snowflake', name: 'Snowflake', available: false, icon: `https://img.logo.dev/snowflake.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsSnowflake /> },
-    // { id: 'looker', name: 'Looker', available: false, icon: `https://img.logo.dev/looker.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsLooker /> },
-    // { id: 'amplitude', name: 'Amplitude', available: false, icon: `https://img.logo.dev/amplitude.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsAmplitude /> },
-    // { id: 'redshift', name: 'Redshift', available: false, icon: `https://img.logo.dev/aws.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsRedshift /> },
+    { id: 'clickhouse', name: 'ClickHouse', available: false, icon: `https://img.logo.dev/clickhouse.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsClickhouse /> },
+    { id: 'snowflake', name: 'Snowflake', available: false, icon: `https://img.logo.dev/snowflake.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsSnowflake /> },
+    { id: 'looker', name: 'Looker', available: false, icon: `https://img.logo.dev/looker.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsLooker /> },
+    { id: 'amplitude', name: 'Amplitude', available: false, icon: `https://img.logo.dev/amplitude.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsAmplitude /> },
+    { id: 'redshift', name: 'Redshift', available: false, icon: `https://img.logo.dev/aws.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsRedshift /> },
+    { id: 'salesforce', name: 'Salesforce', available: false, icon: `https://img.logo.dev/salesforce.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsRedshift /> },
   ]);
 
   const [ai_connectors] = useState<DataSource[]>([
-    { id: 'openai', name: 'OpenAI', available: true, icon: `https://img.logo.dev/openai.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsOpenAI notebookId={notebookId}  onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
-    { id: 'anthropic', name: 'Anthropic', available: true, icon: `https://img.logo.dev/anthropic.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsAnthropic notebookId={notebookId} onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
-    { id: 'openrouter', name: 'OpenRouter', available: true, icon: `https://img.logo.dev/openrouter.ai?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsOpenRouter notebookId={notebookId} onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
-    { id: 'fal', name: 'fal', available: true, icon: `https://img.logo.dev/fal.ai/?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsFal notebookId={notebookId} onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
-    { id: 'modal', name: 'Modal', available: true, icon: `https://img.logo.dev/modal.com/?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsModal notebookId={notebookId} onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
+    { id: 'openai', name: 'OpenAI', available: true, icon: `https://img.logo.dev/openai.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsOpenAI onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
+    { id: 'anthropic', name: 'Anthropic', available: true, icon: `https://img.logo.dev/anthropic.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsAnthropic onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
+    { id: 'openrouter', name: 'OpenRouter', available: true, icon: `https://img.logo.dev/openrouter.ai?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsOpenRouter onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
+    { id: 'fal', name: 'fal', available: true, icon: `https://img.logo.dev/fal.ai/?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsFal onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
+    { id: 'modal', name: 'Modal', available: true, icon: `https://img.logo.dev/modal.com/?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`, form: <FormsModal onHandleCreateConnector={onHandleCreateConnector} handleCloseDialog={handleCloseDialog} /> },
 
   ]);
 
@@ -127,7 +128,7 @@ export function IntegrationsButton({
 
               <div>
                 <SheetHeader>
-                  <SheetTitle>Choose a customer relationship integration</SheetTitle>
+                  <SheetTitle>Choose a data source integration</SheetTitle>
                 </SheetHeader>
                 <div className="grid grid-cols-3 gap-4 py-4">
                   {customer_relationship_connectors.map((source) => (
