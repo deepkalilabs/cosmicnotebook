@@ -84,7 +84,6 @@ export const useOrgUserStore = create<OrgUserStore>((set) => ({
   setOrgUsers: (orgUsers) => set({ orgUsers })
 }));
 
-
 export const useConnectorStore = create<ConnectorsStore>((set, get) => ({
   isDialogOpen: false,
   connectors: [],
@@ -98,14 +97,16 @@ export const useConnectorStore = create<ConnectorsStore>((set, get) => ({
   resetDialog: () => set({ isDialogOpen: false, selectedConnector: null }),
   setLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error }),
-  addConnector: (connector) => set((state) => ({
-    connectors: [...state.connectors, connector]
-  })),
+  addConnector: (connector) => {
+    set(() => ({
+      connectors: [...(get().connectors || []), connector]
+    }));
+  },
   updateConnector: (connector) => set((state) => ({
-    connectors: state.connectors.map(c => c.id === connector.id ? connector : c)
+    connectors: (state.connectors || []).map(c => c.id === connector.id ? connector : c)
   })),
   deleteConnector: (connector) => set((state) => ({
-    connectors: state.connectors.filter(c => c.id !== connector.id)
+    connectors: (state.connectors || []).filter(c => c.id !== connector.id)
   })),
   getConnectorByType: (type) => get().connectors.find(c => c.connector_type === type) || null,
   getConnectorById: (id) => get().connectors.find(c => c.id === id) || null,

@@ -13,37 +13,37 @@ class ConnectorManager:
 
     async def setup_connector(
         self,
-        credentials: ConnectorCredentials,
+        connector_details: ConnectorCredentials
     ) -> ConnectorResponse:
         """Setup a new connector"""
         try:
-            print(f"Credentials: {credentials}")
-            print(f"Searching for connector {credentials.connector_type}")
+
             # 1. Create connector instance
             connector = ConnectorFactory.create(
-                credentials.connector_type,
-                credentials
+                connector_details.connector_type,
+                connector_details
             )
-            print(f"Connector {credentials.connector_type} created")
-            print(f"Response from connector factory: {connector}")
+
 
             # 2. Setup connector and get cell data
             result = await connector.setup()
             print(f"Result: {result}")
-            print(f"Result type: {type(result)}")
-            print(f"Result success: {result.get('success', False)}")
-            if result.get('success', False):
+            if result['success']:
                 return ConnectorResponse(
-                    type=credentials.connector_type,
+                    id=result['id'],
+                    status_code=200,
+                    connector_type=connector_details.connector_type,
                     success=True,
                     message=result.get('message', 'Connector setup successful'),
-                    body=result.get('body', None),
                     code_string=result.get('code_string', None),
-                    doc_string=result.get('doc_string', None)
+                    doc_string=result.get('doc_string', None),
+                    credentials=result.get('credentials', None)
                 )
+            
             else:
                 return ConnectorResponse(
-                    type=credentials.connector_type,
+                    status_code=500,
+                    connector_type=connector_details.connector_type,
                     success=False,
                     message=result.get('message', 'Unknown error occurred'),
                     body=None,
@@ -52,11 +52,12 @@ class ConnectorManager:
                 )          
 
         except Exception as e:
-            print(f"Error setting up connector {credentials.connector_type}: {e}")
+            print(f"Error setting up connector {connector_details.connector_type}: {e}")
             return ConnectorResponse(
-                type=credentials.connector_type,
+                status_code=500,
+                connector_type=connector_details.connector_type,
                 success=False,
-                message=str(e),
+                message="Error setting up connector: " + str(e),
                 body=None,
                 code_string=None,
                 doc_string=None

@@ -241,22 +241,21 @@ async def create_connector(connector_data: dict):
     print(f"Creating connector {connector_data}")
     try:
         # Convert the raw dict to ConnectorCredentials
-        credentials = ConnectorCredentials(
+        connector_details = ConnectorCredentials(
             user_id=connector_data['user_id'],
             org_id=connector_data['org_id'],
             notebook_id=connector_data.get('notebook_id'),  # Using .get() since it's optional
             connector_type=connector_data['connector_type'],
             credentials=connector_data['credentials'],
         )
-        print(f"Connector type: {connector_data['connector_type']}")
-        print("Instantiating connector manager")
+
         connector_manager = ConnectorManager()
-        print("Calling setup_connector")
-        result = await connector_manager.setup_connector(credentials)
+        result = await connector_manager.setup_connector(connector_details)
+        print(f"Result: {result}")
         return result
     except Exception as e:
         logging.error(f"Error creating connector: {e}")
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e))
     
 
 @app.delete("/connectors/delete/{connector_id}")

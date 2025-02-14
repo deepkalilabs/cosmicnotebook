@@ -8,8 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { useOrgUserStore } from '@/app/store'
-import { IntegrationsButtonProps } from '@/app/types'
+import { ConnectorsButtonProps } from '@/app/types'
 import BetaTag from '@/components/BetaTag'
 
 import { toast } from '@/hooks/use-toast'
@@ -21,16 +20,8 @@ const formSchema = z.object({
 
 //TODO: Add a way to test the connection to Slack
 //TODO: Add doc to the form to get the channel id and bot token
-export default function DiscordForm({notebookId, onHandleCreateIntegration, handleCloseDialog}: IntegrationsButtonProps & {handleCloseDialog: () => void}) {
-  //const { user } = useUserStore();
-  const { orgUsers } = useOrgUserStore();
-
-  //const { addConnector } = useConnectorStore();
-  //const userId = user?.id || '';
-  const orgId = orgUsers[0]?.org_id || '';
+export default function DiscordForm({onHandleCreateConnector, handleCloseDialog}: ConnectorsButtonProps & {handleCloseDialog: () => void}) {
   const [isConnecting, setIsConnecting] = useState(false);
-
-
   
   // Update Slack install URL with the correct redirect URI
   const form = useForm<z.infer<typeof formSchema>>({
@@ -48,9 +39,7 @@ export default function DiscordForm({notebookId, onHandleCreateIntegration, hand
     setIsConnecting(true);
     
     try {
-      debugger;
-      const res = await onHandleCreateIntegration(orgId, notebookId, 'slack', credentials);
-      debugger;
+      const res = await onHandleCreateConnector('discord', credentials);
       console.log("Response from onHandleCreateIntegration", res);
       
       if (res && res.error) {

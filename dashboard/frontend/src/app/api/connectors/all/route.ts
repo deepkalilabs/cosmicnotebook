@@ -14,6 +14,7 @@ export async function POST(
     const { orgId } = await req.json();
     console.log('orgId:', orgId);
     if (!orgId) {
+      console.error('Org ID is required');
       return Response.json({ error: 'Org ID is required', data: null, status: 400 });
     }
 

@@ -58,29 +58,34 @@ export interface NotebookCellProps {
 }
 
 export interface ConnectorsButtonProps {
-  onHandleCreateConnector: (connector: string,  values:Record<string, string | number | boolean>, userId: string, notebookId: string) => Promise<ConnectorResponse>;
+  onHandleCreateConnector: (connector: string,  values:Record<string, string | number | boolean>) => Promise<ConnectorResponse>;
 }
 
-export interface IntegrationsButtonProps {
-  notebookId: string;
-  onHandleCreateIntegration: (orgId: string, notebookId: string, integration: string, credentials:Record<string, string | number | boolean>) => Promise<ConnectorResponse>;
+export interface ConnectorCredentialsList {
+  credentials: ConnectorCredential[];
 }
 
-export interface ConnectorCredentials {
+export interface ConnectorCredential {
+  status_code: string;
   id: string;
-  connector_id: string;
-  user_id: string;
-  notebook_id: string;
   connector_type: string;
   credentials: JSON;
-  has_seen_doc?: boolean;
   code_string: string;
   doc_string: string;
+  message: string;
+  success: boolean;
   //status?: 'connected' | 'disconnected' | 'pending' | 'error';
   //created_at?: string;
   //updated_at?: string;
 }
 
+export interface ConnectorCredentialRequest {
+  user_id: string;
+  org_id: string;
+  type: string;
+  credentials: JSON;
+  notebook_id: string;
+}
 
 export interface NotebookConnectionProps {
   onNotebookDeployed?: (data: OutputDeployMessage) => void;
@@ -249,7 +254,7 @@ export interface ConnectorsStore {
   selectedConnector: string | null;
 
   //Connectors data
-  connectors: ConnectorCredentials[];
+  connectors: ConnectorCredential[];
   isLoading: boolean;
   error: string | null;
 
@@ -260,10 +265,10 @@ export interface ConnectorsStore {
   resetDialog: () => void;
 
   //Connector actions
-  addConnector: (connector: ConnectorCredentials) => void;
-  updateConnector: (connector: ConnectorCredentials) => void;
-  deleteConnector: (connector: ConnectorCredentials) => void;
-  removeConnector: (connector: ConnectorCredentials) => void;
+  addConnector: (connector: ConnectorCredential) => void;
+  updateConnector: (connector: ConnectorCredential) => void;
+  deleteConnector: (connector: ConnectorCredential) => void;
+  removeConnector: (connector: ConnectorCredential) => void;
   resetConnectors: () => void;
 
   // Status management
@@ -271,15 +276,15 @@ export interface ConnectorsStore {
   setError: (error: string | null) => void;
 
   // Utility functions
-  setConnectors: (connectors: ConnectorCredentials[]) => void;
-  getConnectorByType: (type: string) => ConnectorCredentials | null;
-  getConnectorById: (id: string) => ConnectorCredentials | null;
+  setConnectors: (connectors: ConnectorCredential[]) => void;
+  getConnectorByType: (type: string) => ConnectorCredential | null;
+  getConnectorById: (id: string) => ConnectorCredential | null;
   hasConnector: (type: string) => boolean; 
 
 }
 
 export interface ConnectorCredentialsList {
-  credentials: ConnectorCredentials[];
+  credentials: ConnectorCredential[];
 }
 
 export interface MarimoFile {

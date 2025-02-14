@@ -14,9 +14,10 @@ import { useRouter } from "next/navigation";
 
 const CurlSupportDialog = ({notebookDetails, curlSupport, setCurlSupport}: {notebookDetails: NotebookDetails, curlSupport: boolean, setCurlSupport: (curlSupport: boolean) => void}) => {
     const [ copied, setCopied ] = useState(false);
+    
     const curlCommand = `curl -X POST  \\
         -H "Content-Type: application/json" \\
-        -d '{"param1": "value1", "param2": "value2"}'
+        -d '{"param1": "value1", "param2": "value2"}' \\
         ${notebookDetails.submit_endpoint}`
 
     return (
