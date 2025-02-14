@@ -18,11 +18,6 @@ const sidebarNavItems = [
     icon: <Home className="h-4 w-4" />,
   },
   {
-    title: "Connectors Admin",
-    href: "/dashboard/connectors-admin",
-    icon: <Plug className="h-4 w-4" />,
-  },
-  {
     title: "All Jobs",
     href: "/dashboard/jobs",
     icon: <Activity className="h-4 w-4" />,

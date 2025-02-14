@@ -248,12 +248,13 @@ export default function NotebookIntegrations() {
     ) : (
         <div className="space-y-6">
             <div className="flex flex-row justify-between items-center gap-2">
-                <h1 className="text-3xl font-bold tracking-tight">Data Connectors</h1>
+                <h1 className="text-3xl font-bold tracking-tight">Data Connectors and Secrets</h1>
                 <IntegrationsButton notebookId={notebookId} onHandleCreateConnector={handleCreateConnector} />
             </div>
             <div>
                 <p className="text-muted-foreground">
-                    Pull data from data connectors to use in your notebook. All your credentials are stored securely and encrypted.
+                    Store your credentials securely and encrypted on AWS Secrets Manager.
+                    Pull data from data connectors to use in your notebook. 
                 </p>
             </div>
             <div>
