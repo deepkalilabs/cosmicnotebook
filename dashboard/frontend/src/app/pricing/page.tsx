@@ -17,7 +17,7 @@ const tiers = [
       price: 'Free',
       description: 'Perfect for getting started with workflows',
       features: [
-        'Up to 3 workflows up to a certain amount of runs.',
+        'Up to 3 workflows up to a certain amount of runs',
         'Observability',
         'Logging',
         'Deployment'
@@ -61,7 +61,7 @@ export default function PricingPage() {
         <div className="flex flex-col items-center text-center">
           <h1 className="text-5xl font-serif font-bold tracking-tight lg:text-5xl mb-6">Pricing</h1>
           <p className="text-xl text-gray-600 mb-8">
-            Choose the plan that is right for you.
+            Choose the plan that is right for you
           </p>
         </div>
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 lg:grid-cols-3">
