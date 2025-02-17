@@ -23,6 +23,8 @@ const tiers = [
         'Deployment'
     
     ],
+        button: 'Get started for free',
+        action: 'auth/signup',
     },
     {
       name: 'Pro',
@@ -40,6 +42,8 @@ const tiers = [
         'Unlimited actions',
         'Unlimited schedules',
       ],
+      button: 'Get custom quote',
+      action: 'charlesjavelona@gmail.com',
     },
     {
       name: 'Enterprise',
@@ -51,6 +55,8 @@ const tiers = [
         'Advanced security',
         'Compliance features'
       ],
+      button: 'Get custom quote',
+      action: 'charlesjavelona@gmail.com',
     },
   ]
 export default function PricingPage() {
@@ -85,8 +91,12 @@ export default function PricingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full">
-                Get started
+              <Button className="w-full" asChild>
+                {tier.action.startsWith('http') || tier.action.startsWith('/') ? (
+                  <a href={tier.action}>{tier.button}</a>
+                ) : (
+                  <a href={`mailto:${tier.action}`}>{tier.button}</a>
+                )}
               </Button>
             </CardFooter>
           </Card>
