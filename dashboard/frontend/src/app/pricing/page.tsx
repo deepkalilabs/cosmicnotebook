@@ -17,7 +17,7 @@ const tiers = [
       price: 'Free',
       description: 'Perfect for getting started with workflows',
       features: [
-        'Up to 3 workflows up to a certain amount of runs',
+        'Up to 3 workflows with a certain amount of runs',
         'Observability',
         'Logging',
         'Deployment'
