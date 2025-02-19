@@ -61,8 +61,9 @@ async def websocket_endpoint(websocket: WebSocket, notebook_id: str, notebook_na
             logging.info("Waiting for message")
             data = await websocket.receive_json()
             logging.info(f"data received {data}")
-       
             if data['type'] == 'deploy_notebook':
+                
+
                 # TODO: Better dependency management here.
                 # TODO: Get status/msg directly from function.
                 # TODO: Make a base lambda layer for basic dependencies.
@@ -77,6 +78,8 @@ async def websocket_endpoint(websocket: WebSocket, notebook_id: str, notebook_na
 
                 logging.info(f"python_script {python_script}")
                 logging.info(f"requirements {requirements}")
+                #deployment_logger.log(f"python_script {python_script}", "info", {})
+                #deployment_logger.log(f"requirements {requirements}", "info", {})
 
                 lambda_handler = lambda_generator.LambdaGenerator(python_script, data['user_id'], data['notebook_name'], data['notebook_id'], requirements)
                 status = False
@@ -85,26 +88,32 @@ async def websocket_endpoint(websocket: WebSocket, notebook_id: str, notebook_na
                 response = OutputGenerateLambdaMessage(type='deploying_notebook', success=status, message=msg)
                 
                 await websocket.send_json(response.model_dump())
+                #deployment_logger.log(f"response {response}", "info", {})
                 lambda_handler.save_lambda_code()
+                #deployment_logger.log("Saved lambda code", "info", {})
 
                 msg = "Preparing your code for prod"
                 lambda_handler.prepare_container()
                 response = OutputGenerateLambdaMessage(type='deploying_notebook', success=status, message=msg)
                 await websocket.send_json(response.model_dump())
+                #deployment_logger.log(f"response {response}", "info", {})
 
                 msg = "Shipping your code to the cloud"
                 lambda_handler.build_and_push_container()
                 response = OutputGenerateLambdaMessage(type='deploying_notebook', success=status, message=msg)
                 await websocket.send_json(response.model_dump())
+                #deployment_logger.log(f"response {response}", "info", {})
                 response = lambda_handler.create_lambda_fn()
+                #deployment_logger.log(f"response {response}", "info", {})
 
                 msg = "Creating an API for you"
                 response = OutputGenerateLambdaMessage(type='deploying_notebook', success=status, message=msg)
                 await websocket.send_json(response.model_dump())
-                
+                #deployment_logger.log(f"response {response}", "info", {})
                 status, message = lambda_handler.create_api_endpoint()
                 response = OutputGenerateLambdaMessage(type='deploying_notebook', success=status, message=message)
                 await websocket.send_json(response.model_dump())
+                #deployment_logger.log(f"response {response}", "info", {})
 
                 api = message
 
@@ -293,6 +302,38 @@ async def get_integration(integration_id: str):
 @app.get("/integrations/all/{org_id}")
 async def get_all_integrations(org_id: str):
     return get_all_integrations(org_id)   
+
+
+#----------------------------------
+#   Logging
+#----------------------------------
+@app.get("/logging/deployments/get/{notebook_id}")
+async def get_deployment_logs(notebook_id: str, next_token: str = None):
+    print(f"Getting deployment logs for notebook {notebook_id}")
+    logs = boto3.client("logs")
+
+    try:
+        params = {
+            "logGroupName": "/deployments",
+            "logStreamNamePrefix": notebook_id,
+            "limit": 100,
+            "startFromHead": False
+        }
+        if next_token:
+            params["nextToken"] = next_token
+
+        response = logs.filter_log_events(**params)
+        return {
+            "logs": [event["message"] for event in response["events"]],
+            "next_token": response["nextForwardToken"]
+        }
+    except logs.exceptions.ResourceNotFoundException:
+        return {
+            "logs": [],
+            "next_token": None
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":
