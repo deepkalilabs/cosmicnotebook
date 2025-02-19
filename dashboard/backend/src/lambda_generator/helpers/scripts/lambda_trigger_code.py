@@ -20,6 +20,16 @@ def lambda_handler(event, context):
     
     try:
         logger.info(f"Event: {json.dumps(event, indent=2)}")
+        logger.info(f"Context: {context}")
+
+        if isinstance(event, str):
+            try:
+                event = json.loads(event)
+            except json.JSONDecodeError:
+                logger.error("Invalid JSON in request body")
+                logger.info(f"Event: {event}")
+                return {'status': 'FAILED', 'error': 'Invalid JSON'}
+
         
         # Extract request ID and body from API Gateway event
         request_id = event.get('request_id')
@@ -31,7 +41,9 @@ def lambda_handler(event, context):
             'created_at': datetime.now().isoformat(),
             'status': 'PROCESSING',
             'completed': False,
-            'notebook_id': notebook_id
+            'notebook_id': notebook_id,
+            'aws_log_group': context.log_group_name,
+            'aws_log_stream': context.log_stream_name
         }).execute()
         
         if not isinstance(body, dict):

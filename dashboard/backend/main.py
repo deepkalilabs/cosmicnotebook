@@ -15,7 +15,7 @@ import resend
 from src.lambda_generator import lambda_generator
 from src.backend_types import OutputGenerateLambdaMessage, ScheduledJob, NotebookDetails
 from src.helpers.notebook import notebook
-#from src.scheduler.notebook_scheduler import NotebookScheduler
+from src.scheduler.notebook_scheduler import NotebookScheduler
 from src.backend_types import ConnectorCredentials
 from supabase import Client
 from helpers.backend.supabase.client import get_supabase_client
@@ -25,7 +25,7 @@ from helpers.backend.supabase.connector_credentials import get_connector_credent
 from helpers.backend.supabase.integration_credentials import create_credentials, get_integration, update_credentials, delete_credentials, get_all_integrations
 
 from src.lambda_generator import lambda_generator
-from src.backend_types import ScheduledJob, NotebookDetails, ConnectorCredentials
+from src.backend_types import ScheduledJob, NotebookDetails, ConnectorCredentials, ScheduledJobRequest
 from src.helpers.notebook import notebook
 from src.connectors.manager import ConnectorManager
 
@@ -35,8 +35,6 @@ import traceback
 
 
 app = FastAPI()
-
-#scheduler = NotebookScheduler()  # Single instance
 # Enable CORS for frontend communication
 app.add_middleware(
     CORSMiddleware,
@@ -130,13 +128,12 @@ async def websocket_endpoint(websocket: WebSocket, notebook_id: str, notebook_na
 
             msgOutput = ''
             
-    except WebSocketDisconnect as e:
+    except Exception as e:
         logging.info(f"WebSocket disconnected for notebook ID: {notebook_id}")
         logging.info(f"WebSocket disconnect code: {e.code}")
         logging.info(f"WebSocket disconnect reason: {e.reason}")
         logging.error(f"Error in websocket connection: {str(e)}")
         logging.error(f"Traceback:\n{traceback.format_exc()}")
-    except Exception as e:
         logging.error(f"Error in websocket connection: {str(e)}")
         logging.error(f"Traceback:\n{traceback.format_exc()}")
     finally:
@@ -178,27 +175,23 @@ async def cleanup():
 async def get_notebook_data(notebook_id: str) -> NotebookDetails:
     notebook_details = supabase.table('notebooks').select('*').eq('id', notebook_id).execute()
     logging.info(f"notebook_details {notebook_details.data[0]}")
-    
-    # job_details = supabase.table('lambda_jobs').select('*').eq('notebook_id', notebook_id).execute()
-    # schedule_details = supabase.table('schedules').select('*').eq('notebook_id', notebook_id).execute()
-    # connector_details = supabase.table('notebook_connectors').select('*').eq('notebook_id', notebook_id).execute()
-
     return NotebookDetails(**notebook_details.data[0])
-
 
 @app.get("/notebook_job_schedule/{notebook_id}")
 async def get_schedules(notebook_id: str) -> List[ScheduledJob]:
-    schedules = await scheduler.get_schedules(notebook_id)
+    scheduler = NotebookScheduler(notebook_id)
+    schedules = await scheduler.get_schedules()
     return schedules
 
 @app.post("/notebook_job_schedule/{notebook_id}")
 async def create_schedule(notebook_id: str, schedule: dict):
     print(f"Creating schedule for notebook {notebook_id} with params {schedule}")
+    scheduler = NotebookScheduler(notebook_id)
     scheduled_details = ScheduledJob(**schedule)
+    print("scheduled_details", scheduled_details)
     try:
-        job_details = await scheduler.create_or_update_schedule(
-            notebook_id=notebook_id,
-            schedule_details=scheduled_details
+        job_details = await scheduler.create_schedule(
+            notebook_job_schedule=scheduled_details
         )
         
         return job_details
@@ -206,32 +199,10 @@ async def create_schedule(notebook_id: str, schedule: dict):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-""""
-@app.put("/notebook_job_schedule/{schedule_id}")
-async def update_schedule(schedule_id: str, schedule: ScheduledJob):
-    try:
-        job_details = await scheduler.create_or_update_schedule(
-            schedule_id=schedule_id,
-            schedule_type=schedule.schedule,
-            input_params=schedule.input_params,
-        )
-        
-        return {
-            "status": "success",
-            "data": job_details
-        }
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@app.delete("/notebook_job_schedule/{schedule_id}")
-async def delete_schedule(schedule_id: str):
-    try:
-        scheduler.remove_schedule(schedule_id)
-        return {"status": "success"}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-"""
-
+@app.delete("/notebook_job_schedule/{notebook_id}/{schedule_id}")
+async def delete_schedule(notebook_id: str, schedule_id: str):
+    scheduler = NotebookScheduler(notebook_id)
+    return await scheduler.delete_schedule(schedule_id)
 
 #----------------------------------
 # Connectors

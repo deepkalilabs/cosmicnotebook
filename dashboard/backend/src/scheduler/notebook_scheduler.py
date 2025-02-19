@@ -1,190 +1,146 @@
-# app/services/scheduler.py
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-import httpx
 from datetime import datetime
 from typing import Dict, Optional
 import os
-# from dotenv import load_dotenv
 from supabase import Client
 from helpers.backend.supabase.client import get_supabase_client
-from src.backend_types import ScheduledJob, NotebookDetails
+from src.backend_types import ScheduledJob, NotebookDetails, ScheduledJobRequest
 from typing import List
 import uuid
 import json
 import logging
-
-# load_dotenv()
-
+import boto3
+from fastapi import HTTPException
+import pdb
 logger = logging.getLogger(__name__)
 
+# TODO: Turn all of these into transactions.
 class NotebookScheduler:
-    _instance = None
-    _scheduler = None
-    _supabase: Optional[Client] = None
+    def __init__(self, notebook_id: str):
+        self.notebook_id = notebook_id
+        db_url = os.getenv('SUPABASE_DATABASE_URL')
+        safe_url = db_url.replace(db_url.split('@')[0].split(':')[-1], '****')
+        print(f"Attempting to connect with URL: {safe_url}")
+        # Initialize Supabase
+        self._supabase: Client = get_supabase_client()
+        self.region = os.environ.get("AWS_REGION")
+        self._events_client = boto3.client('events', region_name=self.region)
+        self._lambda_client = boto3.client('lambda', region_name=self.region)
 
-    def __new__(cls):
-        if cls._instance is None:
-            try:
-                cls._instance = super(NotebookScheduler, cls).__new__(cls)
-                # Initialize scheduler only once
-                cls._scheduler = AsyncIOScheduler()
-                #cls._scheduler.add_jobstore('memory')
-                # Debug: Print the connection URL (with password masked)
-                db_url = os.getenv('SUPABASE_DATABASE_URL')
-                safe_url = db_url.replace(db_url.split('@')[0].split(':')[-1], '****')
-                print(f"Attempting to connect with URL: {safe_url}")
-            
-                cls._scheduler.add_jobstore(
-                    'sqlalchemy',
-                    url=db_url,
-                    engine_options={
-                        'pool_pre_ping': True,
-                        'pool_recycle': 3600,
-                        'connect_args': {
-                            'sslmode': 'require',
-                            'application_name': 'cosmic',
-                        }
-                    }
-                )
-                # Initialize Supabase
-                cls._supabase: Client = get_supabase_client()
-            except Exception as e:
-                logger.error(f"Error initializing NotebookScheduler: {str(e)}")
-                raise ValueError(f"Error initializing NotebookScheduler: {str(e)}")
-            
-        return cls._instance
+    def save_schedule_to_supabase(self, notebook_job_schedule: ScheduledJob, rule_name: str):
+        self._supabase.table('schedules').insert({
+            'notebook_id': self.notebook_id,
+            'schedule': notebook_job_schedule.schedule,
+            'input_params': notebook_job_schedule.input_params,
+            'status': 'Active',
+            'aws_rule_name': rule_name
+        }).execute()
 
-    def __init__(self):
-        self.schedule_configs = {
-            'hourly': {'trigger': 'interval', 'hours': 1},
-            'daily': {'trigger': 'cron', 'hour': 0, 'minute': 0},
-            'weekly': {'trigger': 'cron', 'day_of_week': 0, 'hour': 0, 'minute': 0},
-            'monthly': {'trigger': 'cron', 'day': 1, 'hour': 0, 'minute': 0}
-        }
-
-    async def _execute_schedule(self, notebook_id: str, schedule_job_id: str):
-        """Internal method to execute notebook endpoint"""
+    async def create_schedule(self, notebook_job_schedule: ScheduledJob):
         try:
-            # Get notebook endpoint from Supabase
-            endpoint_result = ''
-            response = self._supabase.table('notebooks').select("*").eq('id', notebook_id).limit(1).maybe_single().execute()
-            input_params = self._supabase.table('schedules').select("input_params").eq('job_id', schedule_job_id).limit(1).maybe_single().execute()
-
-            nb_details = NotebookDetails(**response.data)
-            endpoint = nb_details.submit_endpoint
-            input_params = json.loads(input_params.data['input_params'])
+            cron = notebook_job_schedule.schedule
+            self.lambda_fn_name = self._supabase.table('notebooks').select('lambda_fn_name').eq('id', self.notebook_id).execute().data[0]['lambda_fn_name']
             
-            # Execute the endpoint
-            async with httpx.AsyncClient() as client:
-                endpoint_result = await client.post(endpoint, json=input_params)
+            lambda_response = self._lambda_client.get_function(FunctionName=self.lambda_fn_name)
+            lambda_arn = lambda_response['Configuration']['FunctionArn']
+
+            input_params = notebook_job_schedule.input_params
             
-            # Update last run timestamp in Supabase
-            self._supabase.table('schedules')\
-                .update({'last_run_at': datetime.utcnow().isoformat()})\
-                .update({'last_run_output': str(endpoint_result)})\
-                .eq('job_id', schedule_job_id)\
-                .execute()
-            
-            self._supabase.table('schedules')\
-                .update({'next_run_at': self._scheduler.get_job(schedule_job_id).next_run_time.isoformat()})\
-                .eq('job_id', schedule_job_id)\
-                .execute()
-            
-            return endpoint_result
-                
-        except Exception as e:
-            print(f"Error executing notebook {notebook_id}: {str(e)}")
-            raise
+            rule_payload = {}
+            if isinstance(input_params, str):
+                try:
+                    input_params = json.loads(input_params)
+                    request_id = str(uuid.uuid4())
+                    rule_payload['request_id'] = request_id
+                    rule_payload['notebook_id'] = self.notebook_id
+                    rule_payload['body'] = input_params
+                    rule_payload = json.dumps(rule_payload)
+                except json.JSONDecodeError:
+                    logger.error("Invalid JSON in request body")
+                    logger.info(f"Event: {input_params}")
+                    return {'request_id': request_id, 'status': 'FAILED', 'error': 'Invalid JSON'}
 
-    async def get_schedules(self, notebook_id: str) -> List[ScheduledJob]:
-        """Get schedules for a notebook"""
-        # TODO: Add input_params
-        response = self._supabase.table('schedules')\
-            .select('*, notebooks(submit_endpoint)')\
-            .eq('notebook_id', notebook_id)\
-            .execute()
+            rule_name = f"schedule-{uuid.uuid4()}"
 
-        # Transform response data into ScheduledJob objects
-        schedules = []
-        for schedule in response.data:
-            schedules.append(ScheduledJob(**{
-                'id': schedule['id'],
-                'schedule': schedule['schedule'],
-                'last_run': schedule.get('last_run_at'),
-                'next_run': schedule.get('next_run_at'),
-                'input_params': schedule.get('input_params'),
-                'last_run_output': schedule.get('last_run_output'),
-                'submit_endpoint': schedule['notebooks']['submit_endpoint'],
-            }))
-        print("schedules", schedules)
-        return schedules
-
-    async def create_or_update_schedule(
-        self,
-        notebook_id: str,
-        schedule_details: ScheduledJob,
-    ):
-        """Create or update a schedule"""
-        try:            
-            if schedule_details.schedule not in self.schedule_configs:
-                raise ValueError(f"Invalid schedule type. Must be one of: {', '.join(self.schedule_configs.keys())}")
-            
-            # Add job to APScheduler
-            schedule_config = self.schedule_configs[schedule_details.schedule]
-
-            print("schedule_config", schedule_config)
-
-            schedule_job_id = str(uuid.uuid4())
-
-            job = self._scheduler.add_job(
-                self._execute_schedule,
-                **schedule_config,
-                args=[notebook_id, schedule_job_id],
-                id=schedule_job_id
+            rule_response = self._events_client.put_rule(
+                Name=rule_name,
+                ScheduleExpression=f"cron({cron})",
+                State='ENABLED',
+                Description=f"Schedule for {self.lambda_fn_name}"
             )
 
-            self._supabase.table('schedules')\
-                .insert({
-                    "schedule": schedule_details.schedule,
-                    "input_params": json.dumps(schedule_details.input_params),
-                    "notebook_id": notebook_id,
-                    "last_run_at": datetime.utcnow().isoformat(),
-                    "next_run_at": job.next_run_time.isoformat(),
-                    "job_id": schedule_job_id
-                })\
-                .execute()
-            
+            self._lambda_client.add_permission(
+                FunctionName=self.lambda_fn_name,
+                StatementId=f"EventBridge-{rule_name}",
+                Action='lambda:InvokeFunction',
+                Principal='events.amazonaws.com',
+                SourceArn=rule_response['RuleArn']
+            )
+
+            print(f"rule_payload {rule_payload}")
+
+            self._events_client.put_targets(
+                Rule=rule_name,
+                Targets=[
+                    {
+                        'Id': self.lambda_fn_name,
+                        'Arn': lambda_arn,
+                        'Input': rule_payload
+                    }
+                ]
+            )
+
+            self.save_schedule_to_supabase(notebook_job_schedule, rule_name)
+
             return {
-                'status': 'success',
-                'job_id': schedule_job_id,
+                "status": "success",
+                "rule_name": rule_name,
+                "rule_arn": rule_response['RuleArn'],
+                "lambda_arn": lambda_arn,
+                "input_params": input_params
             }
-            
+        except self._lambda_client.exceptions.ResourceNotFoundException:
+            raise HTTPException(status_code=404, detail="Lambda function not found")
         except Exception as e:
-            raise ValueError(f"Failed to schedule job: {str(e)}")
+            print(f"error {e}")
+            raise HTTPException(status_code=500, detail=str(e))
+
+
+    async def get_schedules(self) -> List[ScheduledJob]:
+        schedules = self._supabase.table('schedules').select('*').eq('notebook_id', self.notebook_id).execute()
+        print(f"schedules {schedules.data}")
+        return schedules.data
     
-    def remove_schedule(self, job_id: str):
-        """Remove a schedule"""
+
+    async def delete_schedule(self, job_id: str):
         try:
-            self._scheduler.remove_job(job_id)
+            schedule_details = self._supabase.table('schedules').select('*, notebooks(lambda_fn_name)').eq('id', job_id).execute()
+            lambda_fn_name = schedule_details.data[0]['notebooks']['lambda_fn_name']
+            rule_name = schedule_details.data[0]['aws_rule_name']
+
+            print("deleting schedule")
+            print(f"lambda_fn_name {lambda_fn_name}")
+            print(f"rule_name {rule_name}")
+
+            # Get all targets for the rule
+            targets = self._events_client.list_targets_by_rule(
+                Rule=rule_name
+            )
+            print(f"targets {targets}")
+            target_ids = [target['Id'] for target in targets['Targets']]
+
+            # Remove all targets
+            if target_ids:
+                self._events_client.remove_targets(
+                    Rule=rule_name,
+                    Ids=target_ids
+                )
+
+            # Delete the rule
+            self._events_client.delete_rule(
+                Name=rule_name,
+                Force=True
+            )
+            self._supabase.table('schedules').delete().eq('id', job_id).execute()
         except Exception as e:
-            print(f"Error removing schedule {job_id}: {str(e)}")
-            # raise ValueError(f"Failed to remove schedule: {str(e)}")
-        
-        try:
-            self._supabase.table('schedules')\
-                .delete()\
-                .eq('id', job_id)\
-                .execute()
-        except Exception as e:
-            print(f"Error removing schedule from DB {job_id}: {str(e)}")
-            # raise ValueError(f"Failed to remove schedule from DB: {str(e)}")
-    
-    def start(self):
-        """Start the scheduler"""
-        if not self._scheduler.running:
-            self._scheduler.start()
-    
-    def shutdown(self):
-        """Shutdown the scheduler"""
-        if self._scheduler.running:
-            self._scheduler.shutdown()
+            print(f"error {e}")
+            raise HTTPException(status_code=500, detail=str(e))

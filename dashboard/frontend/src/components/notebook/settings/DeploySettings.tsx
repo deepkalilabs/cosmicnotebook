@@ -63,7 +63,7 @@ export default function DeploySettings() {
     // const [ buildLogs, setBuildLogs ] = useState<string[]>([]);
     const buildLogs: string[] = [];
     const [ curlSupport, setCurlSupport ] = useState(false);
-    const router = useRouter()
+    const router = useRouter();
 
     const DeployButton = () => {
         return (
@@ -135,24 +135,26 @@ export default function DeploySettings() {
                     <CardContent>
                     <div className="flex items-center justify-between">
                     <div className="max-w-[60%] text-sm text-muted-foreground">
-                        {notebookDetails.submit_endpoint ? (
-                        <div className="flex items-center gap-2">
-                            <span>Deployed to: </span>
-                            <span className="text-black">
-                                {notebookDetails.submit_endpoint}
-                            </span>
-                            <Button 
-                                variant="default" 
-                                size="icon"
-                                onClick={() => {
-                                    setCurlSupport(true);
-                                }}
-                            >
-                                <ExternalLink />
-                            </Button>
-                        </div>
+                        {notebookDetails.submit_endpoint && notebookDetails.submit_endpoint.length > 0 ? (
+                            <div>
+                                <span>Deployed to: </span>
+                                <span className="text-black">
+                                    {notebookDetails.submit_endpoint}
+                                </span>
+                                <Button 
+                                    variant="default" 
+                                    size="icon"
+                                    onClick={() => {
+                                        setCurlSupport(true);
+                                    }}
+                                    className="ml-2 p-4"
+                                >
+                                    <ExternalLink />
+                                </Button>
+                            </div>
+                            
                         ) : (
-                            <span>No deployment information available.</span>
+                            <span>Notebook not deployed.</span>
                         )}
                     </div>
                     <DeployButton />

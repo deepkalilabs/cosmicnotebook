@@ -20,8 +20,9 @@ class LambdaGenerator:
         self.code_chunk_dirty = code_chunk_dirty
         self.user_id = user_id
         self.notebook_name = notebook_name.split('.')[0]
-        self.lambda_fn_name = f"{user_id}_{self.notebook_name}_lambda"
-        self.api_name = f"{user_id}_{self.notebook_name}_api"
+        self.lambda_unique_identifier = f"{user_id.split('-')[0]}" # might extend this later.
+        self.lambda_fn_name = f"{self.lambda_unique_identifier}_{self.notebook_name}_lambda"
+        self.api_name = f"{self.lambda_unique_identifier}_{self.notebook_name}_api"
         self.notebook_id = notebook_id
         self.lambda_zip_folder = ''
         self.code_chunk_clean = ''
@@ -317,9 +318,9 @@ class LambdaGenerator:
     def store_endpoint_supabase(self):
         supabase.table('notebooks').update({
             'submit_endpoint': self.submit_endpoint,
+            'lambda_fn_name': self.lambda_fn_name,
             'updated_at': datetime.now().isoformat()
         }).eq('id', self.notebook_id).execute()
-        
 
 # if __name__ == "__main__":
 #     pass
