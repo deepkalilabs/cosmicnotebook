@@ -56,10 +56,15 @@ class OutputPosthogSetupMessage(BaseModel):
 class ScheduledJob(BaseModel):
     id: str
     schedule: str
+    submit_endpoint: str = None
     last_run: Optional[str] = None
     next_run: Optional[str] = None
-    submit_endpoint: Optional[str] = None
     input_params: Optional[str] = None
+    lambda_fn_name: Optional[str] = None
+
+class ScheduledJobRequest(BaseModel):
+    schedule: ScheduledJob
+    lambda_fn_name: str
 
 class ScheduledJobList(BaseModel):
     schedules: list[ScheduledJob]
@@ -71,6 +76,7 @@ class NotebookDetails(BaseModel):
     user_id: str
     s3_url: Optional[str] = None
     submit_endpoint: Optional[str] = None
+    lambda_fn_name: Optional[str] = None
     cells: Optional[list] = None
     session_id: Optional[str] = None
     created_at: Optional[str] = None 

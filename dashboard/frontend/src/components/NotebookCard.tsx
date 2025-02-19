@@ -23,31 +23,7 @@ export const NotebookCard = ({ marimo_notebook, user, onDeleteNotebook }: { mari
             </div>
 
             <div className="flex items-center space-x-0">
-                <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`notebook/${marimo_notebook.id}/settings?name=${encodeURIComponent(marimo_notebook.name)}`);
-                    }}
-                >
-                    <Settings className="h-2 w-2 text-muted-foreground hover:text-primary" />
-                </Button>
                 
-                <Button
-                variant="ghost"
-                size="icon"
-                className="opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={(e) => {
-                    e.stopPropagation();
-                    // TODO: Implement delete notebook
-
-                    onDeleteNotebook(marimo_notebook?.id || '');
-                }}
-                >
-                <Trash2 className="h-2 w-2 text-muted-foreground hover:text-red-500" />
-                </Button>
             </div>
         </div>
         </CardHeader>
@@ -68,8 +44,37 @@ export const NotebookCard = ({ marimo_notebook, user, onDeleteNotebook }: { mari
             <div className="flex flex-col items-center space-x-2 pb-4">
                     Last modified: {new Date(marimo_notebook.updated_at).toLocaleDateString()}
             </div>
-            <div className="w-full">
-                <MarimoFileComponent file={marimo_notebook} returnUrl={document.location.href} user_id={user?.id || ''} notebook_id={marimo_notebook.id}/>
+            <div className="items-center justify-center w-full flex gap-2">
+                <div className="w-4/5">
+                    <MarimoFileComponent file={marimo_notebook} returnUrl={document.location.href} user_id={user?.id || ''} notebook_id={marimo_notebook.id}/>
+                </div>
+                <div className="w-1/5">
+                    <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="opacity-100 group-hover:opacity-100 transition-opacity"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(`notebook/${marimo_notebook.id}/settings?name=${encodeURIComponent(marimo_notebook.name)}`);
+                        // classname=
+                        }}
+                    >
+                        <Settings className="h-3 w-3 hover:text-primary" />
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        className="opacity-100 transition-opacity"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            // TODO: Implement delete notebook
+
+                            onDeleteNotebook(marimo_notebook?.id || '');
+                        }}
+                        >
+                        <Trash2 className="h-2 w-2 text-muted-foreground hover:text-red-500" />
+                        </Button>
+                </div>
             </div>
         </CardFooter>
     </Card>

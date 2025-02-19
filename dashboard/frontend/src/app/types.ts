@@ -99,6 +99,7 @@ export interface NotebookDetails {
   user_id: string;
   s3_url?: string;
   submit_endpoint?: string;
+  lambda_fn_name?: string;
   cells?: NotebookCell[];
   session_id?: string;
   created_at?: string;

@@ -2574,6 +2574,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cronstrue@npm:^2.54.0":
+  version: 2.54.0
+  resolution: "cronstrue@npm:2.54.0"
+  bin:
+    cronstrue: bin/cli.js
+  checksum: ab02aa995ad3c3326272ce1bb8a077fe677b77e5b362e5e7709a225be2629d4d7d26bd3cf64a538c4d1b9502f76324f48c78aa3d6a01deea0fb416e3916eac59
+  languageName: node
+  linkType: hard
+
 "cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.2":
   version: 7.0.6
   resolution: "cross-spawn@npm:7.0.6"
@@ -5216,6 +5225,7 @@ __metadata:
     class-variance-authority: ^0.7.1
     clsx: ^2.1.1
     core-js: ^3.36.0
+    cronstrue: ^2.54.0
     eslint: ^8.57.0
     eslint-config-next: 15.0.3
     highlight.js: ^11.11.1
