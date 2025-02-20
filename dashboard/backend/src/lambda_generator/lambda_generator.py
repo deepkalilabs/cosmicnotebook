@@ -8,7 +8,6 @@ import json
 import logging
 from datetime import datetime
 from src.logging.cloudwatch.deployment import DeploymentLogger
-
 # Configure logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

@@ -3,6 +3,8 @@ import boto3
 from datetime import datetime
 import json
 import logging
+from helpers.backend.supabase.logs import SupabaseLogs
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -29,25 +31,60 @@ class DeploymentLogger(BaseLogger):
         self.sequence_token = None
 
         logging.info(f"Creating log stream: {self.log_stream}")
+        self.supabase_logs = SupabaseLogs()
+        self._create_log_group()
+        self._create_log_stream()
 
-        self.create_log_group()
-        self.create_log_stream()
-    
-
-    def create_log_group(self):
+    def _create_log_group(self):
         try:
             self.client.create_log_group(
                 logGroupName=self.log_group
             )
+            self.supabase_logs.create_deployment_log(
+                type='deployment',
+                log_group=self.log_group,
+                log_stream=self.log_stream,
+                error=None,
+                status='success',
+                file_path=None,
+                notebook_id=self.notebook_id,
+            )
+
+
             logging.info(f"Created log group: {self.log_group}")
         except self.client.exceptions.ResourceAlreadyExistsException:
             logging.info(f"Log group already exists: {self.log_group}")
+            self.supabase_logs.create_deployment_log(
+                type='deployment',
+                log_group=self.log_group,
+                log_stream=self.log_stream,
+                error="Log group already exists",
+                status='success',
+                file_path=None,
+                notebook_id=self.notebook_id,
+            )
         except Exception as e:
+            self.supabase_logs.create_deployment_log(
+                type='deployment',
+                log_group=self.log_group,
+                log_stream=self.log_stream,
+                error=f"Error creating log group: {e}",
+                status='error',
+                file_path=None,
+                notebook_id=self.notebook_id,
+            )
             logging.error(f"Error creating log group: {e}")
 
-    def create_log_stream(self):
+    def _create_log_stream(self):
         try:
-            logging.info(f"Creating log stream in log group: {self.log_group}")
+            # First, try to create the log group if it doesn't exist
+            try:
+                self.client.create_log_group(logGroupName=self.log_group)
+                logging.info(f"Created log group: {self.log_group}")
+            except self.client.exceptions.ResourceAlreadyExistsException:
+                logging.info(f"Log group already exists: {self.log_group}")
+
+            # Now create the log stream
             response = self.client.create_log_stream(
                 logGroupName=self.log_group,
                 logStreamName=self.log_stream
