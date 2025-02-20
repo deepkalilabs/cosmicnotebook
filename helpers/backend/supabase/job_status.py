@@ -21,7 +21,7 @@ supabase: Client = get_supabase_client()
 def get_all_jobs_for_user(user_id: UUID):
     try:
         response = supabase.table('lambda_jobs') \
-            .select('request_id,input_params,completed,result,created_at,updated_at,completed_at,error, notebook_id') \
+            .select('id,request_id,input_params,completed,result,created_at,updated_at,completed_at,error, notebook_id') \
             .eq('user_id', user_id) \
             .execute()
         
@@ -42,7 +42,7 @@ def get_all_jobs_for_user(user_id: UUID):
 def get_job_by_request_id(request_id: str, user_id: UUID):
     try:
         response = supabase.table('lambda_jobs') \
-            .select('request_id,input_params,completed,result,created_at,updated_at,completed_at,error,notebook_name,notebook_id') \
+            .select('id,request_id,input_params,completed,result,created_at,updated_at,completed_at,error,notebook_name,notebook_id') \
             .eq('request_id', request_id) \
             .eq('user_id', user_id) \
             .single() \
@@ -76,7 +76,7 @@ def get_job_by_request_id(request_id: str, user_id: UUID):
 def get_all_jobs_for_notebook(notebook_id: UUID):
     try:
         response = supabase.table('lambda_jobs') \
-            .select('request_id,input_params,completed,result,created_at,updated_at,completed_at,error,notebook_id') \
+            .select('*') \
             .eq('notebook_id', notebook_id) \
             .execute()
         
