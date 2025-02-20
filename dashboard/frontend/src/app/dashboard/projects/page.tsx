@@ -8,23 +8,71 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
 import { MarimoFile } from '@/app/types';
-import { newNotebookURL } from '@/lib/marimo/urls';
 import { useUserStore } from '@/app/store';
 import { NotebookCard } from '@/components/NotebookCard';
 import { Templates } from '@/components/Templates';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { existingNotebookURL } from '@/lib/marimo/urls';
 
 function NewNotebookButton({ user_id, notebook_id }: { user_id: string, notebook_id: string }) {
-
-  const notebook_url = newNotebookURL(user_id, notebook_id);
   const router = useRouter();
+  const [ nameNotebook, setNameNotebook ] = useState('');
+  const [ openNotebookNameDialog, setOpenNotebookNameDialog ] = useState(false);
+  const [ redirectMarimo, setRedirectMarimo ] = useState(false)
+
+  useEffect(() => {
+    if (!redirectMarimo) return
+    
+    const filename = nameNotebook.split('.')[0]
+    const notebook_url = existingNotebookURL(filename + ".py", user_id, notebook_id)
+    router.push(notebook_url.toString());
+  }, [redirectMarimo])
+
+
   return (
-    <Button onClick={() => {
-      sessionStorage.setItem('returnUrl', document.location.href);
-      router.push(notebook_url.toString());
-    }}>
-      <Plus className="mr-2 h-4 w-4" />
-      New Notebook
-    </Button>
+    <>
+      <Button onClick={() => {
+        sessionStorage.setItem('returnUrl', document.location.href);
+        // router.push(notebook_url.toString());
+        setOpenNotebookNameDialog(true);
+      }}>
+        <Plus className="mr-2 h-4 w-4" />
+        New Notebook
+      </Button>
+      
+      <Dialog open={openNotebookNameDialog} onOpenChange={setOpenNotebookNameDialog}>
+        <DialogContent> 
+          <DialogHeader>
+            <DialogTitle>
+              Create a new notebook
+            </DialogTitle>
+          </DialogHeader>
+          <DialogDescription>
+            Enter a name for your new notebook
+          </DialogDescription>
+          <Input 
+            value={nameNotebook}
+            onChange={(e) => setNameNotebook(e.target.value)}
+            placeholder="Notebook name"
+          />
+          <Button 
+            onClick={() => {
+              setOpenNotebookNameDialog(false);
+              setRedirectMarimo(true);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setOpenNotebookNameDialog(false);
+                setRedirectMarimo(true);
+              }
+            }}
+          >
+            Create
+          </Button>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
