@@ -166,6 +166,7 @@ export interface ConnectorResponse {
 } 
 
 export interface Job {
+    id: string;
     completed: boolean | null;
     completed_at: string | null;
     created_at: string;
@@ -177,6 +178,9 @@ export interface Job {
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
     result: any | null;
     updated_at: string;
+
+    aws_log_group: string | null;
+    aws_log_stream: string | null;
 }
 
 export interface Jobs {

@@ -23,7 +23,11 @@ class OutputGenerateLambdaMessage(BaseModel):
     message: str
 
 class SupabaseJobDetails(BaseModel):
-    request_id: Optional[str] = None
+    id: str = None
+    notebook_id: str = None
+    request_id: str = None
+    aws_log_group: Optional[str] = None
+    aws_log_stream: Optional[str] = None
     input_params: Optional[Dict[str, Any]] = None  # More explicit about expected type
     completed: Optional[bool] = False
     result: Optional[Union[List[Dict[str, Any]], Dict[str, Any], None]] = None
@@ -31,7 +35,6 @@ class SupabaseJobDetails(BaseModel):
     updated_at: Optional[str] = None
     completed_at: Optional[str] = None
     error: Optional[str] = None
-    notebook_id: Optional[str] = None
     
 class SupabaseJobList(BaseModel):
     jobs: list[SupabaseJobDetails]

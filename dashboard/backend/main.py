@@ -28,7 +28,7 @@ from src.lambda_generator import lambda_generator
 from src.backend_types import ScheduledJob, NotebookDetails, ConnectorCredentials, ScheduledJobRequest
 from src.helpers.notebook import notebook
 from src.connectors.manager import ConnectorManager
-
+from src.logging.runtime_logs import RuntimeLogger
 supabase: Client = get_supabase_client()
 resend.api_key = os.getenv('RESEND_API_KEY')
 import traceback
@@ -153,6 +153,15 @@ async def status_endpoint_job_by_request_id(user_id: int, request_id: str):
 @app.get("/status/notebook/jobs/{notebook_id}")
 async def status_endpoint_jobs_for_notebook(notebook_id: UUID): 
     return job_status.get_all_jobs_for_notebook(notebook_id)
+
+@app.post("/jobs/job_logs/{job_id}")
+async def get_logs_for_notebook_job(job_id: str, job_details: dict):
+    notebook_id = job_details['notebook_id']
+    aws_log_group = job_details['aws_log_group']
+    aws_log_stream = job_details['aws_log_stream']
+
+    logger = RuntimeLogger(aws_log_group, aws_log_stream, notebook_id)
+    return logger.get_logs_from_cloudwatch()
 
 # @app.on_event("startup")
 # async def start_scheduler():
