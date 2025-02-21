@@ -7,6 +7,7 @@ from .helpers.ecr_manager import ECRManager
 import json
 import logging
 from datetime import datetime
+from src.logging.cloudwatch.deployment import DeploymentLogger
 # Configure logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -29,6 +30,8 @@ class LambdaGenerator:
         # TODO: Make a base lambda layer for basic dependencies.
         self.dependencies = dependencies
         self.lambda_handler = 'lambda_function.lambda_handler'
+
+        
         
         self.base_folder_path = os.path.join(
             os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
@@ -58,11 +61,23 @@ class LambdaGenerator:
         self.status_endpoint_id = ''
         self.result_endpoint_id = ''
         self.submit_endpoint = ''
+
+        #Init the cloudwatch logger
+        self.aws_logger = DeploymentLogger(
+            self.lambda_fn_name, 
+            self.region,
+            "org_id_here", 
+            self.notebook_id, 
+            self.user_id,
+            "deployment"
+        )
         
         if os.path.exists(self.base_folder_path):
             shutil.rmtree(self.base_folder_path)
         os.makedirs(self.base_folder_path)
         logger.info(f"Initialized LambdaGenerator for user {user_id} and notebook {notebook_name}")
+        self.aws_logger.log(f"Initialized LambdaGenerator for user {user_id} and notebook {notebook_name}", "INFO", {})
+        # log group here. 
     
     @property
     def ARN(self):
@@ -70,6 +85,7 @@ class LambdaGenerator:
         response = iam.get_role(RoleName=self.aws_role_identifier)
         arn = response['Role']['Arn']
         logger.debug(f"Retrieved ARN: {arn}")
+        self.aws_logger.log(f"Retrieved ARN: {arn}", "INFO", {})
         return arn
     
     @property
@@ -77,6 +93,7 @@ class LambdaGenerator:
         sts_client = boto3.client('sts')
         account_id = sts_client.get_caller_identity()['Account']
         logger.debug(f"Retrieved account ID: {account_id}")
+        self.aws_logger.log(f"Retrieved account ID: {account_id}", "INFO", {})
         return account_id
 
     
@@ -91,6 +108,7 @@ class LambdaGenerator:
             f.write(self.code_chunk_clean)
 
         logger.info(f"Lambda code saved successfully: {self.code_chunk_clean}")
+        self.aws_logger.log(f"Lambda code saved successfully: {self.code_chunk_clean}", "INFO", {})
             
         return self.code_chunk_clean
     
@@ -104,11 +122,12 @@ class LambdaGenerator:
             f.write(docker_file_sample)
             
         logger.info("Container preparation completed")
-            
+        self.aws_logger.log("Container preparation completed", "INFO", {})
     def build_and_push_container(self):
         logger.info("Starting container build and push")
         self.image_uri = self.ecr_manager.build_and_push_image()
         logger.info(f"Container built and pushed with URI: {self.image_uri}")
+        self.aws_logger.log(f"Container built and pushed with URI: {self.image_uri}", "INFO", {})
 
     def create_lambda_fn(self):
         """
@@ -119,10 +138,13 @@ class LambdaGenerator:
                 FunctionName=self.lambda_fn_name
             )
             logger.info(f"Successfully deleted Lambda function: {self.lambda_fn_name}")
+            self.aws_logger.log(f"Successfully deleted Lambda function: {self.lambda_fn_name}", "INFO", {})
         except ClientError as e:
             logger.warning(f"Lambda function not found: {str(e)}")
+            self.aws_logger.log(f"Lambda function not found: {str(e)}", "WARNING", {})
             
         logger.info(f"Creating new Lambda function: {self.lambda_fn_name}")
+        self.aws_logger.log(f"Creating new Lambda function: {self.lambda_fn_name}", "INFO", {})
         response = self.lambda_client.create_function(
             FunctionName=self.lambda_fn_name,
             PackageType='Image',
@@ -141,6 +163,7 @@ class LambdaGenerator:
         
         self.lambda_fn_arn = response['FunctionArn']
         logger.info(f"Lambda function created with ARN: {self.lambda_fn_arn}")
+        self.aws_logger.log(f"Lambda function created with ARN: {self.lambda_fn_arn}", "INFO", {})
         return response
         
     def delete_existing_api(self):
@@ -160,9 +183,11 @@ class LambdaGenerator:
                     # time.sleep(30)
         except Exception as e:
             logger.error(f"Error checking/deleting existing API: {str(e)}")
+            self.aws_logger.log(f"Error checking/deleting existing API: {str(e)}", "ERROR", {})
             
     def create_submit_endpoint(self):
         logger.info("Creating submit endpoint")
+        self.aws_logger.log("Creating submit endpoint", "INFO", {})
         
         # Step 1: Create the resource
         submit_endpoint_resource = self.api_gateway_client.create_resource(
@@ -254,6 +279,7 @@ class LambdaGenerator:
         )
         
         logger.info(f"Submit endpoint created with ID: {submit_endpoint_resource_id}")
+        self.aws_logger.log(f"Submit endpoint created with ID: {submit_endpoint_resource_id}", "INFO", {})
         return submit_endpoint_resource_id
         
     def create_api_endpoint(self):
@@ -293,7 +319,7 @@ class LambdaGenerator:
             
             self.submit_endpoint_id = self.create_submit_endpoint()
             logger.info(f"Created submit endpoint with ID: {self.submit_endpoint_id}")
-            
+            self.aws_logger.log(f"Created submit endpoint with ID: {self.submit_endpoint_id}", "INFO", {})
             self.api_gateway_client.create_deployment(
                 restApiId=self.api_id,
                 stageName='prod'
@@ -302,6 +328,7 @@ class LambdaGenerator:
             self.submit_endpoint = f'https://{self.api_id}.execute-api.{self.region}.amazonaws.com/prod/submit'
 
             logger.info(f"API endpoints created successfully: submit={self.submit_endpoint}")
+            self.aws_logger.log(f"API endpoints created successfully: submit={self.submit_endpoint}", "INFO", {})
 
             self.store_endpoint_supabase()
             
@@ -309,6 +336,7 @@ class LambdaGenerator:
             
         except Exception as e:
             logger.error(f"Error creating API endpoint: {str(e)}")
+            self.aws_logger.log(f"Error creating API endpoint: {str(e)}", "ERROR", {})
             return False, str(e)
 
             # {

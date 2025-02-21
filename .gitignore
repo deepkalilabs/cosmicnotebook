@@ -80,6 +80,14 @@ logs
 # Yarn Integrity file
 .yarn-integrity
 
+# Lambda deployment packages
+*.zip
+/lambda_dumps/
+lambda-packages/
+deployment-packages/
+
+// ... existing code ...
+
 .venv
 venv/*
 */venv
