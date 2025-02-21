@@ -207,7 +207,7 @@ export function JobScheduler({ notebookId }: JobSchedulerProps) {
       </div>
 
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent className="sm:max-w-[1000px]">
+        <SheetContent className="sm:max-w-[1000px] overflow-y-auto">
           <SheetHeader>
             <SheetTitle>
               {isEditing ? 'Edit Schedule' : 'Schedule Details'}

@@ -83,9 +83,9 @@ export default function DeploymentLogs({ logs, isLoading, error }: DeploymentLog
             </CardHeader>                       
             <CardContent>
                 <div className="mt-4">
-                    <ScrollArea className="h-[200px] w-full rounded-md border p-4 bg-background">
+                    <ScrollArea className="h-[400px] w-full rounded-md border p-4 bg-background">
                         {logs.length > 0 ? 
-                            logs.slice(-5).map((log, index) => (
+                            logs.map((log, index) => (
                                 <div key={index} className="font-mono text-sm py-1 flex items-start group hover:bg-muted/50">
                                     <span className="text-muted-foreground min-w-[100px] select-none group-hover:text-foreground">
                                         {formatTimestamp(log.timestamp)}

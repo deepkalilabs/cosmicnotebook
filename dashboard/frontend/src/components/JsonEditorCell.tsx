@@ -25,18 +25,11 @@ const JsonEditorCell = ({ value, onChange, isEditing, endpoint }: { value: strin
   };
 
   useEffect(() => {
-    if (jsonValue) {
+    if (jsonValue.length > 10) {
       attemptToFixJson(jsonValue);
-      console.log(jsonValue)
       onChange(jsonValue);
     }
   }, [jsonValue]);
-
-  useEffect(() => {
-    if (value) {
-        console.log(value)
-    }
-  }, [value]);
 
   // Copy formatted JSON to clipboard
   const copyToClipboard = () => {
