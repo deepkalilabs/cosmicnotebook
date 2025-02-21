@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 print(sys.path)
 
@@ -23,6 +24,8 @@ from helpers.backend.aws.s3 import s3
 from helpers.backend.supabase import job_status
 from helpers.backend.supabase.connector_credentials import get_connector_credentials, get_is_type_connected, delete_connector_credentials
 from helpers.backend.supabase.integration_credentials import create_credentials, get_integration, update_credentials, delete_credentials, get_all_integrations
+from helpers.backend.supabase.logs import SupabaseLogs
+from src.logging.cloudwatch.deployment import DeploymentLogger
 
 from src.lambda_generator import lambda_generator
 from src.backend_types import ScheduledJob, NotebookDetails, ConnectorCredentials, ScheduledJobRequest
@@ -59,8 +62,9 @@ async def websocket_endpoint(websocket: WebSocket, notebook_id: str, notebook_na
             logging.info("Waiting for message")
             data = await websocket.receive_json()
             logging.info(f"data received {data}")
-       
             if data['type'] == 'deploy_notebook':
+                
+
                 # TODO: Better dependency management here.
                 # TODO: Get status/msg directly from function.
                 # TODO: Make a base lambda layer for basic dependencies.
@@ -75,6 +79,8 @@ async def websocket_endpoint(websocket: WebSocket, notebook_id: str, notebook_na
 
                 logging.info(f"python_script {python_script}")
                 logging.info(f"requirements {requirements}")
+                #deployment_logger.log(f"python_script {python_script}", "info", {})
+                #deployment_logger.log(f"requirements {requirements}", "info", {})
 
                 lambda_handler = lambda_generator.LambdaGenerator(python_script, data['user_id'], data['notebook_name'], data['notebook_id'], requirements)
                 status = False
@@ -83,26 +89,32 @@ async def websocket_endpoint(websocket: WebSocket, notebook_id: str, notebook_na
                 response = OutputGenerateLambdaMessage(type='deploying_notebook', success=status, message=msg)
                 
                 await websocket.send_json(response.model_dump())
+                #deployment_logger.log(f"response {response}", "info", {})
                 lambda_handler.save_lambda_code()
+                #deployment_logger.log("Saved lambda code", "info", {})
 
                 msg = "Preparing your code for prod"
                 lambda_handler.prepare_container()
                 response = OutputGenerateLambdaMessage(type='deploying_notebook', success=status, message=msg)
                 await websocket.send_json(response.model_dump())
+                #deployment_logger.log(f"response {response}", "info", {})
 
                 msg = "Shipping your code to the cloud"
                 lambda_handler.build_and_push_container()
                 response = OutputGenerateLambdaMessage(type='deploying_notebook', success=status, message=msg)
                 await websocket.send_json(response.model_dump())
+                #deployment_logger.log(f"response {response}", "info", {})
                 response = lambda_handler.create_lambda_fn()
+                #deployment_logger.log(f"response {response}", "info", {})
 
                 msg = "Creating an API for you"
                 response = OutputGenerateLambdaMessage(type='deploying_notebook', success=status, message=msg)
                 await websocket.send_json(response.model_dump())
-                
+                #deployment_logger.log(f"response {response}", "info", {})
                 status, message = lambda_handler.create_api_endpoint()
                 response = OutputGenerateLambdaMessage(type='deploying_notebook', success=status, message=message)
                 await websocket.send_json(response.model_dump())
+                #deployment_logger.log(f"response {response}", "info", {})
 
                 api = message
 
@@ -273,6 +285,28 @@ async def get_integration(integration_id: str):
 @app.get("/integrations/all/{org_id}")
 async def get_all_integrations(org_id: str):
     return get_all_integrations(org_id)   
+
+
+#----------------------------------
+#   Logging
+#----------------------------------
+# TODO Separate call if the notebook is deployed or not.
+@app.get("/logs/{notebook_id}")
+async def get_deployment_logs(notebook_id: str):
+    print(f"Getting deployment logs for notebook {notebook_id}")
+    supabase_logs = SupabaseLogs()
+    log_details = supabase_logs.get_deployment_logs(notebook_id)
+    print(f"log_details {log_details}")
+    log = json.loads(log_details['body'])
+    print(f"log {log[0]}")
+    logger = DeploymentLogger(
+        log[0]['log_group'], 
+        log[0]['log_stream'],
+        'org_id',
+        notebook_id
+    )
+    
+    return logger.get_logs_from_cloudwatch()
 
 
 if __name__ == "__main__":

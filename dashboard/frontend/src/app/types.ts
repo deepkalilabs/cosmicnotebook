@@ -303,3 +303,16 @@ export interface MarimoFile {
   created_at: string;
   updated_at: string;
 };
+
+
+export interface LogEntry {
+  timestamp: number;
+  message: string;
+  ingestionTime: number;
+}
+
+export interface DeploymentLogsProps {
+  logs: LogEntry[]
+  isLoading: boolean
+  error: string | null
+}
