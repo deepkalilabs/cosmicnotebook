@@ -20,7 +20,6 @@ export function useDeploymentLogs(notebookId: string, isDeploying: boolean) {
                 return;
             }
             const data = await response.json();
-            debugger;
             console.log("Data from fetchLogs", data)
             setLogs(data);
         } catch (err) {
