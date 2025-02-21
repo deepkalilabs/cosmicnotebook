@@ -73,11 +73,6 @@ export default function DeploySettings() {
         }
     }, [notebookDetails?.id])
 
-<<<<<<< HEAD
-  
-
-=======
->>>>>>> 83a9420 (deployment logs)
     const handleDeploy = useCallback(async () => {
         if (!notebookDetails) return;
         
