@@ -25,7 +25,7 @@ export default function Notebook() {
     if (returnUrl) {
       sessionStorage.setItem('returnUrl', returnUrl);
     }
-    window.location.replace(notebookUrl);
+    window.open(notebookUrl, '_blank');
   }, [name, user, notebook_id, returnUrl]); // Note: using user instead of user.id since user might be null
 
   return <div>Loading...</div>; // Show loading state while redirecting

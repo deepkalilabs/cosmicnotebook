@@ -90,10 +90,24 @@ def lambda_handler(event, context):
                 
         except Exception as validation_error:
             error_msg = f"Validation error: {str(validation_error)}"
+            supabase.table('lambda_jobs').update({
+                    'completed': True,
+                    'status': 'FAILED',
+                    'error': error_msg,
+                    'updated_at': datetime.now().isoformat()
+                }).eq('request_id', request_id).execute()
+
             logger.error(error_msg)
             return {'request_id': request_id, 'status': 'FAILED', 'error': error_msg}
             
     except Exception as e:
         error_msg = f"Unexpected error: {str(e)}"
+        supabase.table('lambda_jobs').update({
+                    'completed': True,
+                    'status': 'FAILED',
+                    'error': error_msg,
+                    'updated_at': datetime.now().isoformat()
+                }).eq('request_id', request_id).execute()
+
         logger.error(error_msg)
         return {'request_id': request_id, 'status': 'FAILED', 'error': error_msg}
