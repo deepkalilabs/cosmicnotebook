@@ -3,24 +3,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Loader2 } from "lucide-react"
+import { DeploymentLogsProps } from "@/app/types"
 
-interface LogEntry {
-    timestamp: number;
-    message: string;
-    ingestionTime: number;
-}
-
-interface DeploymentLogsProps {
-    logs: LogEntry[]
-    isLoading: boolean
-    error: string | null
-}
 
 export default function DeploymentLogs({ logs, isLoading, error }: DeploymentLogsProps) {
     console.log("Logs in DeploymentLogs", logs)
-    debugger;
 
     const formatTimestamp = (timestamp: number) => {
+        if (!timestamp) {
+            return "N/A";
+        }
         const date = new Date(timestamp);
         return date.toLocaleTimeString('en-US', {
             hour12: false,

@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
+import { LogEntry } from '@/app/types';
 
 export function useDeploymentLogs(notebookId: string, isDeploying: boolean) {
-    const [logs, setLogs] = useState<string[]>([]);
+    const [logs, setLogs] = useState<LogEntry[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -9,18 +10,17 @@ export function useDeploymentLogs(notebookId: string, isDeploying: boolean) {
     const fetchLogs = useCallback(async () => {
         try {
             setIsLoading(true);
-            const response = await fetch(`/api/logging/${notebookId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ notebookId })
-            });
+            const response = await fetch(`/api/logs/${notebookId}`);
             console.log("Response from fetchLogs", response)
             if (response.status !== 200) {
                 console.error("Response not ok", response)
+                const data = await response.json();
+                console.log("Data from fetchLogs", data)
+                setLogs([]);
+                return;
             }
             const data = await response.json();
+            debugger;
             console.log("Data from fetchLogs", data)
             setLogs(data);
         } catch (err) {

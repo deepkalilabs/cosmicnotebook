@@ -1,4 +1,3 @@
-
 import os
 import shutil
 import boto3
@@ -64,12 +63,10 @@ class LambdaGenerator:
 
         #Init the cloudwatch logger
         self.aws_logger = DeploymentLogger(
-            self.lambda_fn_name, 
-            self.region,
-            "org_id_here", 
-            self.notebook_id, 
-            self.user_id,
-            "deployment"
+            self.lambda_fn_name,
+            log_stream=None,  # explicitly naming the parameter
+            org_id="org_id_here",
+            notebook_id=self.notebook_id,
         )
         
         if os.path.exists(self.base_folder_path):
@@ -108,7 +105,7 @@ class LambdaGenerator:
             f.write(self.code_chunk_clean)
 
         logger.info(f"Lambda code saved successfully: {self.code_chunk_clean}")
-        self.aws_logger.log(f"Lambda code saved successfully: {self.code_chunk_clean}", "INFO", {})
+        self.aws_logger.log(f"Lambda code saved successfully: [hidden]", "INFO", {})
             
         return self.code_chunk_clean
     
@@ -125,6 +122,7 @@ class LambdaGenerator:
         self.aws_logger.log("Container preparation completed", "INFO", {})
     def build_and_push_container(self):
         logger.info("Starting container build and push")
+        self.aws_logger.log("Starting container build and push", "INFO", {})
         self.image_uri = self.ecr_manager.build_and_push_image()
         logger.info(f"Container built and pushed with URI: {self.image_uri}")
         self.aws_logger.log(f"Container built and pushed with URI: {self.image_uri}", "INFO", {})
@@ -176,6 +174,7 @@ class LambdaGenerator:
             for api in apis['items']:
                 if api['name'] == self.api_name:
                     logger.info(f"Deleting existing API: {api['name']} ({api['id']})")
+                    self.aws_logger.log(f"Deleting existing API: {api['name']} ({api['id']})", "INFO", {})
                     self.api_gateway_client.delete_rest_api(
                         restApiId=api['id']
                     )

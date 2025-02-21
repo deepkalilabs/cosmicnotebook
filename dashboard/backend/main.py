@@ -290,10 +290,8 @@ async def get_all_integrations(org_id: str):
 #----------------------------------
 #   Logging
 #----------------------------------
-
-
 # TODO Separate call if the notebook is deployed or not.
-@app.get("/logging/deployments/get/{notebook_id}")
+@app.get("/logs/{notebook_id}")
 async def get_deployment_logs(notebook_id: str):
     print(f"Getting deployment logs for notebook {notebook_id}")
     supabase_logs = SupabaseLogs()
