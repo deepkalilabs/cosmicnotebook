@@ -2,7 +2,6 @@
 import { MarimoFile } from '@/app/types';
 //import { getSessionId } from '@/lib/marimo/sessions';
 import { asURL } from '@/lib/marimo/urls';
-import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 
 export type TypedString<T> = string & { __type__: T };
