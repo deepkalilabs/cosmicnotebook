@@ -17,8 +17,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: "Cosmic Notebook",
-  description: "Ship AI workflows with Cosmic Notebook",
+  title: "Build. Iterate. Deploy.",
+  description: "Cosmic is the efficient workflow for AI teams.",
 };
 
 export default function RootLayout({

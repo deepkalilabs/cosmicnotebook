@@ -2,12 +2,15 @@
 
 import React, { useEffect } from 'react'
 import { Button } from "@/components/ui/button"
-import { Code, ArrowRight, Mail } from 'lucide-react'
+import { Code, ArrowRight, Mail, Users, Shield, Server, Zap } from 'lucide-react'
 import Link from 'next/link'
 import posthog from 'posthog-js'
 import Image from 'next/image'
+import { useToast } from "@/hooks/use-toast"
 
 export default function Home() {
+  const { toast } = useToast()
+
   useEffect(() => {
     posthog.capture('page_view', {
       path: '/',
@@ -40,7 +43,7 @@ export default function Home() {
                 </Button>
               </Link>
               <Link href="/auth/signup">
-                <Button className="bg-gradient-to-r from-black-900 via-slate-800 to-black hover:from-blue-950 hover:via-slate-900 hover:to-black text-white">
+                <Button>
                   Get started
                 </Button>
               </Link>
@@ -50,27 +53,30 @@ export default function Home() {
       </header>
       {/* Hero Section */}
       <div className="container mx-auto px-4 lg:px-8 pt-20 pb-16">
-        <div className="flex justify-center">
-          <div className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-gray-50 text-gray-600 mb-8 text-sm font-medium">
-              <h1 className="text-md">✨ AUTOMATE ANY BUSINESS PROCESS WITH AI IN 30 MINUTES</h1>
-          </div>
-        </div>
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Column */}
           <div className="max-w-2xl">
             <h1 className="text-5xl font-serif font-bold tracking-tight lg:text-5xl mb-6">
-              Build & Ship AI Workflows that Automate Business Processes
+              Prototype. <br/>Iterate. Deploy AI.
             </h1>
-            <p className="text-xl text-gray-600 mb-8">
-              Grow your business 10x without increasing headcount.
-              Techincal leaders love shipping AI workflows to automate business processes.
-              Save 100+ hours of engineering and business time on every workflow you automate.
-            </p>
+            <p className="text-l text-gray-600 mb-8">
+            Cosmic helps AI teams ship AI-workflows in 30 mins. No platform knowledge required. <br/>With a single click - your AI notebook is deployed to a live API. </p>
             <div className="flex items-center gap-4">
               <Link href="/auth/signup">
-                <Button className="bg-gradient-to-r from-blue-900 via-slate-800 to-black hover:from-blue-950 hover:via-slate-900 hover:to-black text-white shadow-lg hover:shadow-xl transition-all duration-200 text-lg px-8 py-6 h-auto">
-                  Deploy your first workflow
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                <Button 
+                  className="bg-gradient-to-r from-blue-900 via-slate-800 to-black hover:from-blue-950 hover:via-slate-900 hover:to-black"
+                >
+                  Deploy free
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link href="https://cal.com/charlesjavelona/30min" target="_blank">
+                <Button 
+                  variant="outline"
+                  className="border-2 border-blue-900"
+                >
+                  Contact Sales
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
             </div>
@@ -94,10 +100,10 @@ export default function Home() {
       </div>
 
       {/* Logos Section */}
-      <div className="border-y bg-gray-50">
+      <div className="bg-white">
         <div className="container mx-auto px-12 py-8">
-          <p className="text-center text-xl font-medium text-gray-600 mb-8">
-            Join Companies Shipping AI 10x Faster
+          <p className="text-center text-m font-medium text-gray-400 mb-8 uppercase">
+            Proudly supporting amazing companies
           </p>
           <div className="grid grid-cols-3 md:grid-cols-3 items-center justify-items-center">
             {customer_logos.map((source) => (
@@ -111,146 +117,179 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 lg:px-8 py-14">
-        <div className="flex items-center justify-center gap-4">
-          <Link href="/auth/signup">
-            <Button className="bg-gradient-to-r from-blue-900 via-slate-800 to-black hover:from-blue-950 hover:via-slate-900 hover:to-black text-white shadow-lg hover:shadow-xl transition-all duration-200 text-lg px-8 py-6 h-auto">
-              Deploy your first workflow
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
+      {/* Features Section */}
+      <div className="bg-gray-50">
+        <div className="container mx-auto px-4 lg:px-8 py-16">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="p-6">
+              <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
+                <Server className="h-6 w-6" strokeWidth={1.5} />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Zero config</h3>
+              <p className="text-gray-600">
+                Works out of the box with your existing notebook.
+              </p>
+            </div>
+
+            <div className="p-6">
+              <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
+                <Users className="h-6 w-6" strokeWidth={1.5} />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Collaborative</h3>
+              <p className="text-gray-600">
+                Every change deploys to a shareable api endpoint.
+              </p>
+            </div>
+
+            <div className="p-6">
+              <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
+                <Zap className="h-6 w-6" strokeWidth={1.5} />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Lightning fast</h3>
+              <p className="text-gray-600">
+                Scalable, fast, and simple deployments.
+              </p>
+            </div>
+
+            <div className="p-6">
+              <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
+                <Shield className="h-6 w-6" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Enterprise Ready</h3>
+              <p className="text-gray-600">
+                Built-in security and compliance controls.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Benefits Section */}
-      <div className="border-y bg-gray-50">
-      <div className="container mx-auto px-4 lg:px-8 py-16 bg-gray-50">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl font-serif font-bold tracking-tight sm:text-4xl mb-4">
-            Build business automations without engineering overhead. 
-          </h2>
-          <p className="text-xl text-gray-600">
-            Focus on automating business processes without engineering overhead. Grow your business 10x without increasing headcount. Get to production in record time and save 100+ hours.
-          </p>
+      <div className="border-y">
+        <div className="container mx-auto px-4 lg:px-8 py-20">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-3xl font-serif font-bold tracking-tight sm:text-4xl mb-4">
+              Instant deployment of your AI notebooks
+            </h2>
+            <p className="text-xl text-gray-600 mb-8">
+              Push to git - your AI notebook is deployed to a live API. Zero config required.
+            </p>
+            
+            <div className="flex items-center justify-center gap-8">
+              <Button 
+                className="bg-gradient-to-r from-blue-900 via-slate-800 to-black hover:from-blue-950 hover:via-slate-900 hover:to-black px-6 py-2"
+                onClick={() => {
+                  toast({
+                    title: "Coming Soon",
+                    description: "Notebook import feature is currently in development.",
+                    duration: 3000,
+                  })
+                }}
+              >
+                Import Notebook
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+              <Button 
+                variant="outline"
+                className="border-2 border-blue-900 px-6 py-2"
+                onClick={() => {
+                  toast({
+                    title: "Coming Soon",
+                    description: "Example deployment feature is currently in development.",
+                    duration: 3000,
+                  })
+                }}
+              >
+                Deploy Example
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+            
+
+            <div className="mt-8 rounded-lg overflow-hidden shadow-lg">
+              <Image 
+                src="/deployments.jpg" 
+                alt="Deployment logs showing instant API creation" 
+                width={800} 
+                height={400} 
+                className="w-full"
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto">
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="text-3xl font-bold text-blue-900 mb-2">30min</div>
-            <h3 className="font-medium mb-2">First Deployment</h3>
-            <p className="text-sm text-gray-600">
-              Go from idea to production-ready workflow in just 30 minutes.
+        {/* Value Props Section */}
+        <div className="bg-gray-100 py-16">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl font-serif font-bold tracking-tight sm:text-4xl mb-4">
+              Integrate and Deploy instantly
+            </h2>
+            <p className="text-xl text-gray-600">
+              Integrate with your data sources and deploy to Slack, API, or Email. Automate out business processes in under 30 minutes.
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="text-3xl font-bold text-blue-900 mb-2">100+</div>
-            <h3 className="font-medium mb-2">Hours Saved</h3>
-            <p className="text-sm text-gray-600">
-              Save hundreds of engineering hours on every workflow you automate.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="text-3xl font-bold text-blue-900 mb-2">Zero</div>
-            <h3 className="font-medium mb-2">Infrastructure</h3>
-            <p className="text-sm text-gray-600">
-              No servers to manage, no DevOps required - we handle everything.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="text-3xl font-bold text-blue-900 mb-2">10+</div>
-            <h3 className="font-medium mb-2">Integrations</h3>
-            <p className="text-sm text-gray-600">
-              Pre-built integrations that work out of the box with your stack.
-            </p>
-          </div>
-        </div>
-        </div>
-      </div>
-
-      <div className="container mx-auto px-4 lg:px-8 py-14">
-        <div className="flex items-center justify-center gap-4">
-          <Link href="/auth/signup">
-            <Button className="bg-gradient-to-r from-blue-900 via-slate-800 to-black hover:from-blue-950 hover:via-slate-900 hover:to-black text-white shadow-lg hover:shadow-xl transition-all duration-200 text-lg px-8 py-6 h-auto">
-              Deploy your first workflow
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
-        </div>
-      </div>
-
-      {/* Value Props Section */}
-      <div className="border-y bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl font-serif font-bold tracking-tight sm:text-4xl mb-4">
-            Integrate and Deploy instantly
-          </h2>
-          <p className="text-xl text-gray-600">
-            Integrate with your data sources and deploy to Slack, API, or Email. Automate out business processes in under 30 minutes.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {[
-            {
-              title: "Slack Bot",
-              description: "Transform Slack data into automated team workflows and smart notifications.",
-              icon: <Image src={`https://img.logo.dev/slack.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`} alt="Slack" width={100} height={100} />,
-            },
-            {
-              title: "REST API",
-              description: "Deploy instant API endpoints to connect with any service or application.",
-              icon: <Code className="h-6 w-6" />,
-            },
-            {
-              title: "Email",
-              description: "Trigger smart email updates based on any workflow or event.",
-              icon: <Mail className="h-6 w-6" />,
-            },
-            {
-              title: "Posthog",
-              description: "Predict customer churn with AI-powered analytics and automated alerts.",
-              icon: <Image src={`https://img.logo.dev/posthog.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`} alt="Posthog" width={100} height={100} />,
-            },
-            {
-              title: "Pylon",
-              description: "Scale customer success with AI-driven responses and automated engagement.",
-              icon: <Image src={`https://img.logo.dev/usepylon.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`} alt="Pylon" width={100} height={100} />,
-            },
-            {
-              title: "Fathom",
-              description: "Analyze and act on every call insight with automated transcription workflows.",
-              icon: <Image src={`https://img.logo.dev/fathom.video/?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`} alt="Fathom" width={100} height={100} />,
-            }
-          ].map((prop, i) => (
-            <div key={i} className="relative group h-[210px]">
-              <div className="absolute -inset-px bg-gradient-to-r from-blue-900 via-slate-800 to-black rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
-              <div className="relative h-full bg-white p-4 rounded-lg border shadow-sm hover:shadow-md transition-shadow flex flex-col">
-                <div className="flex flex-col items-start space-y-3">
-                  <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center">
-                    {prop.icon}
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {[
+              {
+                title: "Slack Bot",
+                description: "Transform Slack data into automated team workflows and smart notifications.",
+                icon: <Image src={`https://img.logo.dev/slack.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`} alt="Slack" width={100} height={100} />,
+              },
+              {
+                title: "REST API",
+                description: "Deploy instant API endpoints to connect with any service or application.",
+                icon: <Code className="h-6 w-6" />,
+              },
+              {
+                title: "Email",
+                description: "Trigger smart email updates based on any workflow or event.",
+                icon: <Mail className="h-6 w-6" />,
+              },
+              {
+                title: "Posthog",
+                description: "Predict customer churn with AI-powered analytics and automated alerts.",
+                icon: <Image src={`https://img.logo.dev/posthog.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`} alt="Posthog" width={100} height={100} />,
+              },
+              {
+                title: "Pylon",
+                description: "Scale customer success with AI-driven responses and automated engagement.",
+                icon: <Image src={`https://img.logo.dev/usepylon.com?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`} alt="Pylon" width={100} height={100} />,
+              },
+              {
+                title: "Fathom",
+                description: "Analyze and act on every call insight with automated transcription workflows.",
+                icon: <Image src={`https://img.logo.dev/fathom.video/?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}&retina=true`} alt="Fathom" width={100} height={100} />,
+              }
+            ].map((prop, i) => (
+              <div key={i} className="relative group h-[210px]">
+                <div className="absolute -inset-px bg-gradient-to-r from-blue-900 via-slate-800 to-black rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
+                <div className="relative h-full bg-white p-4 rounded-lg border shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                  <div className="flex flex-col items-start space-y-3">
+                    <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center">
+                      {prop.icon}
+                    </div>
+                    <h3 className="text-lg font-semibold">{prop.title}</h3>
                   </div>
-                  <h3 className="text-lg font-semibold">{prop.title}</h3>
-                </div>
-                <div className="mt-auto">
-                  <p className="text-sm text-gray-600">
-                    {prop.description}
-                  </p>
+                  <div className="mt-auto">
+                    <p className="text-sm text-gray-600">
+                      {prop.description}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
       </div>
 
       <div className="container mx-auto px-4 lg:px-8 py-8 mt-8">
         <div className="flex items-center justify-center gap-4">
           <Link href="/auth/signup">
-            <Button className="bg-gradient-to-r from-blue-900 via-slate-800 to-black hover:from-blue-950 hover:via-slate-900 hover:to-black text-white shadow-lg hover:shadow-xl transition-all duration-200 text-lg px-8 py-6 h-auto">
+            <Button 
+              size="lg"
+              className="bg-gradient-to-r from-blue-900 via-slate-800 to-black hover:from-blue-950 hover:via-slate-900 hover:to-black"
+            >
               Deploy your first workflow
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
