@@ -60,7 +60,7 @@ export default function Home() {
               Prototype. <br/>Iterate. Deploy.
             </h1>
             <p className="text-l text-gray-600 mb-8">
-            Cosmic helps AI teams ship AI-workflows in 30 mins. No platform knowledge required. <br/>All-in-one: Interactive notebook development, iterative experimentation, and production deployment, with seamless collaboration and reproducible research.            </p>
+            Cosmic helps AI teams ship AI-workflows in 30 mins. No platform knowledge required. <br/>All-in-one: with a single click - your AI notebook is deployed to a live API. </p>
             <div className="flex items-center gap-4">
               <Link href="/auth/signup">
                 <Button 
@@ -100,7 +100,7 @@ export default function Home() {
       </div>
 
       {/* Logos Section */}
-      <div className="border-y bg-gray-50">
+      <div className="bg-white">
         <div className="container mx-auto px-12 py-8">
           <p className="text-center text-m font-medium text-gray-400 mb-8 uppercase">
             Proudly supporting amazing companies
@@ -118,7 +118,7 @@ export default function Home() {
       </div>
 
       {/* Features Section */}
-      <div className="container mx-auto px-4 lg:px-8 py-16">
+      <div className="mx-auto px-4 lg:px-8 py-16 bg-gray-50">
         <div className="grid md:grid-cols-4 gap-8">
           <div className="p-6">
             <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
@@ -163,8 +163,8 @@ export default function Home() {
       </div>
 
       {/* Benefits Section */}
-      <div className="border-y bg-gray-50">
-        <div className="container mx-auto px-4 lg:px-8 py-20 bg-gray-50">
+      <div className="border-y">
+        <div className="container mx-auto px-4 lg:px-8 py-20">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-3xl font-serif font-bold tracking-tight sm:text-4xl mb-4">
               Instant deployment of your AI notebooks
@@ -217,7 +217,7 @@ export default function Home() {
         </div>
 
         {/* Value Props Section */}
-        <div className="container mx-auto px-4 py-8">
+        <div className="bg-gray-100 py-16">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl font-serif font-bold tracking-tight sm:text-4xl mb-4">
               Integrate and Deploy instantly
