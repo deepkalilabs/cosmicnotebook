@@ -60,7 +60,7 @@ export default function Home() {
               Prototype. <br/>Iterate. Deploy.
             </h1>
             <p className="text-l text-gray-600 mb-8">
-            Cosmic helps AI teams ship AI-workflows in 30 mins. No platform knowledge required. <br/><br/>With a single click - your AI notebook is deployed to a live API. </p>
+            Cosmic helps AI teams ship AI-workflows in 30 mins. No platform knowledge required. <br/>With a single click - your AI notebook is deployed to a live API. </p>
             <div className="flex items-center gap-4">
               <Link href="/auth/signup">
                 <Button 
