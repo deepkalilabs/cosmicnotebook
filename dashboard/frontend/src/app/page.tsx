@@ -60,7 +60,7 @@ export default function Home() {
               Prototype. <br/>Iterate. Deploy.
             </h1>
             <p className="text-l text-gray-600 mb-8">
-            Cosmic helps AI teams ship AI-workflows in 30 mins. No platform knowledge required. <br/>All-in-one: with a single click - your AI notebook is deployed to a live API. </p>
+            Cosmic helps AI teams ship AI-workflows in 30 mins. No platform knowledge required. <br/><br/>With a single click - your AI notebook is deployed to a live API. </p>
             <div className="flex items-center gap-4">
               <Link href="/auth/signup">
                 <Button 
@@ -118,46 +118,48 @@ export default function Home() {
       </div>
 
       {/* Features Section */}
-      <div className="mx-auto px-4 lg:px-8 py-16 bg-gray-50">
-        <div className="grid md:grid-cols-4 gap-8">
-          <div className="p-6">
-            <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
-              <Server className="h-6 w-6" strokeWidth={1.5} />
+      <div className="bg-gray-50">
+        <div className="container mx-auto px-4 lg:px-8 py-16">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="p-6">
+              <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
+                <Server className="h-6 w-6" strokeWidth={1.5} />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Zero config</h3>
+              <p className="text-gray-600">
+                Works out of the box with your existing notebook.
+              </p>
             </div>
-            <h3 className="text-xl font-bold mb-2">Zero config</h3>
-            <p className="text-gray-600">
-              Works out of the box with your existing notebook.
-            </p>
-          </div>
 
-          <div className="p-6">
-            <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
-              <Users className="h-6 w-6" strokeWidth={1.5} />
+            <div className="p-6">
+              <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
+                <Users className="h-6 w-6" strokeWidth={1.5} />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Collaborative</h3>
+              <p className="text-gray-600">
+                Every change deploys to a shareable api endpoint.
+              </p>
             </div>
-            <h3 className="text-xl font-bold mb-2">Collaborative</h3>
-            <p className="text-gray-600">
-              Every change deploys to a shareable api endpoint.
-            </p>
-          </div>
 
-          <div className="p-6">
-            <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
-              <Zap className="h-6 w-6" strokeWidth={1.5} />
+            <div className="p-6">
+              <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
+                <Zap className="h-6 w-6" strokeWidth={1.5} />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Lightning fast</h3>
+              <p className="text-gray-600">
+                Scalable, fast, and simple deployments.
+              </p>
             </div>
-            <h3 className="text-xl font-bold mb-2">Lightning fast</h3>
-            <p className="text-gray-600">
-              Scalable, fast, and simple deployments.
-            </p>
-          </div>
 
-          <div className="p-6">
-            <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
-              <Shield className="h-6 w-6" />
+            <div className="p-6">
+              <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
+                <Shield className="h-6 w-6" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Enterprise Ready</h3>
+              <p className="text-gray-600">
+                Built-in security and compliance controls.
+              </p>
             </div>
-            <h3 className="text-xl font-bold mb-2">Enterprise Ready</h3>
-            <p className="text-gray-600">
-              Built-in security and compliance controls.
-            </p>
           </div>
         </div>
       </div>
