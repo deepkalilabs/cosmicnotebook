@@ -206,7 +206,7 @@ export default function Home() {
 
             <div className="mt-8 rounded-lg overflow-hidden shadow-lg">
               <Image 
-                src="/deployment.jpg" 
+                src="/deployments.jpg" 
                 alt="Deployment logs showing instant API creation" 
                 width={800} 
                 height={400} 
