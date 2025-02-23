@@ -65,7 +65,8 @@ ehthumbs.db
 Thumbs.db
 
 # Logs
-logs
+*_logs
+logs_*
 *.log
 
 # Optional npm cache directory
