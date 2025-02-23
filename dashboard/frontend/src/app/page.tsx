@@ -57,7 +57,7 @@ export default function Home() {
           {/* Left Column */}
           <div className="max-w-2xl">
             <h1 className="text-5xl font-serif font-bold tracking-tight lg:text-5xl mb-6">
-              Prototype. <br/>Iterate. Deploy.
+              Prototype. <br/>Iterate. Deploy AI.
             </h1>
             <p className="text-l text-gray-600 mb-8">
             Cosmic helps AI teams ship AI-workflows in 30 mins. No platform knowledge required. <br/>With a single click - your AI notebook is deployed to a live API. </p>
