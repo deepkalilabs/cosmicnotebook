@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useUserStore, useNotebookDetailStore } from "@/app/store";
 import { useEffect } from "react";
 import { WebsocketContextProvider } from "@/contexts/websocket-context-provider";
+import { CSPostHogProvider } from "@/app/provider";
 
 const getNotebookNavItems = (id: string, name: string) => [
   {
@@ -160,6 +161,7 @@ export default function NotebookLayout({
   console.log("notebookDetails", notebookDetails);
 
   return (
+    <CSPostHogProvider>
     <WebsocketContextProvider notebookDetails={notebookDetails}>
       <div className="flex flex-col h-full">
         <TopNav />
@@ -168,5 +170,6 @@ export default function NotebookLayout({
           </main>
         </div>
       </WebsocketContextProvider>
+      </CSPostHogProvider>
     )
 } 

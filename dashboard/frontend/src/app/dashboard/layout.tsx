@@ -6,6 +6,7 @@ import { Sidebar } from "@/components/ui/sidebar"
 import { supabase } from '@/lib/supabase';
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
+import { CSPostHogProvider } from "../provider";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { useUserStore, useOrgUserStore } from "@/app/store"
 import { toast } from "@/hooks/use-toast";
@@ -138,13 +139,15 @@ export default function DashboardLayout({
   }, [router]);
 
   return (
-    <SidebarProvider>
-      {/* <SidebarTrigger className="fixed left-0 top-[14px] z-20" /> */}
-      <AppSidebar />
-      <main className="flex-1 pl-4">
+    <CSPostHogProvider>
+      <SidebarProvider>
+        {/* <SidebarTrigger className="fixed left-0 top-[14px] z-20" /> */}
+        <AppSidebar />
+        <main className="flex-1 pl-4">
         <SidebarTrigger />
         {children}
       </main>
     </SidebarProvider>
+    </CSPostHogProvider>
   )
 }
