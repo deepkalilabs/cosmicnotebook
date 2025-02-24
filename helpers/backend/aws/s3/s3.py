@@ -5,6 +5,10 @@ from supabase import Client
 from helpers.backend.supabase.client import get_supabase_client
 supabase: Client = get_supabase_client()
 import logging
+
+from dotenv import load_dotenv
+load_dotenv(os.path.join(os.getcwd(), '.env'))
+
 ##Init boto3
 s3 = boto3.client('s3', 
     aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
@@ -14,9 +18,6 @@ s3 = boto3.client('s3',
 bucket_name = os.environ.get('AWS_BUCKET_NAME')
 
 def get_notebook_file_path(notebook_id: str, user_id: str, filetype: str):
-    user_id = "8a4fb888-37a9-4185-af84-aba3748062bf"
-    notebook_id = "aabf2f1f-ea96-49c0-bdd0-828928e18ed2"
-
     path= f"notebooks/{user_id}/{notebook_id}/{filetype}"
     logging.info(f"path {path}")
     return path
@@ -24,9 +25,6 @@ def get_notebook_file_path(notebook_id: str, user_id: str, filetype: str):
 # TODO: Save the notebook to s3.
 def save_or_update_notebook(notebook_id: str, user_id: str, contents: dict, 
                             project_name: str, bucket_name: str = bucket_name):
-    user_id = "8a4fb888-37a9-4185-af84-aba3748062bf"
-    notebook_id = "aabf2f1f-ea96-49c0-bdd0-828928e18ed2"
-
     if not notebook_id:
         raise ValueError("Notebook ID is required")
     if not user_id:
@@ -93,9 +91,6 @@ def delete_notebook(filename: str, bucket_name = bucket_name):
 
 
 def get_python_deets_from_s3(notebook_id: str, user_id: str, project_name: str, bucket_name = bucket_name):
-    user_id = "8a4fb888-37a9-4185-af84-aba3748062bf"
-    notebook_id = "aabf2f1f-ea96-49c0-bdd0-828928e18ed2"
-
     files = {
         'python_script': 'python_script.py',
         'requirements': 'requirements.txt'

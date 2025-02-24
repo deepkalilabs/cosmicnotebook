@@ -9,7 +9,9 @@
               "logs:CreateLogGroup",
               "logs:CreateLogStream",
               "logs:PutLogEvents",
-              "s3:*"
+              "s3:*",
+	      "secretsmanager:GetSecretValue"
+
           ],
           "Resource": "*"
       }

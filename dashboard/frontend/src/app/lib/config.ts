@@ -2,7 +2,7 @@
 export const getApiUrl = () => {
   const isDevelopment = process.env.NODE_ENV === 'development';
   return isDevelopment 
-    ? 'http://dashboard-backend:47153'
+    ? 'http://localhost:47153'
     : 'https://api.trycosmic.ai';
 };
 
@@ -18,4 +18,11 @@ export const getMarimoUrl = () => {
   return isDevelopment 
     ? 'http://localhost:2718'
     : 'https://ide.trycosmic.ai';
+};
+
+export const getDashboardUrl = () => {
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  return isDevelopment 
+    ? 'http://localhost:3000'
+    : 'https://trycosmic.ai';
 };
