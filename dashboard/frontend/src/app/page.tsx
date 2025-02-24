@@ -30,10 +30,10 @@ export default function Home() {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <Link href="/" className="font-bold text-xl">
+              <Link href="/" className="font-bold text-xl flex items-center gap-2">
                 <Image src="/cosmic-logo-big.png" alt="Logo" width={45} height={45} className="rounded-lg" />
+                <span className="text-lg font-bold">Cosmic AI</span>
               </Link>
-              <span className="text-lg font-bold">Cosmic AI</span>
             </div>
             <div className="flex items-center space-x-4">
               <Link href="/auth/signin">
