@@ -6,10 +6,8 @@ import { Code, ArrowRight, Mail, Users, Shield, Server, Zap } from 'lucide-react
 import Link from 'next/link'
 import posthog from 'posthog-js'
 import Image from 'next/image'
-import { useToast } from "@/hooks/use-toast"
-
+import WaitlistForm from '@/components/waitlist/WaitlistForm'
 export default function Home() {
-  const { toast } = useToast()
 
   useEffect(() => {
     posthog.capture('page_view', {
@@ -35,16 +33,12 @@ export default function Home() {
               <Link href="/" className="font-bold text-xl">
                 <Image src="/cosmic-logo-big.png" alt="Logo" width={45} height={45} className="rounded-lg" />
               </Link>
+              <span className="text-lg font-bold">Cosmic AI</span>
             </div>
             <div className="flex items-center space-x-4">
-              <Link href="/auth/signup">
-                <Button variant="ghost">
-                  Sign in
-                </Button>
-              </Link>
-              <Link href="/auth/signup">
+              <Link href="/auth/signin">
                 <Button>
-                  Get started
+                  Sign in
                 </Button>
               </Link>
             </div>
@@ -62,14 +56,7 @@ export default function Home() {
             <p className="text-l text-gray-600 mb-8">
             Cosmic helps AI teams ship AI-workflows in 30 mins. No platform knowledge required. <br/>With a single click - your AI notebook is deployed to a live API. </p>
             <div className="flex items-center gap-4">
-              <Link href="/auth/signup">
-                <Button 
-                  className="bg-gradient-to-r from-blue-900 via-slate-800 to-black hover:from-blue-950 hover:via-slate-900 hover:to-black"
-                >
-                  Deploy free
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
+              <WaitlistForm buttonText="Deploy free" />
               <Link href="https://cal.com/charlesjavelona/30min" target="_blank">
                 <Button 
                   variant="outline"
@@ -176,35 +163,8 @@ export default function Home() {
             </p>
             
             <div className="flex items-center justify-center gap-8">
-              <Button 
-                className="bg-gradient-to-r from-blue-900 via-slate-800 to-black hover:from-blue-950 hover:via-slate-900 hover:to-black px-6 py-2"
-                onClick={() => {
-                  toast({
-                    title: "Coming Soon",
-                    description: "Notebook import feature is currently in development.",
-                    duration: 3000,
-                  })
-                }}
-              >
-                Import Notebook
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button 
-                variant="outline"
-                className="border-2 border-blue-900 px-6 py-2"
-                onClick={() => {
-                  toast({
-                    title: "Coming Soon",
-                    description: "Example deployment feature is currently in development.",
-                    duration: 3000,
-                  })
-                }}
-              >
-                Deploy Example
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+              <WaitlistForm buttonText="Import Notebook" />
             </div>
-            
 
             <div className="mt-8 rounded-lg overflow-hidden shadow-lg">
               <Image 
@@ -216,6 +176,9 @@ export default function Home() {
               />
             </div>
           </div>
+          <div className="flex items-center justify-center gap-8">
+              <WaitlistForm buttonText="Deploy Example" />
+            </div>
         </div>
 
         {/* Value Props Section */}
@@ -285,15 +248,7 @@ export default function Home() {
 
       <div className="container mx-auto px-4 lg:px-8 py-8 mt-8">
         <div className="flex items-center justify-center gap-4">
-          <Link href="/auth/signup">
-            <Button 
-              size="lg"
-              className="bg-gradient-to-r from-blue-900 via-slate-800 to-black hover:from-blue-950 hover:via-slate-900 hover:to-black"
-            >
-              Deploy your first workflow
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
+            <WaitlistForm buttonText="Deploy your first workflow" />
         </div>
       </div>
 
