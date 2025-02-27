@@ -54,7 +54,7 @@ export default function MarimoFileComponent(props: MarimoFileComponentProps) {
       : asURL(file.path, user_id, notebook_id);
   
     //const isMarkdown = file.path?.endsWith(".md") ?? false;
-    // const router = useRouter(); 
+    //const router = useRouter(); 
 
     return (
         <Button 

@@ -35,7 +35,7 @@ from src.logging.runtime_logs import RuntimeLogger
 supabase: Client = get_supabase_client()
 resend.api_key = os.getenv('RESEND_API_KEY')
 import traceback
-
+from src.nb_import.ImportNotebook import ImportNotebook
 
 app = FastAPI()
 # Enable CORS for frontend communication
@@ -175,13 +175,23 @@ async def get_logs_for_notebook_job(job_id: str, job_details: dict):
     logger = RuntimeLogger(aws_log_group, aws_log_stream, notebook_id)
     return logger.get_logs_from_cloudwatch()
 
-# @app.on_event("startup")
-# async def start_scheduler():
-#     scheduler.start()
-
-# @app.on_event("shutdown")
-# async def shutdown_scheduler():
-#     scheduler.shutdown()
+@app.post("/notebook_import/{user_id}")
+async def import_notebook(user_id: str, notebook_data: dict) -> dict:
+    import_notebook_details = ImportNotebook(notebook_data, user_id).save_to_cloud()
+    if import_notebook_details['status'] == 200:
+        return {
+            'success': True,
+            'message': 'Notebook imported successfully',
+            'status': 200,
+            'notebook_id': import_notebook_details['notebook_id']
+        }
+    else:
+        return {
+            'success': False,
+            'message': 'Failed to import notebook',
+            'status': 500,
+            'notebook_id': None
+        }
 
 @app.on_event("shutdown")
 async def cleanup():

@@ -42,3 +42,11 @@ export function isUrl(value: unknown): boolean {
 export function asURL(path: string, user_id: string, notebook_id: string): URL {
     return new URL(`?file=${path}&user_id=${user_id}&notebook_id=${notebook_id}`, URL_BASE);
 } 
+
+export function asImportedURL(path: string, user_id: string, notebook_id: string, session_id: string): URL {
+    return new URL(`?file=${path}&user_id=${user_id}&notebook_id=${notebook_id}&session_id=${session_id}&imported=true`, URL_BASE);
+} 
+
+export function asTemplateURL(path: string, user_id: string, notebook_id: string, session_id: string): URL {
+    return new URL(`?file=${path}&user_id=${user_id}&notebook_id=${notebook_id}&session_id=${session_id}&template=true`, URL_BASE);
+} 

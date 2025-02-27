@@ -16,12 +16,10 @@ def test_websocket_connection(url, timeout=5):
             print("✓ Connection successful!")
             print("Received value:", value)
             return True
-    except (websocket.WebSocketException, ConnectionRefusedError) as e:
+    except Exception as e:
         print(f"✗ Connection failed: {e}")
         return False
-    except Exception as e:
-        print(f"✗ Unexpected error: {e}")
-        return False
+    
 def clean_start_marimo():
     try:
         subprocess.run(["pkill", "-f", "marimo"], check=True)

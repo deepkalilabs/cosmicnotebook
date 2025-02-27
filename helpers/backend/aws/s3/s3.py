@@ -66,6 +66,7 @@ def save_or_update_notebook(notebook_id: str, user_id: str, contents: dict,
 # TODO: Load the notebook from s3.
 def load_notebook(s3_url: str):
     try:
+        logging.info(f"Loading notebook from {s3_url} and bucket {bucket_name}")
         response = s3.get_object(Bucket=bucket_name, Key=s3_url)
         logging.info("Response:", len(response))
         # logger.info(f"Response: {response}")

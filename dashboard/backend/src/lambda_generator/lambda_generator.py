@@ -120,6 +120,7 @@ class LambdaGenerator:
             
         logger.info("Container preparation completed")
         self.aws_logger.log("Container preparation completed", "INFO", {})
+        
     def build_and_push_container(self):
         logger.info("Starting container build and push")
         self.aws_logger.log("Starting container build and push", "INFO", {})
