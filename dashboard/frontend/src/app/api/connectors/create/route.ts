@@ -1,6 +1,8 @@
 import type { NextRequest } from 'next/server'
 import { getApiUrl } from  '@/app/lib/config';
 import { ConnectorCredentialRequest } from '@/app/types';
+import { useUserStore } from '@/app/store';
+
 /**
  * This endpoint is used to create a connector.
  * @param req - The request object.
@@ -23,9 +25,17 @@ export async function POST(
       return Response.json({ error: 'User ID, Org ID, Type, Credentials, and Notebook ID are required', data: null, status: 400 });
     }
 
+    const { user } = useUserStore.getState();
+    console.log('Token in create connector:', user);
+    if (!user) {
+      console.error('User not found');
+      return Response.json({ error: 'User not found', data: null, status: 401 });
+    }
+
     const response = await fetch(`${getApiUrl()}/connectors/create`, {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${user.token}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({

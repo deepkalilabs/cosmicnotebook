@@ -4,14 +4,16 @@ import json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 print(sys.path)
 
-from fastapi import FastAPI, WebSocket, HTTPException
+from fastapi import FastAPI, WebSocket, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import status
 from uuid import UUID
 import logging
 from typing import List
 from uuid import UUID
 import logging
 logging.basicConfig(level=logging.INFO)
+from middleware.security.auth import AuthMiddleware
 import resend 
 from src.lambda_generator import lambda_generator
 from src.backend_types import OutputGenerateLambdaMessage, ScheduledJob, NotebookDetails
@@ -35,6 +37,10 @@ from src.logging.runtime_logs import RuntimeLogger
 supabase: Client = get_supabase_client()
 resend.api_key = os.getenv('RESEND_API_KEY')
 import traceback
+from pydantic import ValidationError
+
+
+logger = logging.getLogger(__name__)
 
 
 app = FastAPI()
@@ -46,14 +52,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add authentication middleware
+app.add_middleware(AuthMiddleware)
+
 # Dictionary to manage kernels per session
 notebook_sessions = {}
 
 # TODO: This should only load in a notebook if it's not already loaded. It currently loads /dashboard/projects
 @app.websocket("/ws/{notebook_id}/{notebook_name}")
 async def websocket_endpoint(websocket: WebSocket, notebook_id: str, notebook_name: str):
-    logging.info(f"New connection with notebook ID: {notebook_id}")    
-        
+    logging.info(f"New connection with notebook ID: {notebook_id}")  
+    print(f"New connection with websocket {websocket}")
     await websocket.accept()
 
     logging.info("Accepted connection from websocket", websocket)
@@ -61,9 +71,7 @@ async def websocket_endpoint(websocket: WebSocket, notebook_id: str, notebook_na
         while True:
             logging.info("Waiting for message")
             data = await websocket.receive_json()
-            logging.info(f"data received {data}")
             if data['type'] == 'deploy_notebook':
-                
 
                 # TODO: Better dependency management here.
                 # TODO: Get status/msg directly from function.
@@ -193,10 +201,41 @@ async def cleanup():
                 pass
 
 @app.get("/notebook_details/{notebook_id}")
-async def get_notebook_data(notebook_id: str) -> NotebookDetails:
-    notebook_details = supabase.table('notebooks').select('*').eq('id', notebook_id).execute()
-    logging.info(f"notebook_details {notebook_details.data[0]}")
-    return NotebookDetails(**notebook_details.data[0])
+async def get_notebook_data(notebook_id: str, request: Request) -> NotebookDetails:
+    """
+    Retrieve notebook details for the authenticated user.
+
+    Args:
+        notebook_id (str): The ID of the notebook to retrieve.
+        request (Request): FastAPI request object with authenticated user in state.
+
+    Returns:
+        NotebookDetails: The notebook details if accessible.
+
+    Raises:
+        HTTPException: 404 if notebook not found, 403 if unauthorized.
+    """
+    user = request.state.user
+    print(f"User from middleware: {user}")
+    user_id = user['id']
+    print(f"user {user} requesting notebook details for {notebook_id}")
+
+    try:
+        print(f"Getting supabase details for {notebook_id} for user {user_id}")
+        response = supabase.table("notebooks").select("*").eq("id", notebook_id).execute()
+        if not response.data:
+            raise HTTPException(status_code=404, detail=f"Notebook {notebook_id} not found for user {user_id}")
+        
+        # Convert the first item in response.data to NotebookDetails
+        notebook_details = NotebookDetails(**response.data[0])
+        return notebook_details
+
+    except ValidationError as e:
+        logger.error(f"Validation error parsing notebook details: {str(e)}")
+        raise HTTPException(status_code=422, detail=f"Invalid notebook data structure: {str(e)}")
+    except Exception as e:
+        logger.error(f"Error parsing notebook details: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error parsing notebook details: {str(e)}")
 
 @app.get("/notebook_job_schedule/{notebook_id}")
 async def get_schedules(notebook_id: str) -> List[ScheduledJob]:
@@ -231,6 +270,14 @@ async def delete_schedule(notebook_id: str, schedule_id: str):
 @app.post("/connectors/create")
 async def create_connector(connector_data: dict):
     print(f"Creating connector {connector_data}")
+    user = request.state.user
+    user_id = user['id']
+    if connector_data['user_id'] != user_id:
+        logging.warning(f"User {user_id} is not authorized to create connector for user {connector_data['user_id']}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="You are not authorized to create this connector"
+            )
     try:
         # Convert the raw dict to ConnectorCredentials
         connector_details = ConnectorCredentials(

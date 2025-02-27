@@ -100,19 +100,26 @@ export default function DashboardLayout({
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { user: authUser }, error } = await supabase.auth.getUser();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
-      if (error || !authUser || !authUser.email || !authUser.id) {
+      if (sessionError || !session || !session.user) {
         setUser(null);
         router.push('/auth/signin');
         return;
       }
 
-      console.log(error, authUser, authUser.email, authUser.id);
+      console.log('Session', {user: session.user, token: session.access_token});
+
+      if(!session.user.email || !session.user.id) {
+        setUser(null);
+        router.push('/auth/signin');
+        return;
+      }
 
       const userData = {
-        id: authUser.id,
-        email: authUser.email
+        id: session.user.id,
+        email: session.user.email,
+        token: session.access_token
       };
       
       setUser(userData);
@@ -122,10 +129,10 @@ export default function DashboardLayout({
       const { data: orgUser, error: orgError } = await supabase
         .from('org_users')
         .select('*')
-        .eq('user_id', authUser.id)
+        .eq('user_id', session.user.id)
         .single();
 
-      console.log(orgUser);
+      console.log('Org User', orgUser);
 
       if (orgError) {
         console.log('Error getting organization:', orgError);
@@ -136,7 +143,22 @@ export default function DashboardLayout({
     };
     
     checkAuth();
-  }, [router]);
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed', {event, session});
+      if (event === 'SIGNED_OUT') {
+        setUser(null);
+        router.push('/auth/signin');
+      } else if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
+        checkAuth();
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+
+  }, [router, setUser, setOrgUsers]);
 
   return (
     <CSPostHogProvider>

@@ -6,6 +6,15 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { OutputDeployMessage, NotebookConnectionProps } from '@/app/types';
 import { getWebsocketUrl } from '@/app/lib/config';
 import { useToast } from '@/hooks/use-toast';
+import { useUserStore } from '@/app/store';
+
+// Extend react-use-websocket types to include headers
+declare module "react-use-websocket" {
+  interface Options {
+    headers?: Record<string, string>;
+  }
+}
+
 
 export const useNotebookConnection = ({
   onNotebookDeployed, 
@@ -17,7 +26,7 @@ export const useNotebookConnection = ({
   const userId = notebookDetails?.user_id
   const toast = useToast()
   const [isConnected, setIsConnected] = useState(false)
-
+  const { user } = useUserStore.getState();
   const socketUrl = useMemo(() => {
     const socketBaseURL = getWebsocketUrl();
   
@@ -44,6 +53,9 @@ export const useNotebookConnection = ({
     lastMessage,
     readyState,
   } = useWebSocket(socketUrl, {
+    headers: user?.token ? {
+      'Authorization': `Bearer ${user?.token}`,
+    } : {},
     onOpen: () => {
       setIsConnected(true)
       toast.toast({

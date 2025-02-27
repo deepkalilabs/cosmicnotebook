@@ -78,10 +78,14 @@ class NotebookDetails(BaseModel):
     submit_endpoint: Optional[str] = None
     lambda_fn_name: Optional[str] = None
     cells: Optional[list] = None
-    session_id: Optional[str] = None
+    marimo_session_id: Optional[str] = None  
+    auth_session_id: Optional[str] = None
     created_at: Optional[str] = None 
     updated_at: Optional[str] = None
     output: Optional[dict] = None
+    org_id: Optional[str] = None 
+    path: Optional[str] = None              
+    imported: Optional[bool] = None         
 
 class NotebookData(BaseModel):
     notebook_details: NotebookDetails

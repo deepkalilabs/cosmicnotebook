@@ -82,55 +82,7 @@ function TopNav() {
       </div>
   )
 }
-// function SidebarNav() {
-//   const params = useParams();
-//   const searchParams = useSearchParams();
-//   const pathname = usePathname();
-//   const id = params.id as string;
-//   const name = searchParams.get('name') || '';
-  
-//   const items = getNotebookNavItems(id, name);
 
-//   return (
-//     <nav className="grid items-start gap-1">
-//       {items.map((item) => {
-
-//         const itemPath = item.href.split('?')[0];
-//         const currentPath = pathname.split('?')[0];
-//         const isActive = itemPath === currentPath;
-
-//         return (
-//           <Link
-//             key={item.href}
-//             href={item.href}
-//           className={cn(
-//             "flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground",
-//             isActive
-//               ? "bg-accent text-accent-foreground font-medium" 
-//               : "text-muted-foreground"
-//           )}
-//         >
-//           {item.icon}
-//           {item.title}
-//           </Link>
-//         )
-//       })}
-//     </nav>
-//   )
-// }
-
-// function Sidebar() {
-//   return (
-//     <div className="w-[240px] border-r bg-background">
-//       <div className="flex h-14 items-center border-b px-6">
-//         <span className="font-medium">Notebook Settings</span>
-//       </div>
-//       <div className="py-2 px-2">
-//         <SidebarNav />
-//       </div>
-//     </div>
-//   )
-// }
 
 export default function NotebookLayout({
   children,
@@ -142,9 +94,14 @@ export default function NotebookLayout({
   const notebookId = params.id as string;
   const { notebookDetails, setNotebookDetails } = useNotebookDetailStore();
 
+  //TODO: Make an abstracted api call for all fetch requests to proxy with the auth header.
   useEffect(() => {
       if (user && notebookId) {
-          fetch(`/api/notebook_details/${notebookId}`).then(res => {
+          fetch(`/api/notebook_details/${notebookId}`, {
+            headers: {
+              'Authorization': `Bearer ${user.token}`
+            }
+          }).then(res => {
             console.log('notebook details response:', res);
             return res.json();
           })

@@ -204,7 +204,8 @@ export interface OutputConnectorCreatedMessage {
 export interface User {
     id: string;
     email: string;
-}
+    token: string;
+};
 
 export interface UserStore {
   user: User | null;
