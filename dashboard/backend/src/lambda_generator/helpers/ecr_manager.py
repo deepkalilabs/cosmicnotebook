@@ -7,7 +7,7 @@ import os
 import docker
 
 class ECRManager:
-    def __init__(self, repository_name, file_base_path, region='us-west-1'):
+    def __init__(self, repository_name, file_base_path, aws_logger, region='us-west-1'):
         self.region = region
         self.ecr_client = boto3.client('ecr', region_name=region)
         self.account_id = boto3.client('sts').get_caller_identity()['Account']
@@ -15,6 +15,7 @@ class ECRManager:
         self.repository_name = repository_name
         self.file_base_path = file_base_path
         self.docker_client = docker.from_env()
+        self.aws_logger = aws_logger
 
     def get_auth_credentials(self):
         """Get ECR authentication credentials"""
@@ -26,6 +27,7 @@ class ECRManager:
             return username, password
         except ClientError as e:
             print(f"Failed to get auth token: {str(e)}")
+            self.aws_logger.log(f"Failed to get auth token: {str(e)}", "ERROR", {})
             raise
 
     def docker_login(self):
@@ -40,6 +42,7 @@ class ECRManager:
             return True
         except subprocess.CalledProcessError as e:
             print(f"Docker login failed: {e.stderr.decode()}")
+            self.aws_logger.log(f"Docker login failed: {e.stderr.decode()}", "ERROR", {})
             raise
             
     def create_repository(self):
@@ -52,11 +55,15 @@ class ECRManager:
             )
             repository_uri = response['repository']['repositoryUri']
             print(f"Created repository: {repository_uri}")
+            self.aws_logger.log(f"Created repository: {repository_uri}", "INFO", {})
             return repository_uri
         except ClientError as e:
             if e.response['Error']['Code'] == 'RepositoryAlreadyExistsException':
                 return self.get_repository_uri(self.repository_name)
-            raise
+            else:
+                print(f"Failed to create repository: {str(e)}")
+                self.aws_logger.log(f"Failed to create repository: {str(e)}", "ERROR", {})
+                raise
 
     def get_repository_uri(self, repository_name):
         """Get repository URI"""
@@ -67,6 +74,7 @@ class ECRManager:
             return response['repositories'][0]['repositoryUri']
         except ClientError as e:
             print(f"Failed to get repository URI: {str(e)}")
+            self.aws_logger.log(f"Failed to get repository URI: {str(e)}", "ERROR", {})
             raise
 
     def delete_repository(self, force=False):
@@ -138,6 +146,8 @@ class ECRManager:
             print(f"Base path: {self.file_base_path}")
             print(f"Dockerfile: {dockerfile_path}")
             print(f"Target image URI: {image_uri}")
+            self.aws_logger.log(f"Starting Docker build...", "INFO", {})
+
             _, build_logs = self.docker_client.images.build(
                 path=self.file_base_path,
                 dockerfile=dockerfile_path,
@@ -156,11 +166,11 @@ class ECRManager:
             
             # Push image
             self.docker_client.images.push(image_uri)
-            
             return image_uri
             
         except Exception as e:
             print(f"Failed to push image: {str(e)}")
+            self.aws_logger.log(f"Failed to push image: {str(e)}", "ERROR", {})
             raise
 
     def cleanup_untagged_images(self):

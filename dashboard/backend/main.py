@@ -142,12 +142,12 @@ async def websocket_endpoint(websocket: WebSocket, notebook_id: str, notebook_na
             
     except Exception as e:
         logging.info(f"WebSocket disconnected for notebook ID: {notebook_id}")
-        logging.info(f"WebSocket disconnect code: {e.code}")
-        logging.info(f"WebSocket disconnect reason: {e.reason}")
-        logging.error(f"Error in websocket connection: {str(e)}")
+        logging.info(f"WebSocket disconnect code: {str(e)}")
+        # logging.info(f"WebSocket disconnect reason: {e.reason}")
+        # logging.error(f"Error in websocket connection: {str(e)}")
         logging.error(f"Traceback:\n{traceback.format_exc()}")
-        logging.error(f"Error in websocket connection: {str(e)}")
-        logging.error(f"Traceback:\n{traceback.format_exc()}")
+        # logging.error(f"Error in websocket connection: {str(e)}")
+        # logging.error(f"Traceback:\n{traceback.format_exc()}")
     finally:
         if notebook_id in notebook_sessions:
             # Clean up kernel if needed
@@ -308,15 +308,17 @@ async def get_deployment_logs(notebook_id: str):
     log_details = supabase_logs.get_deployment_logs(notebook_id)
     print(f"log_details {log_details}")
     log = json.loads(log_details['body'])
-    print(f"log {log[0]}")
-    logger = DeploymentLogger(
-        log[0]['log_group'], 
-        log[0]['log_stream'],
-        'org_id',
-        notebook_id
-    )
-    
-    return logger.get_logs_from_cloudwatch()
+    if len(log) > 0:
+        print(f"log {log[0]}")
+        logger = DeploymentLogger(
+            log[0]['log_group'], 
+            log[0]['log_stream'],
+            'org_id',
+            notebook_id
+        )
+        return logger.get_logs_from_cloudwatch()
+    else:
+        return []
 
 
 if __name__ == "__main__":

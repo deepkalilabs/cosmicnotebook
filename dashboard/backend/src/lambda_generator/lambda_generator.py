@@ -47,8 +47,6 @@ class LambdaGenerator:
         self.aws_role_identifier = os.environ.get("AWS_ROLE_IDENTIFIER")
         self.region = os.environ.get("AWS_REGION")
         
-        self.ecr_manager = ECRManager(self.lambda_fn_name, self.base_folder_path)
-        
         self.lambda_client = boto3.client('lambda', region_name=self.region)
         
         self.api_gateway_client = boto3.client('apigateway', region_name=self.region)
@@ -68,6 +66,8 @@ class LambdaGenerator:
             org_id="org_id_here",
             notebook_id=self.notebook_id,
         )
+
+        self.ecr_manager = ECRManager(self.lambda_fn_name, self.base_folder_path, self.aws_logger)
         
         if os.path.exists(self.base_folder_path):
             shutil.rmtree(self.base_folder_path)
