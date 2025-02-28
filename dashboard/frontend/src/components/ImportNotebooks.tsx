@@ -103,7 +103,7 @@ function NotebookUpload({ onFileSelect }: NotebookUploadProps) {
         <Button asChild>
           <div>
             <Upload className="mr-2 h-4 w-4" />
-            Select Python File
+            Select Python Notebook
           </div>
         </Button>
       </label>

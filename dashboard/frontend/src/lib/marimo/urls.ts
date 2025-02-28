@@ -47,6 +47,6 @@ export function asImportedURL(path: string, user_id: string, notebook_id: string
     return new URL(`?file=${path}&user_id=${user_id}&notebook_id=${notebook_id}&session_id=${session_id}&imported=true`, URL_BASE);
 } 
 
-export function asTemplateURL(path: string, user_id: string, notebook_id: string, session_id: string): URL {
-    return new URL(`?file=${path}&user_id=${user_id}&notebook_id=${notebook_id}&session_id=${session_id}&template=true`, URL_BASE);
+export function asTemplateURL(path: string, user_id: string, notebook_id: string, template_id: string): URL {
+    return new URL(`?file=${path}&user_id=${user_id}&notebook_id=${notebook_id}&template_id=${template_id}`, URL_BASE);
 } 
