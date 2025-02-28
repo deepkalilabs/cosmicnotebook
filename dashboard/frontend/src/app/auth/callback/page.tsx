@@ -1,12 +1,16 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Card, CardContent } from "@/components/ui/card";
 import { Icons } from "@/components/ui/icons";
+import { useUserStore } from '@/app/store';
+
 
 export default function AuthCallback() {
   const router = useRouter();
+  const { setUser } = useUserStore();
+
 
   useEffect(() => {
     const handleAuthCallback = async () => {
@@ -70,9 +74,22 @@ export default function AuthCallback() {
             console.error('Org user creation error:', orgUserError);
             throw new Error('Failed to link user to organization');
           }
+
+          setUser({
+            id: session.user.id,
+            email: session.user.email,
+            token: session.access_token
+          });
         }
-     
-        router.push('/dashboard/projects');
+
+
+      // Redirect with token as query parameter
+      const returnUrl = sessionStorage.getItem('returnUrl') || '/dashboard/projects';
+      sessionStorage.removeItem('returnUrl');
+      const redirectUrl = `${returnUrl}?token=${encodeURIComponent(session.access_token)}`;
+      console.log('Redirecting to:', redirectUrl);
+      router.push(redirectUrl);
+
       } catch (error) {
         console.error('Auth callback error:', error);
         const message = error instanceof Error ? error.message : 'Authentication failed';

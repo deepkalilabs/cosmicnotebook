@@ -1,7 +1,6 @@
 // src/app/api/jobs/schedule/route.ts
 import { NextResponse, NextRequest } from 'next/server';
 import { getApiUrl } from  '@/app/lib/config';
-import { useUserStore } from '@/app/store';
 export async function GET(request: NextRequest) {
 
     const authHeader = request.headers.get('Authorization');

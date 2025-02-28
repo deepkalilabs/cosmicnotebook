@@ -7,10 +7,10 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { CSPostHogProvider } from "../provider";
+
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { useUserStore, useOrgUserStore } from "@/app/store"
 import { toast } from "@/hooks/use-toast";
-
 
 const sidebarNavItems = [
   {
@@ -102,6 +102,7 @@ export default function DashboardLayout({
     const checkAuth = async () => {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
+
       if (sessionError || !session || !session.user) {
         setUser(null);
         router.push('/auth/signin');
@@ -123,6 +124,7 @@ export default function DashboardLayout({
       };
       
       setUser(userData);
+ 
 
       //Find and store the users organization they belong to
       //TODO Switch to backend call

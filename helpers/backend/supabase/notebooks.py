@@ -78,3 +78,16 @@ def rename_notebook(notebook_id: str, user_id: str, new_path: str):
         logging.error(f"Error renaming notebook: {e}")
         return None
 
+def get_all_notebooks(user_id: str):
+    if not user_id:
+        logging.error("User ID is required")
+        return None
+    try:
+        response = supabase.table('notebooks') \
+            .select('*') \
+            .eq('user_id', user_id) \
+            .execute()
+        return response.data
+    except Exception as e:
+        logging.error(f"Error getting all notebooks: {e}")
+        return None

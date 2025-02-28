@@ -87,13 +87,6 @@ class AuthMiddleware(BaseHTTPMiddleware):
             load = payload.user.dict()
             logger.debug("Token verification successful")
             return load
-        except AttributeError as e:
-            logger.error(f"Unexpected response from supabase: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid bearer token",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
         except Exception as e:
             logger.error(f"Unexpected error: {e}")
             raise HTTPException(

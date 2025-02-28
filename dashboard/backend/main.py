@@ -38,7 +38,7 @@ supabase: Client = get_supabase_client()
 resend.api_key = os.getenv('RESEND_API_KEY')
 import traceback
 from pydantic import ValidationError
-
+from helpers.backend.supabase.notebooks import get_all_notebooks
 
 logger = logging.getLogger(__name__)
 
@@ -200,6 +200,13 @@ async def cleanup():
             except:
                 pass
 
+#----------------------------------
+# Notebooks
+#----------------------------------
+@app.get("/notebooks/all/{user_id}")
+async def fetch_all_notebooks(user_id: str):
+    return get_all_notebooks(user_id)
+
 @app.get("/notebook_details/{notebook_id}")
 async def get_notebook_data(notebook_id: str, request: Request) -> NotebookDetails:
     """
@@ -216,19 +223,28 @@ async def get_notebook_data(notebook_id: str, request: Request) -> NotebookDetai
         HTTPException: 404 if notebook not found, 403 if unauthorized.
     """
     user = request.state.user
-    print(f"User from middleware: {user}")
+    logger.info(f"User from middleware: {user}")
     user_id = user['id']
-    print(f"user {user} requesting notebook details for {notebook_id}")
+    logger.info(f"user {user} requesting notebook details for {notebook_id}")
 
     try:
-        print(f"Getting supabase details for {notebook_id} for user {user_id}")
+        logger.info(f"Getting supabase details for {notebook_id} for user {user_id}")
         response = supabase.table("notebooks").select("*").eq("id", notebook_id).execute()
         if not response.data:
             raise HTTPException(status_code=404, detail=f"Notebook {notebook_id} not found for user {user_id}")
         
+        notebook = response.data[0]
+        logger.info(f"notebook {notebook}")
+        
+        # Check if the user has access to the notebook
+        if notebook.get('user_id') != user_id:
+            logger.warning(f"User {user_id} is not authorized to access notebook {notebook_id}")
+            raise HTTPException(status_code=403, detail=f"You are not authorized to access this notebook")
+        
         # Convert the first item in response.data to NotebookDetails
-        notebook_details = NotebookDetails(**response.data[0])
-        return notebook_details
+        notebook_model = NotebookDetails(**notebook)
+        logger.info(f"notebook_model {notebook_model}")
+        return notebook_model
 
     except ValidationError as e:
         logger.error(f"Validation error parsing notebook details: {str(e)}")
