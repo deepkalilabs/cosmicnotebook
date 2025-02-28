@@ -1,4 +1,3 @@
-import { responseCookiesToRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
