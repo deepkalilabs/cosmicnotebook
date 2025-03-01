@@ -13,7 +13,7 @@ export function useDeploymentLogs(notebookId: string, isDeploying: boolean) {
             const response = await fetch(`/api/logs/${notebookId}`);
             console.log("Response from fetchLogs", response)
             if (response.status !== 200) {
-                console.error("Response not ok", response)
+                console.log("Response not ok", response)
                 const data = await response.json();
                 console.log("Data from fetchLogs", data)
                 setLogs([]);
