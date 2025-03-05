@@ -25,7 +25,6 @@ interface SignInData {
 }
 
 export default function SignIn() {
-  const router = useRouter()
   const [formData, setFormData] = useState<SignInData>({
     email: '',
     password: ''
@@ -49,15 +48,14 @@ export default function SignIn() {
     try {
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email: formData.email,
-        password: formData.password,
+        password: formData.password
       });
 
       if (signInError) throw signInError;
 
       if (data?.session) {
         // Successful login
-        router.push('/dashboard/projects'); // or wherever you want to redirect after login
-        router.refresh(); // Refresh the page to update the session
+        window.location.href = `${window.location.origin}/auth/callback`;
       }
     } catch (error) {
       const err = error as AuthError;
@@ -78,6 +76,7 @@ export default function SignIn() {
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
+            hd: '*', // allow only work email
           },
         }
       });

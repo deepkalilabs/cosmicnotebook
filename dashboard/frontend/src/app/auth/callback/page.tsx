@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,6 +34,11 @@ export default function AuthCallback() {
           router.push('/auth/signin?error=Please use your work email address');
           return;
         }
+
+
+        document.cookie = `auth_token=${session.access_token}; path=/; secure; SameSite=Strict; HttpOnly; expires=${new Date(Date.now() + 15 * 60 * 1000).toUTCString()}`;
+        console.log('Client - Setting auth_token:', session.access_token);
+        router.push('/dashboard/projects');
      
         const domain = session.user.email.split('@')[1];
         const { data: org, error: orgError } = await supabase
@@ -86,7 +91,8 @@ export default function AuthCallback() {
       // Redirect with token as query parameter
       const returnUrl = sessionStorage.getItem('returnUrl') || '/dashboard/projects';
       sessionStorage.removeItem('returnUrl');
-      const redirectUrl = `${returnUrl}?token=${encodeURIComponent(session.access_token)}`;
+      //const redirectUrl = `${returnUrl}?token=${encodeURIComponent(session.access_token)}`;
+      const redirectUrl = `${returnUrl}`
       console.log('Redirecting to:', redirectUrl);
       router.push(redirectUrl);
 

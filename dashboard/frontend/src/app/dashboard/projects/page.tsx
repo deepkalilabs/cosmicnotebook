@@ -14,6 +14,7 @@ import { Templates } from '@/components/Templates';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { existingNotebookURL } from '@/lib/marimo/urls';
+import { fetchApi } from '@/lib/fetchApi';
 
 function NewNotebookButton({ user_id, notebook_id }: { user_id: string, notebook_id: string }) {
   const [ nameNotebook, setNameNotebook ] = useState('');
@@ -78,7 +79,6 @@ function NewNotebookButton({ user_id, notebook_id }: { user_id: string, notebook
 export default function ProjectsPage() {
     const [marimoNotebooks, setMarimoNotebooks] = useState<MarimoFile[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const router = useRouter();
     const { user } = useUserStore();
 
 
@@ -94,18 +94,16 @@ export default function ProjectsPage() {
 
     const getAllMarimoNotebooksByUser = async (userId: string) => {
       try {
-        const fetchNotebooks = await fetch(`/api/notebooks/${userId}`, {
-            headers: {
-                'Authorization': `Bearer ${user?.token}`
-            }
-        });
-        const data = await fetchNotebooks.json();
-        console.log('data', data);
+        const fetchNotebooks = await fetch(`/api/notebooks/${userId}`);
+        console.log('fetchNotebooks', fetchNotebooks);
 
         if(!fetchNotebooks.ok) {
           console.log('Failed to fetch notebooks: ' + fetchNotebooks.statusText);
           return;
         }
+
+        const data = await fetchNotebooks.json();
+        console.log('data', data);
         setMarimoNotebooks(data || [] as MarimoFile[]); 
       } catch (error) {
         console.warn('Error fetching notebooks:', error);

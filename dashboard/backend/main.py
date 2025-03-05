@@ -204,7 +204,15 @@ async def cleanup():
 # Notebooks
 #----------------------------------
 @app.get("/notebooks/all/{user_id}")
-async def fetch_all_notebooks(user_id: str):
+async def fetch_all_notebooks(user_id: str, request: Request):
+    print(f"Fetching all notebooks for user {user_id}")
+    user = request.state.user
+    logger.info(f"User from middleware: user hidden")
+    user_id = user['id']
+    logger.info(f"user {user} requesting notebook details for {user_id}")
+    if user_id != user['id']:
+        raise HTTPException(status_code=403, detail="You are not authorized to access this resource")
+
     return get_all_notebooks(user_id)
 
 @app.get("/notebook_details/{notebook_id}")
@@ -284,7 +292,7 @@ async def delete_schedule(notebook_id: str, schedule_id: str):
 # Connectors
 #----------------------------------
 @app.post("/connectors/create")
-async def create_connector(connector_data: dict):
+async def create_connector(connector_data: dict, request: Request):
     print(f"Creating connector {connector_data}")
     user = request.state.user
     user_id = user['id']
