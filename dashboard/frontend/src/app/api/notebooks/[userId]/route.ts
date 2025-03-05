@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server'
 import { getApiUrl } from  '@/app/lib/config';
-
+import { cookies } from 'next/headers';
 export async function GET(
   req: NextRequest
 ) {
@@ -14,22 +14,14 @@ export async function GET(
       return Response.json({ error: 'User ID is required' }, { status: 400 });
     }
 
-    const authHeader = req.headers.get('Authorization');
-    console.log('Auth header:', authHeader);
+ 
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return Response.json({ 
-            error: 'No valid authorization header',
-            redirect: true
-        }, { status: 401 });
-    }
+    const cookieStore = await cookies();
+    const token = cookieStore.get('auth_token')?.value;
+    console.log('token:', token);
 
-    const token = authHeader.split('Bearer ')[1];
-    if (!token || token == "undefined") {
-      return Response.json({ 
-        error: 'No valid token',
-        redirect: true
-      }, { status: 401 });
+    if (!token) {
+      return Response.json({ error: 'No token found', redirect: true }, { status: 401 });
     }
 
     const response = await fetch(`${getApiUrl()}/notebooks/all/${userId}`, {

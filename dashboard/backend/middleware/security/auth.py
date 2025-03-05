@@ -1,12 +1,15 @@
-from fastapi import Depends, HTTPException, status, Request, WebSocket
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi import HTTPException, status, Request, WebSocket
+from fastapi.security import HTTPBearer
 from fastapi.websockets import WebSocketDisconnect
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
-from typing import Dict, Any, Optional, Callable, TypeVar, Generic
+from typing import Dict, Any
 import logging
 from functools import wraps
 from helpers.backend.supabase.client import get_supabase_client
+from datetime import datetime
+import time
+import jwt
 
 logger = logging.getLogger(__name__)
 
@@ -38,14 +41,18 @@ class AuthMiddleware(BaseHTTPMiddleware):
         ]
         
     async def dispatch(self, request: Request, call_next):
+        logger.info(f"Processing request for path: {request.url.path}")
+        
         if any(request.url.path.startswith(path) for path in self.excluded_paths):
             logger.debug(f"Skipping auth for excluded path {request.url.path}")
             response = await call_next(request)
             return response
 
         auth_header = request.headers.get("Authorization")
+        logger.info(f"Received Authorization header: {auth_header}")
+
         if not auth_header or not auth_header.startswith("Bearer "):
-            logger.warning("Missing Authorization header")
+            logger.warning(f"Invalid or missing Authorization header: {auth_header}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Missing Authorization header",
@@ -53,19 +60,33 @@ class AuthMiddleware(BaseHTTPMiddleware):
             )
             
         token = auth_header.split("Bearer ")[1]
-        logger.debug(f"Processing authentication for token: {token[:10]}...")
-        user = await self.verify_token(token)
-        logger.debug("Token verification successful")
-      
-        request.state.user = user
-        response = await call_next(request)
-        response.headers["X-User-ID"] = user["id"]
-        response.headers["X-User-Email"] = user["email"]
-        logger.debug(f"Added user {user['id']} to response headers")
-        return response
+        logger.info(f"Extracted token (first 20 chars): {token[:20]}...")
+        
+        try:
+            logger.info("Attempting to verify token...")
+            user = await self.verify_token(token)
+            logger.info(f"Token verified successfully for user: {user.get('email', 'unknown')}")
+            
+            request.state.user = user
+            response = await call_next(request)
+            response.headers["X-User-ID"] = user["id"]
+            response.headers["X-User-Email"] = user["email"]
+            logger.info(f"Request processed successfully for user {user['id']}")
+            return response
+            
+        except Exception as e:
+            logger.error(f"Error during token verification: {str(e)}")
+            logger.error(f"Full token that failed: {token}")
+            logger.error(f"Token length: {len(token)}")
+            # Print full exception details
+            import traceback
+            logger.error(f"Full traceback: {traceback.format_exc()}")
+            raise
 
     @staticmethod
     async def verify_token(token: str) -> Dict[str, Any]:
+        logger.info("Starting token verification...")
+        
         if not token or token == "undefined":
             logger.warning("Token is empty or undefined")
             raise HTTPException(
@@ -73,25 +94,49 @@ class AuthMiddleware(BaseHTTPMiddleware):
                 detail="Missing bearer token or undefined",
             )
 
-        logger.debug(f"Verifying token: {token[:10]}...")
-        
         try:
-            payload = supabase.auth.get_user(token)
-            if not getattr(payload, 'user', None):
-                logger.error(f"Authentication failed: {payload.error}")
+            # Decode token without verification to check claims
+            decoded = jwt.decode(token, options={"verify_signature": False})
+            current_time = int(time.time())
+            
+            # Log token timing details
+            logger.info(f"Token timing: current={current_time}, exp={decoded.get('exp')}, iat={decoded.get('iat')}")
+            logger.info(f"Token expires in: {decoded.get('exp', 0) - current_time} seconds")
+            logger.info(f"Token was issued: {current_time - decoded.get('iat', 0)} seconds ago")
+            
+            if decoded.get('exp', 0) <= current_time:
+                logger.error(f"Token expired at {datetime.fromtimestamp(decoded['exp'])} (current time: {datetime.fromtimestamp(current_time)})")
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail=f"{payload.error}",
+                    detail="Token has expired",
+                )
+
+            logger.info("Calling Supabase auth.get_user...")
+            payload = supabase.auth.get_user(token)
+            logger.info(f"Supabase response received: {payload}")
+            
+            if not payload or not getattr(payload, 'user', None):
+                logger.error(f"Invalid payload structure: {payload}")
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid token structure",
                     headers={"WWW-Authenticate": "Bearer"},
                 )
+            
             load = payload.user.dict()
-            logger.debug("Token verification successful")
+            logger.info(f"Successfully verified user: {load.get('email', 'unknown')}")
             return load
+            
         except Exception as e:
-            logger.error(f"Unexpected error: {e}")
+            logger.error(f"Token verification failed with exception: {str(e)}")
+            logger.error(f"Exception type: {type(e)}")
+            logger.error(f"Token that failed verification: {token}")
+            # Print full exception details
+            import traceback
+            logger.error(f"Full traceback: {traceback.format_exc()}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid bearer token",
+                detail=f"Invalid bearer token: {str(e)}",
                 headers={"WWW-Authenticate": "Bearer"},
             )
             

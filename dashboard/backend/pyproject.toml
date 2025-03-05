@@ -20,4 +20,5 @@ dependencies = [
     "requests>=2.32.3",
     "resend>=2.5.1",
     "docker",
+    "pyjwt>=2.8.0",
 ]

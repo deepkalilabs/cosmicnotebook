@@ -111,12 +111,8 @@ export default function NotebookIntegrations() {
     //TODO: This is a temporary fetch to get the connectors. Change to use the API endpoint in the backend.
     const fetchConnectors = async (orgId: string) => {
         try {
-            const response = await fetch(`/api/connectors/all/${orgId}`, {
-                method: 'GET',
-                headers: {
-                'Content-Type': 'application/json'
-                }
-            });
+            const response = await fetch(`/api/connectors/all/${orgId}`)
+              
             console.log('Fetch connectors response:', response);
 
             if (response.status !== 200) {

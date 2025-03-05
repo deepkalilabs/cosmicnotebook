@@ -47,6 +47,7 @@
     "cronstrue": "^2.54.0",
     "highlight.js": "^11.11.1",
     "js-cookie": "^3.0.5",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.462.0",
     "marked": "^15.0.6",
     "monaco-editor": "^0.52.0",

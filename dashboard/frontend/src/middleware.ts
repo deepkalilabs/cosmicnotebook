@@ -1,70 +1,145 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { supabase } from '@/lib/supabase';
 
-export function middleware(request: NextRequest) {
+function decodeJwt(token: string) {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = Buffer.from(base64, 'base64').toString('utf8');
+  return JSON.parse(jsonPayload);
+}
 
-  //Get path name
+export async function refreshToken(token: string) {
+  if (!token) {
+    console.error('Middleware: Refresh token is null or empty');
+    return null;
+  }
+
+  try {
+    console.log('Middleware: Attempting to refresh with token length:', token.length);
+    const { data, error: refreshError } = await supabase.auth.refreshSession({ 
+      refresh_token: token 
+    });
+
+    if (refreshError) {
+      console.error('Middleware: Refresh error:', refreshError.message);
+      return null;
+    }
+
+    if (!data.session) {
+      console.error('Middleware: No session in refresh response');
+      return null;
+    }
+
+    console.log('Middleware: Successfully refreshed session');
+    return {
+      accessToken: data.session.access_token,
+      refreshToken: data.session.refresh_token,
+      expiresAt: data.session.expires_at,
+    };
+  } catch (e) {
+    console.error('Middleware: Unexpected error during refresh:', e);
+    return null;
+  }
+}
+
+
+export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   console.log('Middleware: path:', path);
 
-  //Skip middleware for auth routes
+  // Skip middleware for auth routes
   if (path.startsWith('/auth')) {
     return NextResponse.next();
   }
 
-  //For protected routes, check if user is authenticated
   const isProtectedRoute = path.startsWith('/dashboard') || path.startsWith('/api');
+  console.log('Middleware: isProtectedRoute:', isProtectedRoute);
 
   if (isProtectedRoute) {
-     // Check query parameter for token
-    let authToken = request.nextUrl.searchParams.get('token')
-    console.log('Middleware: auth token from query or cookie:', authToken);
-    console.log('Middleware: isProtectedRoute:', isProtectedRoute);
+    let authToken = request.cookies.get('auth_token')?.value || null;
+    let refreshT = request.cookies.get('refresh_token')?.value || null;
+    console.log('Middleware: auth token:', authToken?.substring(0, 20) + '...');
+    console.log('Middleware: refresh token:', refreshT?.substring(0, 20) + '...');
 
     if (!authToken) {
-      authToken = request.cookies.get('auth_token')?.value || null;
+      console.log('Middleware: No auth token found.');
+      return NextResponse.redirect(new URL('/auth/signin', request.url));
     }
 
-    if (!authToken) {
-        console.log('Middleware: No auth token found.');
-        return NextResponse.redirect(new URL('/auth/signin', request.url));
+    try {
+      // Decode token to check expiration
+      const decoded = decodeJwt(authToken);
+      const currentTime = Math.floor(Date.now() / 1000);
+      console.log('Middleware: Token exp:', decoded.exp, 'Current time:', currentTime);
+
+      // Refresh if token is expired
+      if (decoded.exp && decoded.exp <= currentTime) {
+        console.log('Middleware: Token expired, attempting refresh...');
+        if (!refreshT) {
+          console.log('Middleware: No refresh token available.');
+          return NextResponse.redirect(new URL('/auth/signin', request.url));
+        }
+
+        const refreshed = await refreshToken(refreshT);
+        if (!refreshed) {
+          console.log('Middleware: Refresh failed.');
+          return NextResponse.redirect(new URL('/auth/signin', request.url));
+        }
+
+        authToken = refreshed.accessToken;
+        refreshT = refreshed.refreshToken; // Update refresh token if provided
+        console.log('Middleware: Token refreshed:', authToken?.substring(0, 20) + '...');
       }
 
-    //Token is valid, continue to request. Add token to headers
-    const requestHeaders = new Headers(request.headers);
-    requestHeaders.set('Authorization', `Bearer ${authToken}`);
+      // Set Authorization header with (possibly refreshed) token
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.set('Authorization', `Bearer ${authToken}`);
 
-    const response = NextResponse.next({
-      request: {
-        headers: requestHeaders,
-      },
-    });
+      const response = NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      });
 
-    response.cookies.set('auth_token', authToken, {
+      // Update cookies
+      response.cookies.set('auth_token', authToken ?? '', {
         secure: true,
         sameSite: 'strict',
         httpOnly: true,
         path: '/',
-        expires: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
-      });  
-    console.log('Middleware: set auth token from query');
+        maxAge: 60 * 60 * 24, // 24 hours in seconds
+      });
 
-  //For public routes, continue to request
-  return response;
+      if (refreshT) {
+        response.cookies.set('refresh_token', refreshT, {
+          secure: true,
+          sameSite: 'strict',
+          httpOnly: true,
+          path: '/',
+          maxAge: 60 * 60 * 24 * 30, // 30 days
+        });
+      }
 
+      console.log('Middleware: Proceeding with request');
+      return response;
+    } catch (error) {
+      console.error('Middleware: Token validation error:', error);
+      return NextResponse.redirect(new URL('/auth/signin', request.url));
+    }
   }
 
   return NextResponse.next();
 }
 
-
-// Configure which paths this middleware should run on
 export const config = {
   matcher: [
-    // Match all API routes
-    '/api/:path*',
-    // Add other paths that need authentication
-    '/api/notebooks/:path*', // Protect all notebook routes
-    '/dashboard/:path*', // Protect all dashboard routes
+    // List specific API routes to protect
+    '/api/logs/:path*',
+    '/api/notebooks/:path*',
+    '/api/projects/:path*',
+    '/api/connectors/:path*',
+    // Protect dashboard routes
+    '/dashboard/:path*',
   ],
 };

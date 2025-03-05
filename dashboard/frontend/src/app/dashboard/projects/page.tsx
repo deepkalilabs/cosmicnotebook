@@ -14,7 +14,7 @@ import { Templates } from '@/components/Templates';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { existingNotebookURL } from '@/lib/marimo/urls';
-import { fetchApi } from '@/lib/fetchApi';
+import { fetchApi } from '@/lib/refreshToken';
 
 function NewNotebookButton({ user_id, notebook_id }: { user_id: string, notebook_id: string }) {
   const [ nameNotebook, setNameNotebook ] = useState('');

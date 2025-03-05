@@ -208,9 +208,9 @@ async def fetch_all_notebooks(user_id: str, request: Request):
     print(f"Fetching all notebooks for user {user_id}")
     user = request.state.user
     logger.info(f"User from middleware: user hidden")
-    user_id = user['id']
-    logger.info(f"user {user} requesting notebook details for {user_id}")
-    if user_id != user['id']:
+    requested_user_id = user['id']
+    logger.info(f"user requesting notebook details for {user_id}")
+    if requested_user_id != user_id:
         raise HTTPException(status_code=403, detail="You are not authorized to access this resource")
 
     return get_all_notebooks(user_id)
@@ -231,9 +231,9 @@ async def get_notebook_data(notebook_id: str, request: Request) -> NotebookDetai
         HTTPException: 404 if notebook not found, 403 if unauthorized.
     """
     user = request.state.user
-    logger.info(f"User from middleware: {user}")
+    logger.info(f"User from middleware: user hidden")
     user_id = user['id']
-    logger.info(f"user {user} requesting notebook details for {notebook_id}")
+    logger.info(f"user requesting notebook details for {notebook_id}")
 
     try:
         logger.info(f"Getting supabase details for {notebook_id} for user {user_id}")
@@ -364,7 +364,6 @@ async def get_all_integrations(org_id: str):
 # TODO Separate call if the notebook is deployed or not.
 @app.get("/logs/{notebook_id}")
 async def get_deployment_logs(notebook_id: str):
-    print(f"Getting deployment logs for notebook {notebook_id}")
     supabase_logs = SupabaseLogs()
     log_details = supabase_logs.get_deployment_logs(notebook_id)
     print(f"log_details {log_details}")
