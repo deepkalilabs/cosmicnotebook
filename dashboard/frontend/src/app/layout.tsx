@@ -17,8 +17,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: "Build. Iterate. Deploy.",
-  description: "Cosmic is the efficient workflow for AI teams.",
+  title: "Trade Show Revenue Intelligence",
+  description: "Convert trade show leads into customers with AI-powered revenue intelligence.",
 };
 
 export default function RootLayout({
