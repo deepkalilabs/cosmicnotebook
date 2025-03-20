@@ -1,8 +1,9 @@
 import React, { ReactNode } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mic, MessageSquareText, Zap, ArrowDownToLine, ArrowUpToLine, DollarSign, Activity } from "lucide-react";
+import { Mic, MessageSquareText, Zap, ArrowUpToLine, DollarSign, Activity } from "lucide-react";
 import Image from "next/image";
+import PreOrderButton from "@/components/PreOrderButton";
+
 interface FeatureCardProps {
   icon: ReactNode;
   title: string;
@@ -29,39 +30,39 @@ export default function FeaturesSection() {
   const features = [
     {
       icon: <DollarSign className="h-6 w-6 text-indigo-400" />,
-      title: "Maximize Your $30K Investment",
-      description: "Companies spend $30K on a booth at a trade show. Cosmic helps you maximize ROI on by converting every conversation into a sale."
+      title: "Review each call to maximize ROI",
+      description: "Companies spend $30K on a booth at a trade show. Cosmic records and transcribes each conversation and helps you stay on top of every conversation to ensure quality."
     },
     {
       icon: <Mic className="h-6 w-6 text-indigo-400" />,
-      title: "Voice Clarity",
-      description: "Record conversations perfectly even in crowded conference halls. Review conversations so you never miss a detail."
+      title: "Eliminate Note-taking",
+      description: "Cosmic takes notes for you during conversations so you can focus on building relationships."
     },
     {
       icon: <MessageSquareText className="h-6 w-6 text-indigo-400" />,
-      title: "Speaker Recognition",
-      description: "Identify different speakers and know exactly who said what when reviewing conversations."
+      title: "Identify the right stakeholders",
+      description: "Cosmic identifies different speakers in conversations and knows exactly who said what when reviewing conversations."
     },
     {
       icon: <Activity className="h-6 w-6 text-indigo-400" />,
-      title: "Action Items",
-      description: "Automatically creates action items from conversations for your team to review. Close more deals by following up on the right things."
+      title: "Never miss another follow-up",
+      description: "Cosmic automatically creates action items from conversations for your team to review. Close more deals by following up on the right things."
     },
     {
       icon: <ArrowUpToLine className="h-6 w-6 text-indigo-400" />,
-      title: "Sync to CRM",
-      description: "Automatically creates new contacts, logs conversation summaries, and flags follow-up items directly in Salesforce. Save 15+ hours of manual work per trade show."
+      title: "Save hours of work of updating CRM",
+      description: "Cosmic automatically updates your CRM with new contacts, logs conversation summaries, and flags follow-up items. Save 15+ hours of manual work per trade show."
     },
     {
       icon: <Zap className="h-6 w-6 text-indigo-400" />,
       title: "All-day Battery",
-      description: "96+ hours of continuous use to last through the longest trade shows."
+      description: "Cosmic has a 96+ hour battery life to last through the longest trade shows."
     }
   ];
 
   return (
-    <div className="flex flex-col gap-16 w-full mx-auto bg-gradient-to-bl from-indigo-50 to-slate-100 px-12">
-    <section id="features" className="container mx-auto items-center justify-center w-full py-16 md:py-24 lg:py-32">
+    <div className="flex flex-col gap-14 w-full mx-auto bg-gradient-to-bl from-indigo-50/30 to-indigo-50">
+    <section id="features" className="container mx-auto items-center justify-center w-full py-16 pl-24 md:py-24 lg:py-32">
       <div className="flex justify-center">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-16 w-full">
           {/* Left column with heading and features */}
@@ -69,17 +70,12 @@ export default function FeaturesSection() {
             <div className="flex flex-col space-y-4">
               <div className="space-y-2">
                 <h2 className="text-4xl font-bold tracking-tighter md:text-5xl/tight">
-                  High Quality Meeting<br />
-                  <span className="text-indigo-600">Transcription & Recording</span>
+                  Maximize the ROI of your <br />
+                  <span className="text-indigo-600">Trade Show Investment</span>
                 </h2>
               </div>
               <div className="pt-4">
-                <a href="#get-started" className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-6 py-3 text-white font-medium hover:bg-indigo-700 transition-colors">
-                  Pre-order Now
-                  <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </a>
+                <PreOrderButton className="text-md size-lg py-6" />
               </div>
             </div>
             

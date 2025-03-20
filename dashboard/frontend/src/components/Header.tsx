@@ -2,17 +2,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { X } from 'lucide-react'
+import PreOrderButton from './PreOrderButton'
 
 export default function Header() {
   return (
     <header className="fixed top-0 left-10 right-10 bg-white border-b z-50">
       <div className="relative w-full bg-indigo-600 py-2 px-4 text-center text-sm text-white">
-        <div className="flex items-center justify-center">
-          <span>Introducing Cosmic wearable device! 🔥</span>
-          <Link href="#" className="ml-2 font-medium underline">
-            Pre-order now
-          </Link>
-        </div>
         <Button
           variant="ghost"
           size="icon"
@@ -35,11 +30,7 @@ export default function Header() {
                 Sign in
               </Button>
             </Link>
-            <Link href="/auth/signup">
-              <Button className="bg-gradient-to-r from-black-900 via-slate-800 to-black hover:from-blue-950 hover:via-slate-900 hover:to-black text-white">
-                Pre-order Now
-              </Button>
-            </Link>
+            <PreOrderButton className="text-md size-lg py-6" />
           </div>
         </div>
       </div>

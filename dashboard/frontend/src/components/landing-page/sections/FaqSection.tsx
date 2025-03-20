@@ -1,10 +1,8 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
-import Link from "next/link"
-import { Headphones, Plus, Minus } from "lucide-react"
+import { Plus } from "lucide-react"
+import { Minus } from "lucide-react"
+import React from "react"
 
 interface FAQItem {
   question: string
@@ -12,7 +10,7 @@ interface FAQItem {
 }
 
 export default function FAQSection() {
-  const [openIndex, setOpenIndex] = useState<number>(0)
+  const [openIndex, setOpenIndex] = React.useState<number>(0)
 
   const faqItems: FAQItem[] = [
     {

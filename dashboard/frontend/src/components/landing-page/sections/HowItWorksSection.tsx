@@ -3,8 +3,6 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Headphones } from "lucide-react";
-import StepItem from "@/components/landing-page/StepItem";
 import { cn } from "@/lib/utils";
 
 export default function HowItWorksSection() {

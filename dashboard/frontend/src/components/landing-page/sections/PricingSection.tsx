@@ -1,13 +1,13 @@
-import { Check, CheckCircle } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import PreOrderButton from "@/components/PreOrderButton";
 
 const tiers = [
   {
@@ -113,16 +113,20 @@ export default function PricingSection() {
                 </ul>
               </CardContent>
               <CardFooter>
-                <Button 
-                  className={`w-full ${
-                    tier.highlight 
-                      ? 'bg-indigo-600 hover:bg-indigo-700 text-white' 
-                      : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
-                  } px-8 py-6`}
-                  asChild
-                >
-                  <a href={tier.action}>{tier.button}</a>
-                </Button>
+                {tier.button === 'Pre-order Now' ? (
+                  <PreOrderButton
+                    variant={tier.highlight ? 'highlight' : 'outline'}
+                    size="lg"
+                    className="w-full"
+                  />
+                ) : (
+                  <Button 
+                    className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 px-8 py-6"
+                    asChild
+                  >
+                    <a href={tier.action}>{tier.button}</a>
+                  </Button>
+                )}
               </CardFooter>
             </Card>
           ))}

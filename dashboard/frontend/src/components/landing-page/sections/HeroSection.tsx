@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-
+import PreOrderButton from "@/components/PreOrderButton";
 export default function HeroSection() {
   return (
     <div className="flex flex-col items-center justify-center bg-gradient-to-r from-white to-indigo-600/40 text-black">
@@ -12,22 +12,23 @@ export default function HeroSection() {
             <div className="flex flex-col justify-center space-y-4 max-w-3xl mb-12">
               <div className="space-y-2">
                 <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                Turn Every Trade Show Conversation Into Sales.
+                Turn Trade Show Conversations Into Sales.
                 <br/> 
                 <span className="text-indigo-600">Without Taking Notes</span>
                 </h1>
                 <p className="text-gray-600 md:text-xl">
-                    Cosmic is a wearable device that automatically transcribes, summarizes, and syncs sales conversations at conferences to your CRM. Saving your team hours of manual work after each event.
+                    Cosmic is a wearable device that automatically transcribes, summarizes, and syncs sales conversations at conferences to your CRM. 
+                    <br/>
+                    <span className="text-slate-600 text-md font-bold">Save 15+ hours of manual work after each event. Close more deals.</span>
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
-                <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-white text-md px-8 py-6">
-                    Pre-order Now
-                </Button>
+                <PreOrderButton className="text-md size-lg py-6" />
                 <Button size="lg" variant="default" className="border-gray-700 text-white text-md py-6 hover:bg-gray-800">
                   Request demo
                 </Button>
               </div>
+              <p className="text-gray-600 text-md">* 100% money back guarantee within 3 months if you are not satisfied.</p>
             </div>
             
             <div className="relative w-full mx-auto mt-8">

@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import PreOrderButton from "@/components/PreOrderButton";
 
 export default function IntegrationsSection() {
   const integrations = [
@@ -26,7 +26,7 @@ export default function IntegrationsSection() {
   ];
 
   return (
-    <section id="integrations" className="w-full py-16 md:py-24 lg:py-32 bg-gradient-to-bl from-indigo-50 to-slate-100">
+    <section id="integrations" className="w-full py-16 md:py-24 lg:py-32 bg-gradient-to-bl from-indigo-50 to-indigo-50/30">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center text-center mb-16">
         <h2 className="text-4xl font-bold tracking-tighter md:text-5xl/tight text-black">
@@ -61,9 +61,7 @@ export default function IntegrationsSection() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
-        <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-white text-md px-8 py-6">
-            Pre Order Now
-        </Button>
+          <PreOrderButton className="text-md size-lg py-6" />
         </div>
 
       </div>
