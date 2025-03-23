@@ -62,7 +62,7 @@ export default function FeaturesSection() {
 
   return (
     <div className="flex flex-col gap-14 w-full mx-auto bg-gradient-to-bl from-indigo-50/30 to-indigo-50">
-    <section id="features" className="container mx-auto items-center justify-center w-full py-16 pl-24 md:py-24 lg:py-32">
+    <section id="features" className="container mx-auto items-center justify-center w-full py-16 px-4 md:px-8 lg:pl-24 md:py-24 lg:py-32">
       <div className="flex justify-center">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-16 w-full">
           {/* Left column with heading and features */}

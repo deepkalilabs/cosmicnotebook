@@ -35,22 +35,22 @@ export default function HeroSection() {
               <Card className="p-6 rounded-xl overflow-hidden">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                   {/* Left column for pendant images */}
-                  <div className="md:col-span-3 flex flex-col gap-6">
-                    <div className="relative aspect-square overflow-hidden rounded-xl">
+                  <div className="md:col-span-3 flex flex-col md:flex-col gap-4 sm:flex-row sm:justify-center">
+                    <div className="relative aspect-square w-full sm:w-1/2 md:w-full overflow-hidden rounded-xl">
                       <Image 
                         src="/pendant.jpg"
                         fill
-                        sizes="(max-width: 512px) 100vw, 33vw"
+                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
                         alt="Cosmic recording pendant"
                         className="object-cover hover:scale-105 transition-transform duration-300"
                         priority
                       />
                     </div>
-                    <div className="relative aspect-square overflow-hidden rounded-xl">
+                    <div className="relative aspect-square w-full sm:w-1/2 md:w-full overflow-hidden rounded-xl">
                       <Image 
                         src="/pendant2.png"
                         fill
-                        sizes="(max-width: 512px) 100vw, 33vw"
+                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
                         alt="Cosmic recording pendant"
                         className="object-cover hover:scale-105 transition-transform duration-300"
                         priority
@@ -59,12 +59,12 @@ export default function HeroSection() {
                   </div>
                   
                   {/* Right column for transcription image */}
-                  <div className="relative md:col-span-9 overflow-hidden rounded-xl flex items-stretch h-full">
+                  <div className="relative md:col-span-9 overflow-hidden rounded-xl flex items-stretch h-full min-h-[300px]">
                     <div className="relative w-full h-full">
                       <Image
                         src="/transcription.png"
                         fill
-                        sizes="(max-width: 768px) 200vw, 66vw"
+                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 66vw"
                         alt="Cosmic transcription interface"
                         className="object-contain hover:scale-105 transition-transform duration-300 rounded-xl"
                         priority
