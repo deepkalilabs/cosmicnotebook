@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mic, MessageSquareText, Zap, ArrowUpToLine, DollarSign, Activity } from "lucide-react";
+import { Mic, MessageSquareText, Zap, DollarSign, Activity, Volume2 } from "lucide-react";
 import Image from "next/image";
 import PreOrderButton from "@/components/PreOrderButton";
 
@@ -45,13 +45,13 @@ export default function FeaturesSection() {
     },
     {
       icon: <Activity className="h-6 w-6 text-indigo-400" />,
-      title: "Never miss another follow-up",
-      description: "Cosmic automatically creates action items from conversations for your team to review. Close more deals by following up on the right things."
+      title: "Automate follow ups and CRM updates",
+      description: "Cosmic automatically creates action items and CRM updates from conversations for your team to review. Close more deals by following up on the right things."
     },
     {
-      icon: <ArrowUpToLine className="h-6 w-6 text-indigo-400" />,
-      title: "Save hours of work of updating CRM",
-      description: "Cosmic automatically updates your CRM with new contacts, logs conversation summaries, and flags follow-up items. Save 15+ hours of manual work per trade show."
+      icon: <Volume2 className="h-6 w-6 text-indigo-400" />,
+      title: "Works seamlessly in loud environments",
+      description: "Our proprietary AI model is trained to work in noisy environments, so you can get accurate transcripts even in loud environments."
     },
     {
       icon: <Zap className="h-6 w-6 text-indigo-400" />,
