@@ -12,17 +12,9 @@ export default function Footer() {
               <ul className="space-y-3">
                 <li><Link href="/privacy" className="text-muted-foreground hover:text-foreground">Privacy Policy & Terms of Service</Link></li>
                 <li>
-                  <Link href="/pricing" className="text-muted-foreground hover:text-foreground">
-                    Pricing
+                  <Link href="https://how-to-record-in-person--bzv7ly8.gamma.site/" className="text-muted-foreground hover:text-foreground">
+                    Consent Tips
                   </Link>
-                </li>
-                <li className="text-muted-foreground opacity-50 cursor-not-allowed flex items-center">
-                  Customer Stories
-                  <span className="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">Coming Soon</span>
-                </li>
-                <li className="text-muted-foreground opacity-50 cursor-not-allowed flex items-center">
-                  Recipes
-                  <span className="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">Coming Soon</span>
                 </li>
               </ul>
             </div>

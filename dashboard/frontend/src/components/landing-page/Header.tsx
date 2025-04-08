@@ -55,6 +55,12 @@ export default function Header() {
           >
             FAQ
           </Link>
+          <Link 
+            href="https://how-to-record-in-person--bzv7ly8.gamma.site/" 
+            className="text-md text-gray-600 hover:text-black"
+          >
+            Consent Tips
+          </Link>
         </nav>
         <div className="flex items-center gap-4">
           {/* <Link

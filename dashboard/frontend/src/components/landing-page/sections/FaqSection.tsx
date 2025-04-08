@@ -63,6 +63,11 @@ export default function FAQSection() {
         "We take privacy seriously. All recordings are encrypted both on the device and in the cloud. You have complete control over your data and can delete recordings at any time. We never share your recordings or transcripts with third parties without your explicit permission.",
     },
     {
+      question: "Is this legal in Canada and US?",
+      answer:
+        "Yes, it is legal to record conversations with people in Canada and US. Please see our consent tips for more info. If you are in one of the following 11 states, you must inform the customer before you do so: California, Massachusetts, Connecticut, Florida, Maryland, Illinois, Washington, Montana, Pennsylvania, New Hampshire, and Oregon."
+    },
+    {
       question: "How can I contact you?",
       answer:
         "You can reach our support team at shikharsakhuja@gmail.com or through the help section in the Cosmic app. Our customer service hours are Monday 12am to Sunday 11:59pm EST.",
