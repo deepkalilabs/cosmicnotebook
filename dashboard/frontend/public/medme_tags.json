@@ -1,0 +1,18 @@
+{ "tags": [
+    "AI_Scribe",
+    "Patient_Concierge",
+    "Clinical_Search",
+    "Pharmacy_Software",
+    "EMR_Integration",
+    "Scheduling",
+    "Fillware",
+    "MapFlow",
+    "AutoDocumentation",
+    "Medication_Management"
+    ],
+    "sentiments": {
+        "Positive": 68,
+        "Neutral": 25,
+        "Negative": 7
+    }
+}

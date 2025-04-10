@@ -39,4 +39,4 @@ Coordinate with Tahar on new service development
 - Highlight EMR integration capabilities
 - Show efficiency metrics with AI documentation tools
 - Emphasize prescription delegation features once launched
-- RetryClaude can make mistakes. Please double-check responses.
+- This output can make mistakes. Please double-check responses.
