@@ -111,20 +111,6 @@ export default function MeetingView() {
                   </ReactMarkdown>
                 </CardContent>
               </Card>
-
-              {/* Action Items Section */}
-              <Card>
-                <CardHeader>
-                  <h2 className="text-xl font-semibold">Action Items</h2>
-                </CardHeader>
-                <CardContent>
-                  <ul className="list-disc pl-4 space-y-2">
-                    <li>Follow up on trade show leads</li>
-                    <li>Review wearable technology proposal</li>
-                    <li>Update CRM system</li>
-                  </ul>
-                </CardContent>
-              </Card>
             </div>
           </ScrollArea>
         </div>
