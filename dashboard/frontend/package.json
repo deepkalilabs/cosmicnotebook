@@ -42,6 +42,7 @@
     "@uppy/react": "^4.0.4",
     "add": "^2.0.6",
     "ansi-to-react": "^6.1.6",
+    "assemblyai": "^4.9.0",
     "autoprefixer": "^10.4.20",
     "aws-sdk": "^2.1692.0",
     "axios": "^1.7.7",

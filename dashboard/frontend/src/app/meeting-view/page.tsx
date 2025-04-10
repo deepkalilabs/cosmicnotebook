@@ -22,12 +22,15 @@ export default function MeetingView() {
     // TODO: Replace with actual API call
     const fetchMeeting = async () => {
       try {
+         // Fetch transcript from public directory
+         const transcriptResponse = await fetch('/medme.txt');
+         const transcriptText = await transcriptResponse.text();
         // Simulate API call
         const mockMeeting = {
           id: '1',
           title: 'Team Sync Meeting',
           date: '2024-03-20',
-          transcript: 'This is where the full transcript would go...',
+          transcript: transcriptText,
           summary: 'Key points discussed: Project timeline, resource allocation, next steps.',
         };
         setMeeting(mockMeeting);
@@ -136,17 +139,9 @@ export default function MeetingView() {
             <CardContent className="p-0">
               <ScrollArea className="h-[calc(100vh-16rem)]">
                 <div className="space-y-4 p-4">
-                  {/* Example transcript messages */}
                   <div className="space-y-2">
                     <div className="flex items-start gap-2">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                        C
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">Charles</span>
-                          <span className="text-sm text-muted-foreground">02:45</span>
-                        </div>
+                      <div className="whitespace-pre-wrap font-mono text-sm">
                         <p>{meeting.transcript}</p>
                       </div>
                     </div>

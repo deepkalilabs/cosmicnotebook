@@ -1,0 +1,824 @@
+
+Speaker A:  Hey, man, what's going on? 
+
+Speaker B:  Yeah, it's quite a big conference from my understanding. 
+
+Speaker A:  Oh, no, it's like, small. It's very small. 
+
+Speaker B:  Oh, okay. 
+
+Speaker A:  Yeah, it was pretty busy this morning. 
+
+Speaker A:  Also, networking breaks is when it gets very busy right now. Everyone's doing sessions right now. So everyone's doing. I'm supposed to be on session, but I gotta be here. 
+
+Speaker B:  Yeah. 
+
+Speaker B:  So, yeah, this next, like, 4:45 is. We'll get very busy. It was super busy at 10:10. Yeah. All of our team members were all talking to people. 
+
+Speaker A:  I actually noticed a bunch of them were, like, in the corner on the side. 
+
+Speaker B:  Like, they were just. 
+
+Speaker A:  Were you here earlier? 
+
+Speaker B:  I was here with Anna. 
+
+Speaker A:  Okay. 
+
+Speaker B:  Yeah. And I tried to talk to before. 
+
+Speaker B:  Because there's another person behind me.
+
+Speaker B:  But I did. 
+
+Speaker A:  Yeah. 
+
+Speaker B:  I remembered she's one of them. She's one of the conference doors. 
+
+Speaker B:  Okay. So she's the person to talk to more. Are you wearing one? 
+
+Speaker A:  I didn't bring it. Yeah. But this is what I'm doing right now. I'm using their pharmacy leads app. 
+
+Speaker B:  Okay. 
+
+Speaker A:  A scander badge. And then I'm like, for example. All right, cool. And then, like, I would add a notes section, but that's all I have time to do. You guys have notes? I don't add it for everyone. 
+
+Speaker A:  It's hard. 
+
+Speaker A:  Yeah. 
+
+Speaker B:  Because I know there was, like, a moment when you guys had a lot of folks and there's, like, ones here. I saw, like, that one is a huge line. 
+
+Speaker A:  I noticed. But people only go there for free stuff. 
+
+Speaker B:  Oh, okay. 
+
+Speaker A:  Okay. They're not getting any. Successful. 
+
+Speaker B:  How is it that?
+
+Speaker C:  Hey, how's it going? 
+
+Speaker A:  Hey, Good, good. Listen in. Right. Okay. It will be more helpful. Sure. 
+
+Speaker A:  Honestly, I didn't. 
+
+Speaker B:  Okay. 
+
+Speaker A:  The. 
+
+Speaker C:  Some of the folks on the other side said I should talk to the events to, like, organize this, but I don't know. 
+
+Speaker B:  Yeah. 
+
+Speaker A:  Hey, how's it going? 
+
+Speaker B:  Hey, good. 
+
+Speaker C:  Nice to meet you. I used to be with shoppers. Oh, damn. We worked with you guys. I used to be. When you guys rolled it out, I was working with Sarah. 
+
+Speaker C:  Oh, damn. 
+
+Speaker C:  Yeah, yeah, yeah. Sarah, my boss at the time. 
+
+Speaker C:  Yeah, yeah. 
+
+Speaker C:  Now opened a pharmacy since. Thank you. I want to know what do you guys. I'll be honest. I'm not with medme right now. 
+
+Speaker C:  Yeah. 
+
+Speaker C:  I use Medicist. 
+
+Speaker A:  Okay. 
+
+Speaker C:  But what's your. What's your product offer? 
+
+Speaker C:  Yeah, so shoppers only use us for Scheduler. 
+
+Speaker C:  Okay. 
+
+Speaker A:  But we actually have a lot more products that they. 
+
+Speaker C:  That's why I come with. I figured you guys had more things. 
+
+Speaker A:  So it's just convincing them to add each thing is just a lot too painful. Yeah. Nick, by the way. Andrew. Nice to meet you. 
+
+Speaker A:  Thank you. 
+
+Speaker C:  Owner as well. No pharmacy software. I actually spoke to your team. Yeah. Yeah. About an integration. We can talk to you about it. All right, so maybe I'll tailor to medicine specifically. There's a lot of overlap, honestly. They have, I think, each of these things. 
+
+Speaker C:  What's documentation? Like med checks and stuff. 
+
+Speaker C:  Yeah. Or minor elements or anything that is not as pharmaceutical. 
+
+Speaker A:  Okay. 
+
+Speaker A:  So we have algorithms in place. You can use them either manually, so you would check off checkboxes, type things in, etc. Or you can use the AI version of that. Use the AI assist to help you do notetaking automatically. 
+
+Speaker C:  Okay, very cool. 
+
+Speaker A:  By the time you finish talking to a patient, all your consult notes, bedscheck forms are done, notification, provider, and everything is just generated automatically. 
+
+Speaker A:  Wow. 
+
+Speaker C:  Okay, So I think that's different. 
+
+Speaker A:  I don't think they've done that. They've just rolled out some sort of an AI feature, but I think it's more of a chatbot than it is for training. 
+
+Speaker C:  Yeah, yeah, yeah, yeah. I don't think it's in their hub right now. 
+
+Speaker A:  Correct. Yeah. I think, as with my membership, it's limited usage initially. It's not like. I think it's just. It's really more so the way they've positioned it is just to ask your questions. It's a clinical tool. 
+
+Speaker C:  Oh, sorry, then you're talking about NDM Health, then. So we have a simple version. Yeah. You can ask a couple questions. It'll find the right source for you. Honestly, we didn't. People don't really use it. 
+
+Speaker C:  Did you guys build this yourself or is it, like, through. 
+
+Speaker C:  So we use a tool called Deep Grammar OpenAI because they are much better at pulling up medication words than any models we can host ourselves. So that's unique to us. This is also unique to us. I know Metasys has an IVR or inbound. 
+
+Speaker A:  Yeah. 
+
+Speaker C:  But we have an AI version of that. 
+
+Speaker A:  Okay. 
+
+Speaker A:  We also do outbound, so maybe I'll walk you through a journey. Actually. 
+
+Speaker C:  Yeah, go ahead. I'll be honest, too. One thing, I'm locked in with Metasyst because they also. I negotiated with them building my website, so they built my website for me too. 
+
+Speaker A:  All good, all good. All good. Well, by the way, like, actually, I'll show you first. 
+
+Speaker C:  Okay. 
+
+Speaker A:  It's your call. We do buy out contracts for customers as well. 
+
+Speaker C:  You do? 
+
+Speaker A:  If you need to. 
+
+Speaker C:  Well, yeah, I just started with them, so I'm not like. And yeah, I don't. I. I'm. I think you guys also work with them. You're very cordial with it. 
+
+Speaker C:  So. So depending on what. What the. What. What your use case is, I. I might actually just recommend you staying with them. So, like, I'll show you. 
+
+Speaker C:  But we're also a new pharmacy, so, like, I'm using this year for me as like a. Like, I optimize the companies I work with based on what I needed. Like, building the website for me was like a huge money saver because they effectively saved me all the money I was going to spend on hiring a developer to do that. They did that included for my fees that I paid them for the year. 
+
+Speaker A:  Whereas, like, a small topic, we can do that too. You know how that's possible with AI these days? In fact, you could have done that yourself without them. 
+
+Speaker C:  Like, building a full website. 
+
+Speaker A:  Building a full website. 
+
+Speaker C:  I'll show you what they built and then maybe. 
+
+Speaker A:  Yeah, well, you know. Yeah, he's the tech. You can just. 
+
+Speaker C:  You work with him too? 
+
+Speaker A:  No, no, no. He's. He has his own tech company, but. 
+
+Speaker C:  Oh, nice. Which company? 
+
+Speaker B:  Called Cosmic. So it's more for. We'll talk about. 
+
+Speaker A:  Any. Just. AI coding is safe and most of our pharmacists on our team are coding now. Okay. 
+
+Speaker C:  We used to work a lot with Taher. 
+
+Speaker A:  Oh, okay. 
+
+Speaker A:  So is he here? 
+
+Speaker C:  Yeah, yeah, he's here. So he's like our main protocol. Like he is. Yeah, yeah. Ye. 
+
+Speaker C:  He probably hated. He probably hated me back in, like 2022. 
+
+Speaker A:  I mean. Oh, that's back in these. 
+
+Speaker C:  That's like when it was launched. That's like, when it was launching. 
+
+Speaker B:  No, that was. That was. Those are some tough times. 
+
+Speaker A:  Those were tough times. 
+
+Speaker B:  Those were tough times. So, you know, the patient's facing side for the most part. Pharmacy's facing side. Fast forward. Patient comes into your store. 
+
+Speaker A:  All right, cool. 
+
+Speaker B:  You're here for a. Whatever consultation. I'm going to do a generic one for now. 
+
+Speaker A:  Okay. 
+
+Speaker B:  Because everything works. All services. 
+
+Speaker A:  Okay. 
+
+Speaker B:  Actually, sorry, let me show you a different. Let me show you. I'll just create a new one because that was our enterprise version. It might not be relevant to. 
+
+Speaker A:  Mcto. 
+
+Speaker B:  So that was like a lock. That was almost a walking service. So, yeah, like, we're in the constipation room. Like, what brings you here today? 
+
+Speaker A:  I have a uti. 
+
+Speaker B:  You have a uti. Maybe try talking a little closer because. A little loud. Patients here for uti. Yeah, tell me more about it. Are you experiencing frequent urine burning sensation? 
+
+Speaker A:  A little bit of discomfort. 
+
+Speaker B:  Okay. 
+
+Speaker A:  It's only happening for three days. 
+
+Speaker B:  Do you feel any pain in your pelvic region or abdomen region? 
+
+Speaker A:  No. 
+
+Speaker B:  Have you had a UTI before? 
+
+Speaker A:  Yeah. 
+
+Speaker B:  Awesome. And obviously just confirming your biology. Biologically female. 
+
+Speaker A:  Yep. 
+
+Speaker B:  All right, cool. So what happened? What did you do last time when you had a uti? 
+
+Speaker A:  I went to my doctor. They gave me an antibiotic. 
+
+Speaker B:  Okay. 
+
+Speaker A:  It worked. 
+
+Speaker B:  Do you remember when antibiotic was. What color was the pill? 
+
+Speaker A:  It was a powder. 
+
+Speaker B:  It was a powder. Okay, cool. 
+
+Speaker A:  I mixed it with water. 
+
+Speaker B:  Awesome. And so, yeah, based on the information you gave me, I think you are eligible for the uti. And let's say I prescribe you some medication. Sure. I'll follow up with you in two days. I'll message your doctor as well. 
+
+Speaker A:  So you were just talking on that? Okay. 
+
+Speaker B:  Yeah. 
+
+Speaker A:  Nice. 
+
+Speaker B:  So patient. Yeah. So. 
+
+Speaker A:  Oh, I didn't see that. 
+
+Speaker B:  Tracking popular fields. This is a soflo. It also generates messjack, forms, Travel console, whatever it is. 
+
+Speaker A:  Okay. 
+
+Speaker B:  Takes just a few seconds. Generates it. 
+
+Speaker A:  Nice. 
+
+Speaker B:  And now you can send it to patients. You can do whatever you want with it. And then more importantly, is, like, you would complete. Return your profile, move on to the next patient, because that's it. You're done. Like, you're finished. 
+
+Speaker A:  This is really good, especially for metrics. Like, for. I'll say for, like, minor ailments. I don't find minor ailments to be too. I use Map Flow personally. I have Meticys, but I use mapflow for minor ailments. 
+
+Speaker B:  So we have integration with Map Flow as well. 
+
+Speaker A:  Okay. 
+
+Speaker B:  Save you the effort of having that type of patient information. 
+
+Speaker A:  And now that. Now Map Flow is integrated with, like, I use fillware at the moment. Okay, so does it work if MapFlow is integrated with fillware? Does that integration flow to you guys as well? 
+
+Speaker B:  No. Sorry. 
+
+Speaker A:  But does it, like, my patient? Like, if I have a patient in filler? 
+
+Speaker B:  Yeah. 
+
+Speaker A:  It'll automatically show up in MapFlow now. 
+
+Speaker B:  Okay. 
+
+Speaker A:  Yes. 
+
+Speaker B:  Yes. 
+
+Speaker A:  Or are you saying MacFlow has to be launched from MedMe? 
+
+Speaker B:  It launches from us. But we do pull information from Filware, too. 
+
+Speaker A:  Oh, you do? Okay. Okay. 
+
+Speaker B:  Okay. We just don't write into it right now. That's all. 
+
+Speaker A:  Okay. Got it. This is really. So this. I can do this for any of your forms? 
+
+Speaker B:  Any form. In fact, you can give me your custom form. And we can do it too, because Our AI was not hardcoded for any specific form. 
+
+Speaker A:  Okay. And it does everything. And then what about like the. Does it prompt you? Like is there more of a guided form? If like there's certain. Cuz there's like certain questions that they give you like to ask. Yeah. 
+
+Speaker B:  So let me show you real quick. Let's say we do what's the upper Scott maybe. So we do like we do walk. We do have algorithms to walk you through the. 
+
+Speaker A:  If I wanted that. So I could either do it in soap note version or do it through this way as well. Okay, so walk me through the rest of the journey. We do this and the prescription gets. 
+
+Speaker B:  Generated and then you just fax it, download it, send it to patients, whatever you want at the end, market as complete and then move on to your next patient. Okay, so that's pretty much it. 
+
+Speaker A:  And then what's your patient concierge. 
+
+Speaker B:  Oh, sorry, quickly as well. If it was like let's say a shingles vaccine, for example, we actually automatically schedule messages to be sent out to the patient in six months time. 
+
+Speaker A:  Oh nice. 
+
+Speaker B:  This the base version is SMS and email. Guys opting for the patient concierge. There's the AI version of that. 
+
+Speaker A:  So they got a phone call. 
+
+Speaker B:  Oh nice. You want to try it actually sure. You want. There's a few things you can test. You want to do shingles follow up, appointment, reminder, treatment follow up. 
+
+Speaker A:  Su shingles follow up. 
+
+Speaker B:  We could do the minor element follow ups if you want. Up to you shingles. That one will come right now. 
+
+Speaker A:  Right? 
+
+Speaker B:  What's the follow up time between the two? So four times within six months treatment would have been two days or whatever I said. You said it right. Two days. So we can do jingles first. So what's it, what's your name? 
+
+Speaker A:  Yousef. 
+
+Speaker B:  And phone number? 
+
+Speaker A:  647332 3395. 
+
+Speaker B:  So everyone has to be kind of quiet just in case. Except the voice. 
+
+Speaker D:  Hi, this is Kate, an AI representative from Bedme Pharmacy on 600 University Avenue. I'm calling about your last shingles vaccination. In order to make sure I'm sharing information with the right person, could you. 
+
+Speaker A:  Tell me if this is youf speaking? Yes, it's Yousef. 
+
+Speaker D:  Thanks for confirming that. You said for security purposes. Could you also please confirm your last name? 
+
+Speaker A:  Habib. 
+
+Speaker D:  Thanks for confirming your last name too, Yusef. And calling about your last shingles vaccination. Did you experience any symptoms from the vaccine? 
+
+Speaker A:  Nope. 
+
+Speaker D:  That's great to hear. You didn't experience any harsh Symptoms you had. Would you like to schedule your second dose now? 
+
+Speaker A:  Yeah, go ahead. 
+
+Speaker D:  All right, Yusef, he'll transfer you to bomb another AI agent help you with your appointment for the second chance vaccination. It might take a few seconds, so hang tight. 
+
+Speaker A:  Who's it transferring? It's an actual agent or an AI agent. 
+
+Speaker B:  Oh, sorry. It's an AI agent. 
+
+Speaker A:  That's very cool. That's very, very cool. 
+
+Speaker B:  So essentially it's mostly out safe for patients maybe who aren't as comfortable with email. You can send them the phone and. 
+
+Speaker A:  It shows us my number. 
+
+Speaker B:  It will show as your pharma instead of that spam. But more importantly, you can actually see everything that happened just now. So let me just refresh the page so you can see the whole conversation that just happened because this call might be happening on the weekend or when you're not working. Right. So you want to be able to audit the call. 
+
+Speaker A:  That's incredible. 
+
+Speaker B:  If let's say you said yes, you did have side effects, it would actually take those questions active pharmacist. The pharmacist will call you back in the future. You probably don't want to book you. 
+
+Speaker A:  Nice. That's so cool. 
+
+Speaker B:  That's the patient coner so the clinical assistant. What we saw I showed you part of it which was the AI scribe the other part of it, you want. 
+
+Speaker A:  To have a seat? 
+
+Speaker B:  Take a seat. 
+
+Speaker A:  Take a seat. 
+
+Speaker B:  No, no, no, no, no. 
+
+Speaker E:  Take a seat, take a seat. No, I promise I'm all good. Thank you though. 
+
+Speaker B:  She's already a user of us. She's just. This is the other one. This we have a clinical search Medicis also has ready. Oh, oh. 
+
+Speaker A:  A sea. Nice. 
+
+Speaker B:  So give me like a clinical question. You would have had to look up on up to date or something. 
+
+Speaker A:  What is the difference between prolia and juventi? 
+
+Speaker B:  You're going to have to spell for. 
+
+Speaker A:  Me here P. R. Ok. I don't know if I spent that word. Second one right. 
+
+Speaker B:  That was close enough. It's probably okay. Okay, we'll see. So it's looking through millions of pubmed articles, drug monographs. Right now I'm trying to pull the right source to answer that question for you. So I see it found. 
+
+Speaker A:  So it gives you the answer right. 
+
+Speaker B:  There and the sources so you. Because AI you got to be able to check its work pretty easily, right? So if you're like all right, cool. I don't, you know I. It sounds legitimate but I want to see what's going on. So it highlights the paragraph. 
+
+Speaker A:  Oh, wow. 
+
+Speaker B:  In the Article. 
+
+Speaker A:  I've been using Grok to do a lot. I found Grok has been my most reliable for that. And they'll give me. They'll give me sources as well. 
+
+Speaker B:  I see. But does it pull? I guess you can always. 
+
+Speaker A:  I'll do the. I'll do the Grok deep research. 
+
+Speaker B:  Right. 
+
+Speaker A:  Not their regular. 
+
+Speaker B:  Okay, so it takes a little longer. 
+
+Speaker A:  It takes about 20. Yeah. Not as fast as this because we're. 
+
+Speaker B:  Only trained on pub articles, drug monographs, peer reviewed sources. We're not training on Reddit or whatever. 
+
+Speaker A:  Right. Yeah. 
+
+Speaker B:  Because sometimes AIs trade on random stuff. 
+
+Speaker E:  Where does that clinical search sit within the platform? 
+
+Speaker B:  Right now it's just on the side in this button. You might see it on your platform. Ready? We're trying to have it so that it's within the Scribe. So we actually want to build this into this interface. 
+
+Speaker E:  So this is the scribe feature. 
+
+Speaker B:  When you start Scribe and it just fills out the. The soap goes for you as you speak. 
+
+Speaker E:  Amazing. 
+
+Speaker A:  How are you finding. Can you use my. Me? 
+
+Speaker E:  Oh yeah. 
+
+Speaker B:  Not describe yet. 
+
+Speaker A:  Not. Not describe. Yeah. 
+
+Speaker B:  No. Dude, her calendar is insane. 
+
+Speaker A:  Like, where do you practice? Oh, okay. So you're. Are you in a clinic? Yes. Okay. 
+
+Speaker E:  Yeah. 
+
+Speaker A:  So you're like super, super. 
+
+Speaker B:  Okay. 
+
+Speaker A:  In Nova Scotia they have to use Manu. Right. Like, I think it's. As part of the pilot. It was like highly recommended. 
+
+Speaker E:  It was highly recommended. 
+
+Speaker A:  It was. 
+
+Speaker E:  It was definitely like different stores were doing different platforms. But for the professional pharmacy team at Pans to try to sort things, they made Medby sort of our very strong recommendation. But now we're looking at platforms to do this. So when we pilot it. What's the other one that works with Tally? 
+
+Speaker B:  Tally and Heidi? There's a few. I would say they're really good on the doctor side because they generate generic cell codes quite well. But if you wanted to do pharmacy documents, notifications of providers, patient summaries. I think. 
+
+Speaker E:  Yeah, I think we're hoping that this all works so that we can just have that one system integrated. 
+
+Speaker B:  Yeah, Tally's not too bad though. Tally is also a web based browser, so you can actually launch it within medme as well. Kind of. Ok. Just as a pop up. Kind of like. Kind of like this just now. It's like a pop up. Sorry. Yeah. 
+
+Speaker E:  And AI described it, there's no way to have that with our emr. There's no way to work that into our EMR system, is there? 
+
+Speaker B:  Not the moment access. Yeah. But you can click on copy all when you're done. 
+
+Speaker E:  Yeah. And Just paste it. 
+
+Speaker A:  Yeah. What EMR you want to use? 
+
+Speaker B:  Emit access Telus solution that they forced to use. 
+
+Speaker A:  No, but shoppers uses Accuro in Nova Scotia too. Nova Scotia. 
+
+Speaker E:  They're. 
+
+Speaker B:  They're using your cura. I guess they need just any emr. 
+
+Speaker E:  Just that access at non shoppers. Are you shoppers? 
+
+Speaker A:  I used to be. I used to work on the phone, so. 
+
+Speaker E:  Oh, did you. Oh, okay, right up. Are you independent now or. Yeah, no, but shoppers don't use. 
+
+Speaker B:  I see. 
+
+Speaker A:  So. But they don't have any of these features. Any. They just use. They just use MedMe. 
+
+Speaker B:  But they do have a cure integration though. So if they did use us for scribe, it actually would show up in the wind. New hero it was. 
+
+Speaker E:  But now shoppers uses Mendy as well. Right. 
+
+Speaker B:  Just kind of a different. They only really use us for scheduling. They don't really use us for any of the patient forms. 
+
+Speaker A:  Only for flu. You guys uploaded their form? No, the patient forms I meant. 
+
+Speaker B:  Oh, patient forms they use for flu and covert. 
+
+Speaker A:  They had. You guys had the. 
+
+Speaker B:  Even Covid came really late. I think that by the time you left. 
+
+Speaker A:  I left this year. I left. I just left this year like last year. But COVID test, because I remember they wanted like the. They wanted the two vaccines, one form and I think you guys rolled that out for them. And then at some point the issue was like it was printing on too many pages, so they just wanted to condense the number of pages. 
+
+Speaker E:  So when you start scribe, you can just chat with the patient. It's going to pull out like everywhere appropriately into that. So. 
+
+Speaker B:  Yeah, so exactly when you pick start scribe, you get consent and then once you do that, it's going to start. 
+
+Speaker A:  Thinking you would just turn this on. 
+
+Speaker E:  As soon as the patient. This will be especially helpful. 
+
+Speaker B:  I think the coolest part. So obviously I would say the primary goal is you don't have. Basically you don't have to do any note taking during the console anymore. You can actually control and then when you're done, you can actually move on to the next location pretty quickly. Right. You don't need that much of a gap anymore in between consults. So you're not switching gears. 
+
+Speaker A:  Does this help? I see you guys have the ad clerk. If you say in there like, you know, book follow up, 30 days, will it automatically set up an appointment for 30 days or is it not quite there yet? Like, like as part of. Like you have your consultation. You're. You're talking, you're doing this, you're. You're. You're developing your plan, your plan of care. 
+
+Speaker B:  Yeah. 
+
+Speaker A:  Does it detect that you've assigned a follow up and then schedule it? 
+
+Speaker B:  Yeah, it does. So if you have agreed on the time during the consult, it actually books in already, but chances are you won't be able to agree immediately. Yeah, yeah. So you would schedule a message to be sent out in the future. Okay, so in 60 days it would. 
+
+Speaker A:  Send them a message to book. 
+
+Speaker B:  Yeah, because ideally if you're not negotiating time slots with the patient on the spot, patients usually don't have the calendars on them or you know, like, so you don't, you don't want to work out. 
+
+Speaker A:  It's typically done like with like, I don't know, in your clinics. You guys also have like a clock. Shoppers used to call it the concierge. Like the care cons, like the, like. 
+
+Speaker B:  The person that you hired. 
+
+Speaker A:  Yeah. So typically that's where, that's where they book their appointments. You're not dealing with that in the room? 
+
+Speaker E:  No, we're not dealing with that in the room. And actually like we find we have to book problems at the time. Like so when they leave that pharmacy. 
+
+Speaker A:  Yeah, but you're not z. You're telling them to go out to the next station. 
+
+Speaker E:  We don't do any scheduling. 
+
+Speaker B:  But for them, they can afford a full time hire. 
+
+Speaker A:  Right. 
+
+Speaker B:  For. For pharmacies getting started, they may not. 
+
+Speaker A:  Be able to get time. No, definitely not. Yeah. 
+
+Speaker E:  This would be super helpful though, in that case. 
+
+Speaker A:  Absolutely. 
+
+Speaker B:  But for data entry though, quick question. Is Med Access online? Web or dev? 
+
+Speaker E:  Talk about web Web. Yes. 
+
+Speaker B:  Okay, so interesting. If, if you're comfortable giving us your login to Med Access, we could actually use our admin clerk to automatically. 
+
+Speaker E:  I think Lynn actually has a test. 
+
+Speaker B:  Okay, I'll hit them up. We're currently doing this for immunization records because you can't integrate with immunization records. They don't have APIs. So the only way is to get their login and manually type it in to a browser. 
+
+Speaker E:  The immunizations into Internet access. 
+
+Speaker B:  No, we're doing this for Manitoba. Similar to a Covaxon. That's right, similar to Covaxon. 
+
+Speaker E:  All of ours are tracked with. 
+
+Speaker B:  So you have to manually do that at the end of each vaccine. 
+
+Speaker E:  Yeah, so it's just where we do all of our documentation within Candyman Ice. So when we provide the vaccine, we just, you know, you put your lot expiring time in administration and then it launches and they have like a permanent record. 
+
+Speaker B:  I see, I see, I see. 
+
+Speaker A:  So theoretically, could you do that, all that here. And then if you could find an integration with Cannonized, then it could just trans. 
+
+Speaker E:  But this is Pan's next big push. Like, we're not bringing on a lot of new pilots over the next few years. Like, it's all idea. It's content integration because it's so. Like, what we found from running these primary care clinics is that the inefficiencies of having to go between so many different. 
+
+Speaker B:  That's right. 
+
+Speaker A:  Yeah. 
+
+Speaker B:  Hopefully we can be that single tool for you guys. And it's not even the cost or anything because Nova Scotia is so ahead. We just want to build something that works for you guys. We generally don't charge much for Nova Scotia. And then it's just everyone else in other provinces maybe have to pay in. 
+
+Speaker A:  The future or just subsidized by shoppers. 
+
+Speaker B:  He's not wrong. Summer's estate. 
+
+Speaker A:  I have a question. Why do you feel a need to use your E EMR if this can. If everything can be documented? 
+
+Speaker E:  So we're four. So we're actually. 
+
+Speaker A:  Oh, it's because it's required by the vet. What's the logic behind it? That's a really good question. 
+
+Speaker E:  I think maybe. Well, and before. Honestly, Nick, at the beginning, all those patients portals and documentation weren't as readily available. They started these clinics that's newer than that and the EMR had them integrated already. All of the decisions support tools with the AIDS that you have. 
+
+Speaker B:  Okay. 
+
+Speaker E:  I don't think that they were there in the. Like, I don't think we could transfer over to Vigilance Town. 
+
+Speaker B:  I think so. Those are only for minor elements. Yeah. And we've had them for, I think a year. A year now. Yeah, but maybe. I don't remember. I don't. Are they in Latinosa? Yeah, they are now. Okay. 
+
+Speaker E:  The other, the other thing is that order labs, like, and get labs and get all of, like, you know, patient discharge across all of the reports. 
+
+Speaker A:  And. 
+
+Speaker B:  There'S some benefits there. 
+
+Speaker A:  So what do you guys expect to do next, like, in the next year? What other features? Like the big thing that's maybe enticing? Like, I. I don't use menu today. 
+
+Speaker E:  Oh, you don't? What do you use? 
+
+Speaker A:  I use Medicis. 
+
+Speaker E:  They try to get me too. 
+
+Speaker A:  I mean, I was telling Nick I mainly use them because I negotiate with them to build my website for me for the same cost of the annual subscription. Like, kind of save money on one. 
+
+Speaker B:  Of the things if you hit us up, we could have done. 
+
+Speaker A:  I know, but I also. I mean, coming from Shoppers. I just thought of you guys mainly as a scheduler, because at shoppers, I had the bias. If you guys were just a scheduler. Right. I'm really glad I stopped by today. But, you know, like, one thing they've introduced that's pretty cool is. I mean, it's useless. Do you guys remember Nova Scotia? But they have this access to care program where they have. I can pay them an extra 100 bucks a month. 
+
+Speaker B:  That follow up, they give me delegations. 
+
+Speaker A:  Like I can now, like in Ontario. I can't. I can't prescribe for travel health. I can't prescribe for. For EV Financial. But through Medicis, they've set up agreements with doctors and mps and they've set up specific algorithms. So if I follow their algorithms, I can. I have the forms that are already co. Signed by the NPS or the doctors for certain. 
+
+Speaker B:  We're adding. 
+
+Speaker A:  But I have to follow their assessment, their diagnosis criteria. 
+
+Speaker B:  Yeah. So we're adding that this year. 
+
+Speaker A:  You are? 
+
+Speaker B:  Yeah. 
+
+Speaker A:  Okay. 
+
+Speaker B:  So we're hiring. In fact, you might have seen our genie. We're hiring the nurse practitioner on site. Is it the same though? Because we have a similar setup for travel consult to prescribe the vaccines within 10 minutes. But that's different. 
+
+Speaker A:  How much do you guys pay? That's. That's a service that I could do right now with you guys. 
+
+Speaker B:  You can do that right now? Yeah. 
+
+Speaker A:  Okay, so I just charge a fee to the patient, then I give you guys part of that fee, I assume, or you guys charge me a fee. 
+
+Speaker B:  Telemed charges you. 
+
+Speaker A:  Okay. 
+
+Speaker B:  We don't charge you. 
+
+Speaker A:  Okay. So you're just like the platform through which everything happens. 
+
+Speaker E:  Holy sm. You guys are doing so much. 
+
+Speaker A:  Yeah. 
+
+Speaker B:  Yeah, it's a lot. 
+
+Speaker E:  What time are you here until? I'll like throw a note out in my six or seven. 
+
+Speaker B:  I think they. I think the. 
+
+Speaker E:  Because I don't go on until 3:45. 
+
+Speaker A:  What's your last. What's your presentation? 
+
+Speaker E:  Oh, are you. 
+
+Speaker B:  Well, so the mender hall is at 4:45. So you typically come at 4:45. But we'll be here until 6. But lots of things coming. Like we're doing. In fact, Tahar is running all those. 
+
+Speaker A:  Okay. 
+
+Speaker B:  So he's actually hiring in to help drive that side of things. On the product side, we just want to be able to string things together better. That's the. 
+
+Speaker A:  Yeah, I was. And I don't. We don't need to talk about numbers right now. But how are you guys tiered in different? Or is it just one Subscription and you get access to everything for pharmacies. 
+
+Speaker B:  Yeah. So for an independent pharmacy like you, the base is 25. 
+
+Speaker A:  Okay. 
+
+Speaker B:  But it's 50 cents per service. 
+
+Speaker A:  50 cents per service. 
+
+Speaker E:  But then you can do to max. 
+
+Speaker B:  And it maxes out. 
+
+Speaker E:  We always max and we, we really max. 
+
+Speaker B:  So you just pay annual and it'll be cheaper that way. 
+
+Speaker A:  What's the annual? 
+
+Speaker B:  It's $1,000 per year. 
+
+Speaker A:  That's it for everything here. 
+
+Speaker B:  Because we're not charging AI anything at all. Right. 
+
+Speaker A:  Wait, what? Is that a true ivr? I know it's not a true ivr, but is it like if a patient calls my pharmacy and is like, I want to refill my prescription and they prescription. 
+
+Speaker B:  Good question. So right now, because we haven't set up some of those endpoints with the PMSS yet. 
+
+Speaker A:  Okay. 
+
+Speaker B:  You actually have to keep your ivr. But we were the first point of contact. We might send people to your IVR for refills or other things that we cannot handle. 
+
+Speaker A:  Could I, could you send. Could you print me a fax or print me a. Like, instead of connecting to my ivr, if a patient called in and was like, I want to refill this prescription, could you just send me a fax with the prescription number? Or I still need the IVR regardless. 
+
+Speaker B:  I could do. But IVRs already have integrations with DNS. It might be. 
+
+Speaker A:  I mean, I haven't set up my I IVR yet. We're in the process of setting it up, so I don't even know what it's going to look like. But Metasys doesn't even have an integration with fillware. 
+
+Speaker B:  Correct. 
+
+Speaker A:  So I think it's going to be. 
+
+Speaker B:  None of us do that. 
+
+Speaker A:  I think it's going. I think it's. I mean, it's too expensive. The only company that does is a company called MJ and it's 150amonth. I'm not for an IVR. It's way too much. I mean, for a small pharmacy like we just started. I can't afford to do that. 
+
+Speaker B:  No. If it's because cold charges 100 bucks, someone. Yeah, they're not making money. 
+
+Speaker A:  MJ's not making money. 
+
+Speaker B:  MJ's not Making that much money because pro charges them. 
+
+Speaker A:  But with Medicist, I like, I, I don't need it. 
+
+Speaker E:  So you're filler. 
+
+Speaker A:  I'm can't believe you're. I did it. Cuz it's. I mean, we just started. I went. I just told Crystal and Greg this too. 
+
+Speaker B:  You're young shoppers. Why you on filler? 
+
+Speaker A:  Dude, I called, I told, I told. They want Kroll was like, it's $8,000 as a startup cost to start up with Kroll. Failaware was free. And then I talked, I was talking to Kroll and they were like, it's $8,000 whether you start up new or you switch later on. So I was like, I'm just gonna save it until I can switch later on because I saved $8,000 now to spend on something else. I just. It's called Lawrence Park Fantasy. 
+
+Speaker E:  Okay, where is that? 
+
+Speaker A:  Are you familiar with Toronto? Yes, it's at Young and Lawrence. 
+
+Speaker E:  Oh, oh, right here. 
+
+Speaker A:  Yeah. Right. 
+
+Speaker B:  So good spot. 
+
+Speaker A:  It's a good spot. Yeah. Yeah. 
+
+Speaker B:  But are there a lot of pharmacies? 
+
+Speaker A:  No, my only competitors are shoppers in Rexall. 
+
+Speaker B:  Are they there or like shepherd or. 
+
+Speaker A:  Like, you know, so like. No, in my building there's no one. And then a kilometer north is a shoppers and a Rexall and 2km west is a shoppers. That's it. So yeah, it's a nice neighborhood. So it's very different. I mean, like coming from shoppers. It's super different. 
+
+Speaker B:  Yeah. Oh, one more thing. I think one of the big differences, I'm curious that medicine has this now. They don't really maintain the patient record. Is that from my understanding? 
+
+Speaker A:  So for me to. Yeah, they don't. They don't. I have to download an. An Excel file and upload the Excel file of patients onto medicist. 
+
+Speaker E:  Oh, dear. 
+
+Speaker B:  But let's say you do a second appointment. 
+
+Speaker A:  No, it maintains it. 
+
+Speaker B:  Is it attached to the same patient profile the second time? 
+
+Speaker A:  I don't know. I haven't had a second appointment with. 
+
+Speaker B:  A patient yet because we had someone switch from meta a few months ago because they didn't have that. So I don't know if they have it now. 
+
+Speaker A:  I don't. I don't know. 
+
+Speaker B:  Yeah, this is great. 
+
+Speaker A:  I didn't know they did all this. And honestly, your price is super competitive. Like, I pay a lot more. I pay a lot more more. I paid percentage wise substantially more for medicine for effectively the same. But I, I can't complain. They've been really good to me. But I didn't know you guys did all this stuff. 
+
+Speaker B:  To be honest, that's why we're here first time pharmacy. You. Yeah. Gotta get the word out because it was. It's pretty expensive to be here. Right? That's what we're like, ah, should we be here? We really have like most people already kind of know us. We're like, no, maybe that's not true. Maybe people have a different perception of the whole. Lots of new products need AI. 
+
+Speaker A:  So I'll definitely do it. 
+
+Speaker E:  Do this. 
+
+Speaker A:  I'll keep in touch. And then in a year, my contract. My contract with Medicist ends next February. So I'll be. I'll be exploring what options I have. 
+
+Speaker A:  Make sure. Do you have access to the website that they built you? 
+
+Speaker C:  Yeah, it's on my Squarespace. 
+
+Speaker B:  Okay. 
+
+Speaker C:  We asked them. We already had a domain on Squarespace, so we just asked them to build it on Squarespace. 
+
+Speaker A:  You were using Squarespace already? 
+
+Speaker C:  I found it was, but I found I was like, honestly, I'll say. I know. I definitely could have done it myself. I just went from, like, having my job at Shoppers was so intense, I switched from my job. Bristow wouldn't give me Kroll for free, so I couldn't do it. 
+
+Speaker A:  Wait, fine. Were you working with Sarah or Karista? 
+
+Speaker C:  No. So Sarah was my boss at some point, and then I went to Operations. She was from Constantine? Yeah, actually, yeah, before. 

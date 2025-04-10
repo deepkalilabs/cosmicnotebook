@@ -7,6 +7,7 @@ import { Slider } from '../ui/slider';
 import { Button } from '../ui/button';
 import { Play, Pause } from 'lucide-react';
 
+
 export default function AudioPlayer() {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -34,6 +35,7 @@ export default function AudioPlayer() {
         const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
         console.log('Signed URL:', signedUrl); // Debug: Verify URL
         setAudioUrl(signedUrl);
+
 
         const audio = new Audio(signedUrl);
         audioRef.current = audio;
