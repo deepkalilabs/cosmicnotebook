@@ -14,35 +14,6 @@ export default function FAQSection() {
 
   const faqItems: FAQItem[] = [
     {
-      question: "How much does Cosmic cost?",
-      answer: "For now, Cosmic is 99$ for pre-orders and no subscription is required. If you're interested in the premium features, we'll waive the device cost and launch a subscription model for 199$ in Q2 2025.",
-    },
-    {
-      question: "What's included in the box?",
-      answer: (
-        <div>
-          <p className="mb-4">Each Cosmic package includes:</p>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>Cosmic wearable device</li>
-            <li>Charging case</li>
-            <li>USB-C charging cable</li>
-            <li>Quick start guide</li>
-            <li>Access to the Cosmic mobile app</li>
-          </ul>
-        </div>
-      ),
-    },
-    {
-      question: "When will I receive my Cosmic?",
-      answer:
-        "Pre-orders will begin shipping in Q1 2025. Once your order is processed, you'll receive a confirmation email with tracking information.",
-    },
-    {
-      question: "What does 'always listening' mean?",
-      answer:
-        "Cosmic works throughout your trade show day distinguishing meaningful conversations from background noise. The goal is to help you focus on building relationships while Cosmic automatically captures the interactions that matter, ensuring no valuable insight is ever lost in the hustle of a busy event floor.",
-    },
-    {
       question: "Do I need a phone to be able to use the device?",
       answer:
         "Yes, Cosmic requires a smartphone (iOS or Android) to access all features. The device can record offline, but you'll need the app to view transcriptions, summaries, and to manage your recordings.",

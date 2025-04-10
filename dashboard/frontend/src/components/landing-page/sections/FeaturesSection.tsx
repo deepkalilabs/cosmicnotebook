@@ -29,6 +29,11 @@ export function FeatureCard({ icon, title, description }: FeatureCardProps) {
 export default function FeaturesSection() {
   const features = [
     {
+      icon: <Zap className="h-6 w-6 text-indigo-400" />,
+      title: "AI-powered coaching",
+      description: "Cosmic uses AI to transcribe, summarize, and generate insights from every in-person conversation for sales, customer success, and support."
+    },
+    {
       icon: <DollarSign className="h-6 w-6 text-indigo-400" />,
       title: "Review each call to maximize ROI",
       description: "Companies spend $30K on a booth at a trade show. Cosmic records and transcribes each conversation and helps you stay on top of every conversation to ensure quality."
@@ -52,11 +57,6 @@ export default function FeaturesSection() {
       icon: <Volume2 className="h-6 w-6 text-indigo-400" />,
       title: "Works seamlessly in loud environments",
       description: "Our proprietary AI model is trained to work in noisy environments, so you can get accurate transcripts even in loud environments."
-    },
-    {
-      icon: <Zap className="h-6 w-6 text-indigo-400" />,
-      title: "All-day Battery",
-      description: "Cosmic has a 96+ hour battery life to last through the longest trade shows."
     }
   ];
 
@@ -70,8 +70,8 @@ export default function FeaturesSection() {
             <div className="flex flex-col space-y-4">
               <div className="space-y-2">
                 <h2 className="text-4xl font-bold tracking-tighter md:text-5xl/tight">
-                  Maximize the ROI of your <br />
-                  <span className="text-indigo-600">Trade Show Investment</span>
+                  Gain 100% visibility into every <br />
+                  <span className="text-indigo-600">in-person conversation</span>
                 </h2>
               </div>
               <div className="pt-4">

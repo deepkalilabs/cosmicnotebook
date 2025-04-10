@@ -13,9 +13,8 @@ const tiers = [
   {
     name: 'Starter',
     price: 'Free',
-    description: '$99 one-time payment for 1 device.',
+    description: 'Free forever.',
     features: [
-      'Cosmic wearable device',
       '8 hours of recording per month',
       'Basic transcription',
       '7-day conversation history',
@@ -29,12 +28,13 @@ const tiers = [
   {
     name: 'Professional',
     price: '$199/mo',
-    description: 'Free device. Monthly subscription.',
+    description: 'Monthly subscription.',
     features: [
       'Everything in Starter',
       '40 hours of recording per month',
       'Advanced transcription',
       'AI-powered summaries',
+      'AI-powered coaching',
       '30-day conversation history',
       'Sync to CRM',
       'Priority support'
@@ -46,16 +46,16 @@ const tiers = [
   {
     name: 'Enterprise',
     price: 'Custom',
-    description: 'Free devices. Contact us for more details.',
+    description: 'Contact us for more details.',
     features: [
-      'Multiple Cosmic devices',
       'Unlimited recording',
       'Premium transcription',
       'Advanced AI summaries',
       'Unlimited conversation history',
       'Team collaboration features',
       'Custom integrations',
-      'Dedicated support'
+      'Dedicated support',
+      'HIPAA compliance'
     ],
     button: 'Contact Sales',
     action: 'mailto:shikharsakhuja@gmail.com',

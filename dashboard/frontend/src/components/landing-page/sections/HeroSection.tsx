@@ -12,14 +12,14 @@ export default function HeroSection() {
             <div className="flex flex-col justify-center space-y-4 max-w-3xl mb-12">
               <div className="space-y-2">
                 <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                Turn Trade Show Conversations Into Sales.
+                Get visibility into every in-person conversation
                 <br/> 
-                <span className="text-indigo-600">Without Taking Notes</span>
+                <span className="text-indigo-600">Using AI</span>
                 </h1>
                 <p className="text-gray-600 md:text-xl">
-                    Cosmic is a wearable device that automatically transcribes, summarizes, and syncs sales conversations at conferences to your CRM. 
+                    Cosmic records, transcribes, and generates insights from every in-person conversation for sales, customer success, and support.
                     <br/>
-                    <span className="text-slate-600 text-md font-bold">Save 15+ hours of manual work after each event. Close more deals.</span>
+                    <span className="text-slate-600 text-md font-bold">Coach your team with unparalleled visibility. Close more deals.</span>
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
@@ -38,7 +38,7 @@ export default function HeroSection() {
                   <div className="md:col-span-3 flex flex-col md:flex-col gap-4 sm:flex-row sm:justify-center">
                     <div className="relative aspect-square w-full sm:w-1/2 md:w-full overflow-hidden rounded-xl">
                       <Image 
-                        src="/pendant.jpg"
+                        src="/talking.png"
                         fill
                         sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
                         alt="Cosmic recording pendant"
@@ -46,11 +46,11 @@ export default function HeroSection() {
                         priority
                       />
                     </div>
-                    <div className="relative aspect-square w-full sm:w-1/2 md:w-full overflow-hidden rounded-xl">
+                    <div className="relative aspect-square w-full overflow-hidden rounded-xl">
                       <Image 
-                        src="/pendant2.png"
+                        src="/recording.png"
                         fill
-                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+                        // sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
                         alt="Cosmic recording pendant"
                         className="object-cover hover:scale-105 transition-transform duration-300"
                         priority
