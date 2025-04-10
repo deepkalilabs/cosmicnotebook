@@ -95,7 +95,15 @@ export default function MeetingView() {
       if (matchCount > 0) {
         setCurrentMatchIndex((prev) => {
           const nextIndex = prev + 1;
-          return nextIndex >= matchCount ? 0 : nextIndex;
+          const newIndex = nextIndex >= matchCount ? 0 : nextIndex;
+          
+          // Find and scroll to the current match
+          const marks = document.querySelectorAll('mark');
+          if (marks[newIndex]) {
+            marks[newIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          
+          return newIndex;
         });
       }
     }
