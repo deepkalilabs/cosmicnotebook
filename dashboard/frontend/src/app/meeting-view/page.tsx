@@ -91,6 +91,7 @@ export default function MeetingView() {
     if (e.key === 'Enter' && searchTerm) {
       const matches = meeting?.transcript.match(new RegExp(searchTerm, 'gi'));
       const matchCount = matches?.length || 0;
+      console.log(currentMatchIndex);
       
       if (matchCount > 0) {
         setCurrentMatchIndex((prev) => {
