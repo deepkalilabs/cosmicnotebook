@@ -76,11 +76,11 @@ export default function MeetingView() {
 
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col min-h-screen">
       {/* Main Content Area */}
-      <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
+      <div className="flex flex-col lg:flex-row flex-1 overflow-y-auto">
         {/* Left Column - Topics */}
-        <div className="w-full lg:w-1/4 p-4 border-b lg:border-b-0 lg:border-r">
+        <div className="w-full lg:w-1/4 p-4 border-b lg:border-b-0 lg:border-r overflow-y-auto">
           <div className="space-y-4">
             <h1 className="text-2xl font-bold">{meeting.title}</h1>
             <p className="text-sm text-muted-foreground">
@@ -122,8 +122,8 @@ export default function MeetingView() {
         </div>
 
         {/* Middle Column - Summary and Details */}
-        <div className="w-full lg:w-2/4 p-4 border-b lg:border-b-0 lg:border-r">
-          <ScrollArea className="h-[50vh] lg:h-full">
+        <div className="w-full lg:w-2/4 p-4 border-b lg:border-b-0 lg:border-r overflow-y-auto">
+          <ScrollArea className="h-[calc(100vh-16rem)] lg:h-full">
             <div className="space-y-6">
               {/* Summary Section */}
               <Card>
@@ -141,7 +141,7 @@ export default function MeetingView() {
         </div>
 
         {/* Right Column - Transcript */}
-        <div className="w-full lg:w-1/4 p-4">
+        <div className="w-full lg:w-1/4 p-4 overflow-y-auto">
           <Card className="h-full">
             <CardHeader className="border-b">
               <div className="flex items-center justify-between flex-wrap gap-2">
@@ -154,7 +154,7 @@ export default function MeetingView() {
               </div>
             </CardHeader>
             <CardContent className="p-0">
-              <ScrollArea className="h-[50vh] lg:h-[calc(100vh-16rem)]">
+              <ScrollArea className="h-[calc(100vh-20rem)] lg:h-[calc(100vh-16rem)]">
                 <div className="space-y-4 p-4">
                   <div className="space-y-2">
                     <div className="flex items-start gap-2">
@@ -171,7 +171,7 @@ export default function MeetingView() {
       </div>
 
       {/* Bottom Audio Player */}
-      <div className="h-16 border-t bg-background">
+      <div className="h-16 border-t bg-background sticky bottom-0">
         <section className="flex h-full items-center px-4">
               <Player />
         </section>
