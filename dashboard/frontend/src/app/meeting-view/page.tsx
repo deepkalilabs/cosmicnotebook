@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import Player from '@/components/audio/Player';
+import ReactMarkdown from 'react-markdown';
 
 
 interface Meeting {
@@ -25,13 +26,16 @@ export default function MeetingView() {
          // Fetch transcript from public directory
          const transcriptResponse = await fetch('/medme.txt');
          const transcriptText = await transcriptResponse.text();
+
+         const summaryResponse = await fetch('/medme_summary.txt');
+         const summaryText = await summaryResponse.text();
         // Simulate API call
         const mockMeeting = {
           id: '1',
           title: 'Team Sync Meeting',
           date: '2024-03-20',
           transcript: transcriptText,
-          summary: 'Key points discussed: Project timeline, resource allocation, next steps.',
+          summary: summaryText,
         };
         setMeeting(mockMeeting);
       } catch (error) {
@@ -102,7 +106,9 @@ export default function MeetingView() {
                   <h2 className="text-xl font-semibold">Summary</h2>
                 </CardHeader>
                 <CardContent>
-                  <p className="leading-7">{meeting.summary}</p>
+                  <ReactMarkdown className="leading-7 prose dark:prose-invert max-w-none">
+                    {meeting.summary}
+                  </ReactMarkdown>
                 </CardContent>
               </Card>
 

@@ -1,0 +1,60 @@
+This transcript captures a conversation at a pharmacy conference between MedMe representatives and several pharmacy professionals, including a pharmacy owner named Yousef who currently uses Medicist software.
+Main Discussion Points:
+
+**MedMe's AI Features**
+
+AI-powered note-taking tool that automatically generates consultation documentation
+Patient concierge system with AI phone calls for appointment follow-ups
+Clinical search tool that pulls information from medical literature
+Integration capabilities with other pharmacy systems
+
+
+**Competitive Landscape**
+
+Yousef using Medicist but impressed with MedMe's features
+Discussion about relative advantages compared to competitors
+MedMe offering contract buyouts for customers who want to switch
+
+
+**Product Demonstration**
+
+Live demo of the AI scribe functionality through a mock UTI consultation
+Demo of AI phone call follow-up system for vaccination appointments
+Exploration of clinical search capabilities
+
+
+**Pricing Details**
+
+Base fee: $25/month
+Per service: $0.50 per service
+Annual option: $1,000/year (better for high-volume users)
+
+
+**Integration Questions**
+
+Discussion about MapFlow integration
+- Fillware compatibility
+- EMR system connections, particularly in Nova Scotia
+
+
+**Expansion Plans**
+
+- Adding prescription delegation features similar to Medicist's offering
+- Improving system integration capabilities
+- Enhancing AI capabilities across the platform
+
+
+
+**Next Steps for MedMe:**
+
+- Follow up with Yousef - His Medicist contract expires February 2026; maintain contact and prepare transition proposal
+- Develop integration with Fillware - Critical need identified by independent pharmacy owners
+- Expand EMR integration capabilities - Focus on Med Access and Accuro compatibility
+- Launch the prescription delegation program - Accelerate development of the feature mentioned as "coming this year"
+- Improve marketing materials - Many potential customers only know MedMe as a scheduling tool, not for its AI capabilities
+- Create educational content - Demonstrate AI documentation workflow improvements with real metrics
+- Contact Lynn - Access the test environment for Med Access integration mentioned during the conversation
+- Coordinate with Tahar - Follow up on his progress with the new service offerings mentioned
+
+The conversation reveals significant interest from potential customers in MedMe's AI capabilities, though integration with existing pharmacy systems remains a critical consideration for adoption.
+Please double-check check response. It may have some errors.
