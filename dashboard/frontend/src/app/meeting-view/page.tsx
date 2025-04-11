@@ -20,104 +20,45 @@ interface Meeting {
   };
 }
 
-export default function MeetingView() {
-  const [meeting, setMeeting] = useState<Meeting | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentMatchIndex, setCurrentMatchIndex] = useState(-1);
-  const searchParams = useSearchParams();
-  const meetingId = searchParams.get('id');
+function MeetingViewContent({ meeting }: { meeting: Meeting }) {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [currentMatchIndex, setCurrentMatchIndex] = useState(-1); 
 
-  console.log(meetingId);
-
-  useEffect(() => {
-    // TODO: Replace with actual API call
-    const fetchMeeting = async () => {
-      try {
-         // Fetch transcript from public directory
-         const transcriptResponse = await fetch(`/${meetingId}.txt`);
-         const transcriptText = await transcriptResponse.text();
-
-         const summaryResponse = await fetch(`/${meetingId}_summary.txt`);
-         const summaryText = await summaryResponse.text();
-
-         const tagsResponse = await fetch(`/${meetingId}_tags.json`);
-         const tags = await tagsResponse.json();
-        // Simulate API call
-        const meetingObject = {
-          id: '1',
-          title:  `${meetingId} meeting`,
-          date: '2024-04-04',
-          transcript: transcriptText,
-          summary: summaryText,
-          topics: tags.tags,
-          sentiments: tags.sentiments,
-        };
-        setMeeting(meetingObject);
-      } catch (error) {
-        console.error('Error fetching meeting:', error);
-      } finally {
-        setLoading(false);
-      }
+    const highlightText = (text: string) => {
+        if (!searchTerm) return text;
+        
+        const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
+        return parts.map((part, i) => 
+            part.toLowerCase() === searchTerm.toLowerCase() 
+                ? <mark key={i} className="bg-yellow-200 dark:bg-yellow-800">{part}</mark>
+                : part
+        );
     };
 
-    fetchMeeting();
-  }, []);
+    const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && searchTerm) {
+            const matches = meeting?.transcript.match(new RegExp(searchTerm, 'gi'));
+            const matchCount = matches?.length || 0;
 
-  
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        Loading...
-      </div>
-    );
-  }
-
-  if (!meeting) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        Meeting not found
-      </div>
-    );
-  }
-
-  const highlightText = (text: string) => {
-    if (!searchTerm) return text;
+            if (matchCount > 0) {
+                console.log(currentMatchIndex);
+                setCurrentMatchIndex((prev) => {
+                    const nextIndex = prev + 1;
+                    const newIndex = nextIndex >= matchCount ? 0 : nextIndex;
+                    
+                    const marks = document.querySelectorAll('mark');
+                    if (marks[newIndex]) {
+                        marks[newIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    
+                    return newIndex;
+                })
+            }
+        }
+    };
     
-    const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
-    return parts.map((part, i) => 
-      part.toLowerCase() === searchTerm.toLowerCase() 
-        ? <mark key={i} className="bg-yellow-200 dark:bg-yellow-800">{part}</mark>
-        : part
-    );
-  };
-
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && searchTerm) {
-      const matches = meeting?.transcript.match(new RegExp(searchTerm, 'gi'));
-      const matchCount = matches?.length || 0;
-      console.log(currentMatchIndex);
-      
-      if (matchCount > 0) {
-        setCurrentMatchIndex((prev) => {
-          const nextIndex = prev + 1;
-          const newIndex = nextIndex >= matchCount ? 0 : nextIndex;
-          
-          // Find and scroll to the current match
-          const marks = document.querySelectorAll('mark');
-          if (marks[newIndex]) {
-            marks[newIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
-          
-          return newIndex;
-        });
-      }
-    }
-  };
-  
-
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
+    
+    return (
     <div className="flex flex-col min-h-screen">
       {/* Main Content Area */}
       <div className="flex flex-col lg:flex-row flex-1 overflow-y-auto">
@@ -265,6 +206,73 @@ export default function MeetingView() {
         </section>
       </div>
     </div>
+    )
+}
+
+export default function MeetingView() {
+  const [meeting, setMeeting] = useState<Meeting | null>(null);
+  const [loading, setLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const meetingId = searchParams.get('id');
+
+  console.log(meetingId);
+
+  useEffect(() => {
+    // TODO: Replace with actual API call
+    const fetchMeeting = async () => {
+      try {
+         // Fetch transcript from public directory
+         const transcriptResponse = await fetch(`/${meetingId}.txt`);
+         const transcriptText = await transcriptResponse.text();
+
+         const summaryResponse = await fetch(`/${meetingId}_summary.txt`);
+         const summaryText = await summaryResponse.text();
+
+         const tagsResponse = await fetch(`/${meetingId}_tags.json`);
+         const tags = await tagsResponse.json();
+        // Simulate API call
+        const meetingObject = {
+          id: '1',
+          title:  `${meetingId} meeting`,
+          date: '2024-04-04',
+          transcript: transcriptText,
+          summary: summaryText,
+          topics: tags.tags,
+          sentiments: tags.sentiments,
+        };
+        setMeeting(meetingObject);
+      } catch (error) {
+        console.error('Error fetching meeting:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMeeting();
+  }, []);
+
+  
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!meeting) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Meeting not found
+      </div>
+    );
+  }
+
+  
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+        <MeetingViewContent meeting={meeting} />
     </Suspense>
   );
 }
