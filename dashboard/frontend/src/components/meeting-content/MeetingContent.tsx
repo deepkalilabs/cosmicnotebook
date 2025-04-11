@@ -24,12 +24,67 @@ function MeetingViewContent() {
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentMatchIndex, setCurrentMatchIndex] = useState(-1); 
+  const [currentMatchIndex, setCurrentMatchIndex] = useState(-1);
   const searchParams = useSearchParams();
   const meetingId = searchParams.get('id');
 
+  useEffect(() => {
+    if (!meetingId) {
+      setLoading(false);
+      return;
+    }
+
+    // Fetch meeting data
+    const fetchMeeting = async () => {
+      try {
+        // Fetch transcript from public directory
+        const transcriptResponse = await fetch(`/${meetingId}.txt`);
+        const transcriptText = await transcriptResponse.text();
+
+        const summaryResponse = await fetch(`/${meetingId}_summary.txt`);
+        const summaryText = await summaryResponse.text();
+
+        const tagsResponse = await fetch(`/${meetingId}_tags.json`);
+        const tags = await tagsResponse.json();
+
+        const meetingObject = {
+          id: '1',
+          title: `${meetingId} meeting`,
+          date: '2024-04-04',
+          transcript: transcriptText,
+          summary: summaryText,
+          topics: tags.tags,
+          sentiments: tags.sentiments,
+        };
+        setMeeting(meetingObject);
+      } catch (error) {
+        console.error('Error fetching meeting:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMeeting();
+  }, [meetingId]);
+
   if (!meetingId) {
-      return <div>Meeting not found</div>;
+    return <div>Meeting not found</div>;
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!meeting) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Meeting not found
+      </div>
+    );
   }
 
   const highlightText = (text: string) => {
@@ -64,56 +119,6 @@ function MeetingViewContent() {
       }
     }
   };
-  
-  useEffect(() => {
-    // TODO: Replace with actual API call
-    const fetchMeeting = async () => {
-      try {
-         // Fetch transcript from public directory
-         const transcriptResponse = await fetch(`/${meetingId}.txt`);
-         const transcriptText = await transcriptResponse.text();
-
-         const summaryResponse = await fetch(`/${meetingId}_summary.txt`);
-         const summaryText = await summaryResponse.text();
-
-         const tagsResponse = await fetch(`/${meetingId}_tags.json`);
-         const tags = await tagsResponse.json();
-        // Simulate API call
-        const meetingObject = {
-          id: '1',
-          title:  `${meetingId} meeting`,
-          date: '2024-04-04',
-          transcript: transcriptText,
-          summary: summaryText,
-          topics: tags.tags,
-          sentiments: tags.sentiments,
-        };
-        setMeeting(meetingObject);
-      } catch (error) {
-        console.error('Error fetching meeting:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMeeting();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        Loading...
-      </div>
-    );
-  }
-
-  if (!meeting) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        Meeting not found
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col min-h-screen">
