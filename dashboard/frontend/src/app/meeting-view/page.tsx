@@ -5,6 +5,7 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import Player from '@/components/audio/Player';
 import ReactMarkdown from 'react-markdown';
+import { useSearchParams } from 'next/navigation';  // Add this import if not already present
 
 
 interface Meeting {
@@ -24,24 +25,28 @@ export default function MeetingView() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentMatchIndex, setCurrentMatchIndex] = useState(-1);
+  const searchParams = useSearchParams();
+  const meetingId = searchParams.get('id');
+
+  console.log(meetingId);
 
   useEffect(() => {
     // TODO: Replace with actual API call
     const fetchMeeting = async () => {
       try {
          // Fetch transcript from public directory
-         const transcriptResponse = await fetch('/medme.txt');
+         const transcriptResponse = await fetch(`/${meetingId}.txt`);
          const transcriptText = await transcriptResponse.text();
 
-         const summaryResponse = await fetch('/medme_summary.txt');
+         const summaryResponse = await fetch(`/${meetingId}_summary.txt`);
          const summaryText = await summaryResponse.text();
 
-         const tagsResponse = await fetch('/medme_tags.json');
+         const tagsResponse = await fetch(`/${meetingId}_tags.json`);
          const tags = await tagsResponse.json();
         // Simulate API call
         const meetingObject = {
           id: '1',
-          title: 'MedMe Meeting',
+          title:  `${meetingId} meeting`,
           date: '2024-04-04',
           transcript: transcriptText,
           summary: summaryText,
