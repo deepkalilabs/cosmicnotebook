@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react'; 
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import Player from '@/components/audio/Player';
@@ -117,6 +117,7 @@ export default function MeetingView() {
   
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
     <div className="flex flex-col min-h-screen">
       {/* Main Content Area */}
       <div className="flex flex-col lg:flex-row flex-1 overflow-y-auto">
@@ -264,5 +265,6 @@ export default function MeetingView() {
         </section>
       </div>
     </div>
+    </Suspense>
   );
 }
