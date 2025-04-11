@@ -1,8 +1,10 @@
+'use client';
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import Player from '@/components/audio/Player';
 import ReactMarkdown from 'react-markdown';
+import { useSearchParams } from 'next/navigation';
 
 
 
@@ -18,13 +20,17 @@ interface Meeting {
   };
 }
 
-function MeetingViewContent({ meetingId }: { meetingId: string }) {
+function MeetingViewContent() {
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   const [loading, setLoading] = useState(true);
-  
-
   const [searchTerm, setSearchTerm] = useState('');
   const [currentMatchIndex, setCurrentMatchIndex] = useState(-1); 
+  const searchParams = useSearchParams();
+  const meetingId = searchParams.get('id');
+
+  if (!meetingId) {
+      return <div>Meeting not found</div>;
+  }
 
   const highlightText = (text: string) => {
     if (!searchTerm) return text;
