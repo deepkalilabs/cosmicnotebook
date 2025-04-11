@@ -17,8 +17,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: "Trade Show Revenue Intelligence",
-  description: "Convert trade show leads into customers with AI-powered revenue intelligence.",
+  title: "Field Sales Revenue Intelligence",
+  description: "End ridealongs with actionable insights to help your team close more deals.",
 };
 
 export default function RootLayout({
