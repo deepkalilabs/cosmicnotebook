@@ -29,7 +29,7 @@ export default function PreOrderButton({
       className={`${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
       asChild
     >
-      <a href="https://buy.stripe.com/8wM9BifBC5PGbqUaEE">Pre-order</a>
+      <a href="https://buy.stripe.com/4gw28Q89a1zqdz25kl">Pre-order</a>
     </Button>
   );
 } 

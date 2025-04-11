@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import PreOrderButton from "@/components/PreOrderButton";
+
 export default function HeroSection() {
   return (
     <div className="flex flex-col items-center justify-center bg-gradient-to-r from-white to-indigo-600/40 text-black">
@@ -23,10 +24,16 @@ export default function HeroSection() {
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
-                <PreOrderButton className="text-md size-lg py-6" />
-                <Button size="lg" variant="default" className="border-gray-700 text-white text-md py-6 hover:bg-gray-800">
-                  Request demo
-                </Button>
+                <PreOrderButton className="text-md size-lg py-6"/>
+                  <Button size="lg" variant="default" className="border-gray-700 text-white text-md py-6 hover:bg-gray-800">
+                    <a 
+                    href="https://cal.com/team/s-c/30-min-chat?overlayCalendar=true"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Request demo
+                    </a>
+                  </Button>
               </div>
               <p className="text-gray-600 text-md">* 100% money back guarantee within 3 months if you are not satisfied.</p>
             </div>
@@ -34,23 +41,13 @@ export default function HeroSection() {
             <div className="relative w-full mx-auto mt-8">
               <Card className="p-6 rounded-xl overflow-hidden">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                  {/* Left column for pendant images */}
-                  <div className="md:col-span-3 flex flex-col md:flex-col gap-4 sm:flex-row sm:justify-center">
-                    <div className="relative aspect-square w-full sm:w-1/2 md:w-full overflow-hidden rounded-xl">
-                      <Image 
-                        src="/talking.png"
-                        fill
-                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
-                        alt="Cosmic recording pendant"
-                        className="object-cover hover:scale-105 transition-transform duration-300"
-                        priority
-                      />
-                    </div>
-                    <div className="relative aspect-square w-full overflow-hidden rounded-xl">
+                  {/* Left column for pendant image */}
+                  <div className="md:col-span-4 flex justify-center">
+                    <div className="relative aspect-square w-full max-w-[300px] overflow-hidden rounded-xl">
                       <Image 
                         src="/recording.png"
                         fill
-                        // sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
                         alt="Cosmic recording pendant"
                         className="object-cover hover:scale-105 transition-transform duration-300"
                         priority
@@ -59,14 +56,14 @@ export default function HeroSection() {
                   </div>
                   
                   {/* Right column for transcription image */}
-                  <div className="relative md:col-span-9 overflow-hidden rounded-xl flex items-stretch h-full min-h-[300px]">
+                  <div className="md:col-span-8 relative overflow-hidden rounded-xl flex items-stretch h-full min-h-[500px]">
                     <div className="relative w-full h-full">
                       <Image
                         src="/transcription.png"
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 66vw"
                         alt="Cosmic transcription interface"
-                        className="object-contain hover:scale-105 transition-transform duration-300 rounded-xl"
+                        className="object-cover hover:scale-105 transition-transform duration-300 rounded-xl"
                         priority
                       />
                     </div>

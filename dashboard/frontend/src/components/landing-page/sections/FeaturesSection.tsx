@@ -35,8 +35,8 @@ export default function FeaturesSection() {
     },
     {
       icon: <DollarSign className="h-6 w-6 text-indigo-400" />,
-      title: "Review each call to maximize ROI",
-      description: "Companies spend $30K on a booth at a trade show. Cosmic records and transcribes each conversation and helps you stay on top of every conversation to ensure quality."
+      title: "Review each call to help your team close more deals",
+      description: "Coach your team with virtual ridealongs to help them close more deals."
     },
     {
       icon: <Mic className="h-6 w-6 text-indigo-400" />,

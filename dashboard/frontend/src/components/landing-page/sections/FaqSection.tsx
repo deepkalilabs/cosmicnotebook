@@ -21,12 +21,7 @@ export default function FAQSection() {
     {
       question: "What phone do I need to use Cosmic?",
       answer:
-        "Cosmic is compatible with iPhone (iOS 14 or later) and Android devices (Android 10 or later) with Bluetooth 5.0 capability.",
-    },
-    {
-      question: "What happens when I break the device?",
-      answer:
-        "Cosmic comes with a 1-year limited warranty that covers manufacturing defects. If your device breaks due to normal wear and tear within the warranty period, we'll replace it. Accidental damage is not covered, but we offer a replacement program at a reduced cost.",
+        "Cosmic is compatible with iPhone (iOS 14 or later) and Android devices (Android 10 or later).",
     },
     {
       question: "How is my privacy protected?",
